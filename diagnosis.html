@@ -4,19 +4,55 @@
   <meta charset="UTF-8" />
   <title>サーフボード診断 | SEA LIFE HUB</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="初心者〜中級者向けのサーフボード診断ツール。体重・レベル・波の条件・スタイルから板タイプと推奨ボリューム(ℓ)を提案します。" />
+  <meta name="description" content="体重×係数で推奨ボリューム(ℓ)を算出し、目的に合った板タイプと長さ/幅/厚みの目安も提案。テール形状やレール厚、ロッカーの学習モード付き。" />
   <link rel="stylesheet" href="style.css" />
   <style>
-    form{ display:grid; gap:12px; max-width:680px; margin:16px auto 0; grid-template-columns:1fr 1fr; }
-    form label{ display:flex; flex-direction:column; gap:6px; font-weight:600; }
-    form select, form input{ padding:10px; border-radius:8px; border:none; }
+    /* 追加スタイル（このページ専用の最小限） */
+    form#surfForm{
+      display:grid; gap:12px; max-width:800px; margin:16px auto 0; grid-template-columns:1fr 1fr;
+      background: rgba(0,0,0,0.35); padding:16px; border-radius:12px;
+    }
+    form#surfForm label{ display:flex; flex-direction:column; gap:6px; font-weight:600; }
+    form#surfForm select, form#surfForm input{ padding:10px; border-radius:8px; border:none; }
     .span2{ grid-column:1/-1; }
-    .result{ margin-top:20px; display:grid; gap:16px; }
-    .card img{ height: 200px; }
     .hint{ opacity:.85; font-size:.92rem; }
+    .result{ margin-top:20px; display:grid; gap:16px; }
+    .result .grid{ display:grid; gap:16px; grid-template-columns: 1.2fr 1fr; }
+    @media (max-width: 900px){ .result .grid{ grid-template-columns: 1fr; } }
+    .card img{ height: 200px; }
+    .table{
+      width:100%; border-collapse: collapse; overflow:hidden; border-radius:12px;
+      background: rgba(0,0,0,0.25);
+    }
+    .table th, .table td{ padding:10px 12px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .table th{ text-align:left; color: var(--c-accent); }
+    .badge{ display:inline-block; padding:2px 8px; border-radius:9999px; background: rgba(255,255,255,0.15); font-size:.85rem; }
+    .row{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+    .mini{ font-size:.9rem; opacity:.9; }
+
+    /* 学習モード（アコーディオン） */
+    .accordion{ margin-top:24px; }
+    .acc-item{ background: rgba(0,0,0,0.35); border-radius:12px; margin-bottom:10px; overflow:hidden; }
+    .acc-head{
+      width:100%; text-align:left; background: transparent; border:none; padding:14px 16px;
+      color:#fff; display:flex; justify-content:space-between; align-items:center; cursor:pointer;
+    }
+    .acc-head:hover{ background: rgba(255,255,255,0.08); }
+    .acc-body{ display:none; padding:0 16px 16px; }
+    .acc-item.open .acc-body{ display:block; }
+    .chev{ transition: transform .2s ease; }
+    .acc-item.open .chev{ transform: rotate(90deg); }
+
+    /* SVG 簡易アイコン整形 */
+    .icon-row{ display:flex; gap:16px; flex-wrap:wrap; margin-top:8px; }
+    .icon-card{
+      background: rgba(255,255,255,0.06); padding:10px; border-radius:10px; display:flex; gap:10px; align-items:center;
+    }
+    .icon-card svg{ width:52px; height:32px; }
   </style>
 </head>
 <body>
+  <!-- ヘッダー -->
   <header class="site-header">
     <a href="index.html" class="logo">🌊 SEA LIFE HUB</a>
 
@@ -52,11 +88,13 @@
     <a href="index.html#about">このサイトについて</a>
   </nav>
 
+  <!-- 本文 -->
   <section class="overlay">
     <main class="container">
-      <h1 class="section-title">サーフボード診断（参考ロジック版）</h1>
-      <p class="hint">※ロジックは外部情報を参考に**要約・再構成**しています。最終的な推奨はあなたの基準で微調整できます。</p>
+      <h1 class="section-title">サーフボード診断（係数テーブル＋学習モード）</h1>
+      <p class="hint">※推奨はあくまで目安です。体力・好み・ローカルの波質で最終調整を行ってください。</p>
 
+      <!-- 入力フォーム -->
       <form id="surfForm">
         <label>
           体重（kg）
@@ -75,7 +113,7 @@
           よく行く波サイズ
           <select id="wave">
             <option value="small">小波（膝〜腹）</option>
-            <option value="mid">ミドル（腰〜胸）</option>
+            <option value="mid" selected>ミドル（腰〜胸）</option>
             <option value="solid">サイズあり（肩〜頭以上）</option>
           </select>
         </label>
@@ -83,24 +121,113 @@
           目指すスタイル
           <select id="style">
             <option value="easy">まずは楽にたくさん乗りたい</option>
-            <option value="maneuver">ターンや技を磨きたい</option>
+            <option value="maneuver" selected>ターンや技を磨きたい</option>
             <option value="cruise">ゆったりクルーズしたい</option>
           </select>
         </label>
 
-        <label class="span2">
-          フィットネス/パドル体力の自己評価
+        <label>
+          フィットネス/パドル体力
           <select id="fitness">
-            <option value="low">やや弱め（体力に自信なし）</option>
+            <option value="low">やや弱め</option>
             <option value="mid" selected>ふつう</option>
-            <option value="high">強め（体力/泳力に自信あり）</option>
+            <option value="high">強め</option>
           </select>
         </label>
+
+        <label>
+          好みの浮力感
+          <select id="floatPref">
+            <option value="more">やや多め（安心感）</option>
+            <option value="neutral" selected>ふつう</option>
+            <option value="less">やや少なめ（取り回し重視）</option>
+          </select>
+        </label>
+
+        <div class="span2 row mini">
+          <span class="badge">係数テーブル（参考）</span>
+          <span>初心者：0.50｜中級：0.45｜上級：0.40 を基準、体力±0.03、好み±0.02で微調整します。</span>
+        </div>
 
         <button class="btn primary span2" type="button" onclick="diagnose()">診断する</button>
       </form>
 
+      <!-- 結果 -->
       <div id="result" class="result"></div>
+
+      <!-- 学習モード：テール形状 / レール厚 / ロッカー -->
+      <section class="accordion">
+        <h2 class="section-title">学習モード</h2>
+
+        <div class="acc-item">
+          <button class="acc-head">
+            <strong>テール形状の基本</strong>
+            <span class="chev">▶</span>
+          </button>
+          <div class="acc-body">
+            <p>テール形状は水の抜けやエッジの食い付きに影響し、ターンや加速の性格を決めます。</p>
+            <div class="icon-row">
+              <div class="icon-card">
+                <!-- Squash -->
+                <svg viewBox="0 0 100 60" aria-hidden="true">
+                  <path d="M5,10 C50,5 50,5 95,10 L95,50 L5,50 Z" fill="none" stroke="white"/>
+                  <rect x="55" y="45" width="20" height="5" fill="white" />
+                </svg>
+                <div><strong>スクアッシュ</strong><br><span class="mini">汎用性◎。ターンの切り返しが軽く、小〜中波で扱いやすい。</span></div>
+              </div>
+              <div class="icon-card">
+                <!-- Swallow -->
+                <svg viewBox="0 0 100 60" aria-hidden="true">
+                  <path d="M5,10 C50,5 50,5 95,10 L95,50 L60,50 L50,40 L40,50 L5,50 Z" fill="none" stroke="white"/>
+                </svg>
+                <div><strong>スワロー</strong><br><span class="mini">小波でグリップとドライブ。ツイン/フィッシュと好相性。</span></div>
+              </div>
+              <div class="icon-card">
+                <!-- Round -->
+                <svg viewBox="0 0 100 60" aria-hidden="true">
+                  <path d="M5,10 C50,5 50,5 95,10 L95,50 Q50,40 5,50 Z" fill="none" stroke="white"/>
+                </svg>
+                <div><strong>ラウンド</strong><br><span class="mini">ターンがスムーズ。サイズが上がっても癖が少ない。</span></div>
+              </div>
+              <div class="icon-card">
+                <!-- Pin -->
+                <svg viewBox="0 0 100 60" aria-hidden="true">
+                  <path d="M5,10 C50,5 50,5 95,10 L95,50 L52,45 L48,45 L5,50 Z" fill="none" stroke="white"/>
+                </svg>
+                <div><strong>ピン</strong><br><span class="mini">サイズのある波でのホールド感重視。ミッド/ガンで活躍。</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-head">
+            <strong>レール厚（ボキシー/ピンチ）</strong>
+            <span class="chev">▶</span>
+          </button>
+          <div class="acc-body">
+            <p>レールは「浮力感と食い付き」のバランスに直結します。</p>
+            <ul>
+              <li><strong>ボキシー（厚め）</strong>：テイクオフが早く、ミスに寛容。初心者〜中級の本数確保に◎。</li>
+              <li><strong>ピンチ（薄め）</strong>：ターン時の食い付きが良い。上達してコントロール重視なら有効。</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <button class="acc-head">
+            <strong>ロッカー（反り）の考え方</strong>
+            <span class="chev">▶</span>
+          </button>
+          <div class="acc-body">
+            <p>ロッカーは「テイクオフの早さ」と「ターンのキレ/ノーズ刺さりにくさ」のトレードオフ。</p>
+            <ul>
+              <li><strong>弱いロッカー</strong>：テイクオフ早い・直進性◎。小波〜ミドル、初心者の本数確保に。</li>
+              <li><strong>強いロッカー</strong>：掘れた波でも刺さりにくく、急激なターンに対応。サイズある波や上級者向け。</li>
+            </ul>
+          </div>
+        </div>
+      </section>
     </main>
   </section>
 
@@ -111,97 +238,180 @@
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    /* ===== 診断ロジック（参考を要約し自作したもの） =====
-       推奨ボリューム = weight * factor
-       factorはレベル/体力目安で 0.50 / 0.45 / 0.40 を基準に微調整。
-       板タイプは レベル・波サイズ・スタイルから推定。
-    */
+    /* ===============================
+       推奨ボリューム：係数テーブル方式
+       base (初心者0.50 / 中級0.45 / 上級0.40)
+       体力 low:+0.03 / high:-0.03
+       好み more:+0.02 / less:-0.02
+       =============================== */
+    function calcVolume(weight, level, fitness, floatPref){
+      let base = (level==='beginner') ? 0.50 : (level==='advanced') ? 0.40 : 0.45;
+      if(fitness==='low') base += 0.03;
+      if(fitness==='high') base -= 0.03;
+      if(floatPref==='more') base += 0.02;
+      if(floatPref==='less') base -= 0.02;
 
-    function calcVolume(weight, level, fitness){
-      // 基準係数
-      let base = 0.45; // 中間
-      if(level === 'beginner') base = 0.50;
-      if(level === 'advanced') base = 0.40;
+      // 安全な範囲にクリップ
+      base = Math.max(0.35, Math.min(0.60, base));
 
-      // 体力で微調整（±0.03）
-      if(fitness === 'low') base += 0.03;
-      if(fitness === 'high') base -= 0.03;
-
-      const liters = Math.round(weight * base * 10)/10; // 0.1刻み
-      // ±10%のレンジも併記
+      const liters = Math.round(weight * base * 10)/10;
       const low = Math.round(liters * 0.9 * 10)/10;
       const high = Math.round(liters * 1.1 * 10)/10;
       return { liters, range:[low, high], factor: base };
     }
 
+    /* ===============================
+       板タイプ推定（レベル×波×スタイル）
+       =============================== */
     function pickBoardType(level, wave, style){
-      // シンプルな分岐（あなたの考えで上書き歓迎）
       if(level === 'beginner'){
-        if(style === 'maneuver' && wave !== 'small') return {type:'ミッドレングス', why:'安定と操作性を両立しつつステップアップ'};
-        if(style === 'cruise') return {type:'ロング/ミッド', why:'テイクオフが早く、クルーズを楽しみやすい'};
-        return {type:'ソフトボード/ファン', why:'安定＆パドルしやすく、乗れる本数を増やしやすい'};
+        if(style === 'maneuver' && wave !== 'small') return {type:'ミッドレングス', why:'安定と操作性のバランスで上達に繋げやすい'};
+        if(style === 'cruise') return {type:'ロング/ミッド', why:'早いテイクオフでゆったりクルーズ'};
+        return {type:'ソフトボード/ファン', why:'安定＆本数確保。まずは「乗れる」を体に入れる'};
       }
       if(level === 'intermediate'){
         if(style === 'maneuver'){
-          return (wave === 'small') ? {type:'フィッシュ/ツイン寄りショート', why:'小波でスピードを得やすい'} :
-                                      {type:'オールラウンドショート', why:'技と走りのバランス'};
+          return (wave === 'small') ? {type:'フィッシュ/ツイン寄りショート', why:'小波での加速と回転性'} :
+                                      {type:'オールラウンドショート', why:'技と走りのバランスで応用範囲が広い'};
         }
-        if(style === 'cruise') return {type:'ミッド/ロング', why:'ゆったり乗る本数と感覚を優先'};
-        return {type:'ミッド/ショート(ややボリューム多め)', why:'取り回しと安定のバランス'};
+        if(style === 'cruise') return {type:'ミッド/ロング', why:'本数とライン取りを重視'};
+        return {type:'ミッド/ショート(ややボリューム多め)', why:'取り回しと安定の中庸'};
       }
-      // advanced
-      if(style === 'cruise') return {type:'ロング', why:'ライン取りを大きく、クルーズ重視'};
-      return (wave === 'small') ? {type:'ハイボリュームショート/フィッシュ', why:'小波でドライブ感を確保'} :
-                                  {type:'HPショート', why:'操作性・パフォーマンス重視'};
+      // 上級
+      if(style === 'cruise') return {type:'ロング', why:'大きいラインとクルーズ感'};
+      return (wave === 'small') ? {type:'ハイボリュームショート/フィッシュ', why:'小波でも推進力とドライブ'} :
+                                  {type:'HPショート', why:'サイズがある波での機動性と性能'};
     }
 
-    function suggestFins(type, style){
-      // ざっくりの推奨（参考の一般論を踏まえた傾向）
+    /* ===============================
+       推奨の長さ/幅/厚み（type × weight × waveで目安）
+       基本レンジをタイプごとに定義し、体重バケット/波で微調整
+       =============================== */
+    const sizeTable = {
+      'ソフトボード/ファン':   { len:[7.0, 8.0],   wid:[21.0, 23.0], thick:[2.75, 3.3] },
+      'ミッドレングス':        { len:[6.8, 7.6],   wid:[20.5, 22.5], thick:[2.6, 3.0] },
+      'ロング/ミッド':         { len:[9.0, 9.6],   wid:[22.5, 23.5], thick:[2.75, 3.25] },
+      'フィッシュ/ツイン寄りショート': { len:[5.4, 6.0], wid:[19.5, 21.5], thick:[2.4, 2.7] },
+      'オールラウンドショート': { len:[5.10, 6.4], wid:[18.5, 20.5], thick:[2.3, 2.6] },
+      'ミッド/ショート(ややボリューム多め)': { len:[6.0, 6.6], wid:[19.5, 21.5], thick:[2.5, 2.8] },
+      'ハイボリュームショート/フィッシュ': { len:[5.8, 6.4], wid:[19.5, 21.5], thick:[2.5, 2.8] },
+      'HPショート':            { len:[5.8, 6.2],  wid:[18.0, 19.5], thick:[2.25, 2.5] },
+      'ロング':                { len:[9.0, 9.6],  wid:[22.5, 23.5], thick:[2.75, 3.25] }
+    };
+
+    function adjustByWeightAndWave(base, weight, wave){
+      // 体重バケット
+      const bucket = (weight<55)? -1 : (weight<=75)? 0 : 1; // -1:軽い, 0:中間, 1:重い
+      const waveAdj = (wave==='small')? +0.0 : (wave==='mid')? +0.05 : +0.1; // サイズあるほど長/厚側へ
+
+      function lerpRange([min,max], k){ return [ +(min + (max-min)*k).toFixed(2), +(max + (max-min)*k).toFixed(2) ]; }
+      function shiftRange([min,max], delta){ return [ +(min+delta).toFixed(2), +(max+delta).toFixed(2) ]; }
+
+      // バケット係数（軽い：-0.05、重い：+0.05）
+      const k = (bucket===-1)? -0.05 : (bucket===1)? 0.05 : 0;
+      let len  = lerpRange(base.len, k + waveAdj*0.3);
+      let wid  = lerpRange(base.wid, k*0.8 + waveAdj*0.2);
+      let thk  = lerpRange(base.thick, k + waveAdj*0.4);
+
+      // 小数→フィートインチ表記用に保持
+      return { len, wid, thk };
+    }
+
+    function toFeetInches(val){
+      const feet = Math.floor(val);
+      const inches = Math.round((val - feet) * 12);
+      return `${feet}'${inches}"`;
+    }
+    function rangeFeetInches([a,b]){ return `${toFeetInches(a)} 〜 ${toFeetInches(b)}`; }
+    function rangeCm([a,b]){ return `${Math.round(a*30.48)}〜${Math.round(b*30.48)}cm`; } // 1ft=30.48cm
+    function rangeInch([a,b]){ return `${a.toFixed(2)}〜${b.toFixed(2)}"`; }
+
+    /* ===============================
+       フィン推奨（簡易）
+       =============================== */
+    function suggestFins(type){
       if(type.includes('ロング')) return {fins:'シングル中心（2+1も可）', note:'直進安定と大きいライン'};
-      if(type.includes('フィッシュ') || style==='maneuver') return {fins:'ツイン or クワッド', note:'回転性or加速を重視'};
+      if(type.includes('フィッシュ') || type.includes('ツイン')) return {fins:'ツイン or クワッド', note:'回転性/加速を重視'};
       if(type.includes('ソフト') || type.includes('ファン') || type.includes('ミッド')) return {fins:'トライ', note:'汎用でコントロールしやすい'};
       return {fins:'トライ', note:'最もポピュラー'};
     }
 
+    /* ===============================
+       診断メイン
+       =============================== */
     function diagnose(){
       const weight = Number(document.getElementById('weight').value || 0);
       const level = document.getElementById('level').value;
       const wave = document.getElementById('wave').value;
       const style = document.getElementById('style').value;
       const fitness = document.getElementById('fitness').value;
+      const floatPref = document.getElementById('floatPref').value;
 
       if(!weight || weight < 35){
         alert('体重(kg)を入力してください'); return;
       }
 
-      const vol = calcVolume(weight, level, fitness);
+      const vol = calcVolume(weight, level, fitness, floatPref);
       const board = pickBoardType(level, wave, style);
-      const fins = suggestFins(board.type, style);
+      const base = sizeTable[board.type] || sizeTable['ミッドレングス'];
+      const sized = adjustByWeightAndWave(base, weight, wave);
+      const fins = suggestFins(board.type);
 
       const img = (board.type.includes('ロング')) ? 'images/stays.jpg'
                 : (board.type.includes('ミッド')) ? 'images/diagnosis.jpg'
                 : 'images/apparel.jpg';
 
+      // 表とカードを並べて表示
       const html = `
-        <article class="card">
-          <img src="${img}" alt="${board.type}">
-          <div class="card-body">
-            <h3>${board.type}</h3>
-            <p>${board.why}</p>
-            <p><strong>推奨ボリューム(目安)：</strong>${vol.liters}ℓ（約${vol.range[0]}〜${vol.range[1]}ℓ）</p>
-            <p class="hint">※ボリュームは目安です。浮力の好み・パドル力・着用ウェット・波の力で前後します。</p>
-            <p><strong>推奨フィン構成：</strong>${fins.fins}（${fins.note}）</p>
-            <div class="cta-row">
-              <a class="btn link" target="_blank" href="https://www.amazon.co.jp/s?k=サーフボード+${encodeURIComponent(board.type)}">Amazonで探す</a>
-              <a class="btn link" target="_blank" href="https://search.rakuten.co.jp/search/mall/${encodeURIComponent(board.type)}">楽天で探す</a>
+        <div class="grid">
+          <article class="card">
+            <img src="${img}" alt="${board.type}">
+            <div class="card-body">
+              <h3>${board.type}</h3>
+              <p>${board.why}</p>
+              <p><strong>推奨フィン構成：</strong>${fins.fins}（${fins.note}）</p>
+              <div class="cta-row">
+                <a class="btn link" target="_blank" href="https://www.amazon.co.jp/s?k=${encodeURIComponent('サーフボード ' + board.type)}">Amazonで探す</a>
+                <a class="btn link" target="_blank" href="https://search.rakuten.co.jp/search/mall/${encodeURIComponent(board.type)}">楽天で探す</a>
+              </div>
+            </div>
+          </article>
+
+          <div>
+            <table class="table">
+              <thead><tr><th>項目</th><th>推奨値（目安）</th></tr></thead>
+              <tbody>
+                <tr><td>体重</td><td>${weight} kg</td></tr>
+                <tr><td>推奨ボリューム</td><td><strong>${vol.liters}ℓ</strong>（約${vol.range[0]}〜${vol.range[1]}ℓ） <span class="mini">係数:${vol.factor.toFixed(2)}</span></td></tr>
+                <tr><td>長さ</td><td>${rangeFeetInches(sized.len)} <span class="mini">（${rangeCm(sized.len)}）</span></td></tr>
+                <tr><td>幅</td><td>${rangeInch(sized.wid)}</td></tr>
+                <tr><td>厚み</td><td>${rangeInch(sized.thk)}</td></tr>
+              </tbody>
+            </table>
+
+            <div class="row mini" style="margin-top:10px;">
+              <span class="badge">補足</span>
+              <span>ウェットスーツの厚さ・海水密度・筋力・テイクオフ技術で前後します。ショップの実測値も確認を。</span>
             </div>
           </div>
-        </article>
+        </div>
       `;
       document.getElementById('result').innerHTML = html;
+      window.scrollTo({ top: document.getElementById('result').offsetTop - 20, behavior: 'smooth' });
     }
 
-    /* ===== 共通：モバイルメニュー&デスクトップドロップダウン ===== */
+    /* ===============================
+       アコーディオン（学習モード）
+       =============================== */
+    document.querySelectorAll('.acc-head').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        btn.parentElement.classList.toggle('open');
+      });
+    });
+
+    /* ===============================
+       共通：モバイルメニュー & デスクトップドロップダウン
+       =============================== */
     (function(){
       const body = document.body;
       const burger = document.querySelector('.hamburger');
