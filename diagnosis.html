@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>サーフボード診断</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* フォーム専用の追加デザイン */
+    form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+    label {
+      font-size: 1.1rem;
+    }
+    select {
+      padding: 0.5rem;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: none;
+    }
+    button {
+      margin-top: 1rem;
+      padding: 0.7rem 1.2rem;
+      background: #00b4d8;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    button:hover {
+      background: #0077b6;
+      transform: scale(1.05);
+    }
+    /* 診断結果カード */
+    .card {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      max-width: 500px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+    .card img {
+      max-width: 100%;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+    .card h2 {
+      margin-bottom: 0.5rem;
+      color: #00d9ff;
+    }
+    .links a {
+      display: inline-block;
+      margin: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: #00b4d8;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 6px;
+      transition: background 0.3s;
+    }
+    .links a:hover {
+      background: #0077b6;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html" class="logo">🌊 SurfBoard診断</a>
+    <nav>
+      <a href="index.html">ホーム</a>
+      <a href="diagnosis.html">診断</a>
+      <a href="#">お問い合わせ</a>
+    </nav>
+  </header>
+
+  <div class="overlay">
+    <h1>あなたに合うサーフボード診断</h1>
+    <p>
+      いくつかの質問に答えると、あなたにおすすめのサーフボードタイプを提案します。<br>
+      初心者から中級者まで、自分にピッタリの一本を見つけましょう！
+    </p>
+
+    <form id="surfForm">
+      <label>サーフィン歴を選んでください:
+        <select id="experience">
+          <option value="beginner">初心者（～1年）</option>
+          <option value="intermediate">中級者（1〜3年）</option>
+          <option value="advanced">上級者（3年以上）</option>
+        </select>
+      </label>
+
+      <label>身長を選んでください:
+        <select id="height">
+          <option value="short">〜160cm</option>
+          <option value="medium">160〜175cm</option>
+          <option value="tall">175cm以上</option>
+        </select>
+      </label>
+
+      <button type="button" onclick="diagnose()">診断する</button>
+    </form>
+
+    <div id="result"></div>
+  </div>
+
+  <script>
+    function diagnose() {
+      const exp = document.getElementById("experience").value;
+      const height = document.getElementById("height").value;
+      let resultHTML = "";
+
+      if (exp === "beginner") {
+        resultHTML = `
+          <div class="card">
+            <h2>おすすめ: ソフトボード / ファンボード</h2>
+            <img src="https://via.placeholder.com/400x200.png?text=Soft+Board" alt="ソフトボード">
+            <p>安定感があり、初心者でも安心して波に乗れるボードです。</p>
+            <div class="links">
+              <a href="https://www.amazon.co.jp/" target="_blank">Amazonで探す</a>
+              <a href="https://www.rakuten.co.jp/" target="_blank">楽天で探す</a>
+            </div>
+          </div>
+        `;
+      } else if (exp === "intermediate") {
+        if (height === "tall") {
+          resultHTML = `
+            <div class="card">
+              <h2>おすすめ: ミッドレングス</h2>
+              <img src="https://via.placeholder.com/400x200.png?text=Mid+Length" alt="ミッドレングス">
+              <p>扱いやすさと機動性を両立。体格が大きい方にも最適です。</p>
+              <div class="links">
+                <a href="https://www.amazon.co.jp/" target="_blank">Amazonで探す</a>
+                <a href="https://www.rakuten.co.jp/" target="_blank">楽天で探す</a>
+              </div>
+            </div>
+          `;
+        } else {
+          resultHTML = `
+            <div class="card">
+              <h2>おすすめ: ショートボード</h2>
+              <img src="https://via.placeholder.com/400x200.png?text=Short+Board" alt="ショートボード">
+              <p>ステップアップを目指すサーファーに最適です。</p>
+              <div class="links">
+                <a href="https://www.amazon.co.jp/" target="_blank">Amazonで探す</a>
+                <a href="https://www.rakuten.co.jp/" target="_blank">楽天で探す</a>
+              </div>
+            </div>
+          `;
+        }
+      } else {
+        resultHTML = `
+          <div class="card">
+            <h2>おすすめ: ハイパフォーマンスショートボード</h2>
+            <img src="https://via.placeholder.com/400x200.png?text=High+Performance" alt="ハイパフォーマンスショートボード">
+            <p>高度なテクニックを発揮できる上級者向けのボードです。</p>
+            <div class="links">
+              <a href="https://www.amazon.co.jp/" target="_blank">Amazonで探す</a>
+              <a href="https://www.rakuten.co.jp/" target="_blank">楽天で探す</a>
+            </div>
+          </div>
+        `;
+      }
+
+      document.getElementById("result").innerHTML = resultHTML;
+    }
+  </script>
+</body>
+</html>
