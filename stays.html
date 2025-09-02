@@ -10,7 +10,8 @@
 <body>
   <header class="site-header">
     <a href="index.html" class="logo">🌊 SEA LIFE HUB</a>
-    <nav class="site-nav">
+
+    <nav class="site-nav" aria-label="Primary">
       <a href="index.html">ホーム</a>
       <div class="dropdown">
         <button class="dropbtn" aria-haspopup="true" aria-expanded="false">メニュー ▾</button>
@@ -22,8 +23,22 @@
       </div>
       <a href="index.html#about">このサイトについて</a>
     </nav>
+
+    <button class="hamburger" aria-label="メニューを開く" aria-controls="mobileNav" aria-expanded="false">
+      <span class="bar"></span>
+    </button>
   </header>
   <div class="header-spacer"></div>
+
+  <div class="mobile-nav-backdrop" id="backdrop"></div>
+  <nav class="mobile-nav" id="mobileNav" aria-label="Mobile">
+    <div class="mobile-title">🌊 SEA LIFE HUB</div>
+    <a href="index.html">ホーム</a>
+    <a href="diagnosis.html">サーフボード診断</a>
+    <a href="apparel.html">アパレル（Tシャツ）</a>
+    <a href="stays.html" class="is-active">海沿い民泊</a>
+    <a href="index.html#about">このサイトについて</a>
+  </nav>
 
   <section class="overlay">
     <main class="container">
@@ -54,24 +69,41 @@
   <footer class="site-footer">
     <p>© <span id="year"></span> SEA LIFE HUB</p>
   </footer>
+
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
+
     (function(){
-      const dropdown = document.querySelector('.dropdown');
-      const btn = dropdown?.querySelector('.dropbtn');
-      const menu = dropdown?.querySelector('.dropdown-content');
-      if(!dropdown || !btn || !menu) return;
-      const closeAll = () => { dropdown.classList.remove('open'); btn.setAttribute('aria-expanded','false'); };
-      btn.addEventListener('click', (e) => {
+      const body = document.body;
+      const burger = document.querySelector('.hamburger');
+      const mobileNav = document.getElementById('mobileNav');
+      const backdrop = document.getElementById('backdrop');
+      const deskDropdown = document.querySelector('.dropdown');
+      const deskBtn = deskDropdown?.querySelector('.dropbtn');
+
+      const closeMobile = () => { body.classList.remove('nav-open'); burger?.setAttribute('aria-expanded','false'); };
+      burger?.addEventListener('click', (e) => {
         e.stopPropagation();
-        const willOpen = !dropdown.classList.contains('open');
+        const willOpen = !body.classList.contains('nav-open');
         document.querySelectorAll('.dropdown.open').forEach(d => d.classList.remove('open'));
-        if (willOpen) { dropdown.classList.add('open'); btn.setAttribute('aria-expanded','true'); }
-        else { closeAll(); }
+        if (willOpen) { body.classList.add('nav-open'); burger.setAttribute('aria-expanded','true'); }
+        else { closeMobile(); }
       });
-      menu.addEventListener('click', () => closeAll());
-      document.addEventListener('click', (e) => { if (!dropdown.contains(e.target)) closeAll(); });
-      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAll(); });
+      backdrop?.addEventListener('click', closeMobile);
+      mobileNav?.addEventListener('click', (e) => { if (e.target.tagName === 'A') closeMobile(); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMobile(); });
+
+      if (deskDropdown && deskBtn) {
+        const closeAll = () => deskDropdown.classList.remove('open');
+        deskBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const willOpen = !deskDropdown.classList.contains('open');
+          document.querySelectorAll('.dropdown.open').forEach(d => d.classList.remove('open'));
+          if (willOpen) deskDropdown.classList.add('open'); else closeAll();
+        });
+        document.addEventListener('click', (e) => { if (!deskDropdown.contains(e.target)) deskDropdown.classList.remove('open'); });
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') deskDropdown.classList.remove('open'); });
+      }
     })();
   </script>
 </body>
