@@ -4,19 +4,23 @@
   <meta charset="UTF-8" />
   <title>サーフボード診断 | SEA LIFE HUB</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="初心者〜中級者向けのサーフボード診断ツール。" />
+  <meta name="description" content="初心者〜中級者向けのサーフボード診断ツール。体重・レベル・波の条件・スタイルから板タイプと推奨ボリューム(ℓ)を提案します。" />
   <link rel="stylesheet" href="style.css" />
   <style>
-    form{ display:flex; flex-direction:column; gap:12px; max-width:520px; margin: 16px auto 0; }
-    select, input{ padding:10px; border-radius:8px; border:none; }
-    .result{ margin-top: 20px; display:grid; gap: 16px; }
+    form{ display:grid; gap:12px; max-width:680px; margin:16px auto 0; grid-template-columns:1fr 1fr; }
+    form label{ display:flex; flex-direction:column; gap:6px; font-weight:600; }
+    form select, form input{ padding:10px; border-radius:8px; border:none; }
+    .span2{ grid-column:1/-1; }
+    .result{ margin-top:20px; display:grid; gap:16px; }
     .card img{ height: 200px; }
+    .hint{ opacity:.85; font-size:.92rem; }
   </style>
 </head>
 <body>
   <header class="site-header">
     <a href="index.html" class="logo">🌊 SEA LIFE HUB</a>
 
+    <!-- デスクトップナビ -->
     <nav class="site-nav" aria-label="Primary">
       <a href="index.html">ホーム</a>
       <div class="dropdown">
@@ -30,12 +34,14 @@
       <a href="index.html#about">このサイトについて</a>
     </nav>
 
+    <!-- モバイル：ハンバーガー -->
     <button class="hamburger" aria-label="メニューを開く" aria-controls="mobileNav" aria-expanded="false">
       <span class="bar"></span>
     </button>
   </header>
   <div class="header-spacer"></div>
 
+  <!-- モバイルメニュー -->
   <div class="mobile-nav-backdrop" id="backdrop"></div>
   <nav class="mobile-nav" id="mobileNav" aria-label="Mobile">
     <div class="mobile-title">🌊 SEA LIFE HUB</div>
@@ -48,25 +54,50 @@
 
   <section class="overlay">
     <main class="container">
-      <h1 class="section-title">サーフボード診断</h1>
-      <p>あなたの経験・体格・好みから、おすすめのボードタイプを提案します。</p>
+      <h1 class="section-title">サーフボード診断（参考ロジック版）</h1>
+      <p class="hint">※ロジックは外部情報を参考に**要約・再構成**しています。最終的な推奨はあなたの基準で微調整できます。</p>
 
       <form id="surfForm">
-        <label>サーフィン歴
-          <select id="experience">
-            <option value="beginner">初心者（〜1年）</option>
-            <option value="intermediate">中級（1〜3年）</option>
-            <option value="advanced">上級（3年以上）</option>
+        <label>
+          体重（kg）
+          <input id="weight" type="number" min="35" max="120" step="1" placeholder="例）68" required />
+        </label>
+        <label>
+          レベル
+          <select id="level">
+            <option value="beginner">初心者</option>
+            <option value="intermediate">中級</option>
+            <option value="advanced">上級</option>
           </select>
         </label>
-        <label>身長
-          <select id="height">
-            <option value="short">〜160cm</option>
-            <option value="medium">160〜175cm</option>
-            <option value="tall">175cm以上</option>
+
+        <label>
+          よく行く波サイズ
+          <select id="wave">
+            <option value="small">小波（膝〜腹）</option>
+            <option value="mid">ミドル（腰〜胸）</option>
+            <option value="solid">サイズあり（肩〜頭以上）</option>
           </select>
         </label>
-        <button class="btn primary" type="button" onclick="diagnose()">診断する</button>
+        <label>
+          目指すスタイル
+          <select id="style">
+            <option value="easy">まずは楽にたくさん乗りたい</option>
+            <option value="maneuver">ターンや技を磨きたい</option>
+            <option value="cruise">ゆったりクルーズしたい</option>
+          </select>
+        </label>
+
+        <label class="span2">
+          フィットネス/パドル体力の自己評価
+          <select id="fitness">
+            <option value="low">やや弱め（体力に自信なし）</option>
+            <option value="mid" selected>ふつう</option>
+            <option value="high">強め（体力/泳力に自信あり）</option>
+          </select>
+        </label>
+
+        <button class="btn primary span2" type="button" onclick="diagnose()">診断する</button>
       </form>
 
       <div id="result" class="result"></div>
@@ -80,34 +111,89 @@
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    function diagnose(){
-      const exp = document.getElementById('experience').value;
-      const height = document.getElementById('height').value;
-      let title = "ソフトボード / ファンボード";
-      let desc  = "安定感があり、初心者でも安心。";
-      let img   = "images/diagnosis.jpg";
-      let amazon= "https://www.amazon.co.jp/s?k=サーフィン+ソフトボード";
-      let rakuten="https://search.rakuten.co.jp/search/mall/サーフィン+ソフトボード/";
-      if(exp === 'intermediate'){
-        title = (height === 'tall') ? "ミッドレングス" : "ショートボード（オールラウンド）";
-        desc  = (height === 'tall') ? "扱いやすさと機動性を両立。体格が大きめでも◎" : "ステップアップに最適。";
-        amazon= "https://www.amazon.co.jp/s?k=サーフィン+ショートボード";
-        rakuten="https://search.rakuten.co.jp/search/mall/ショートボード+サーフィン/";
-      }else if(exp === 'advanced'){
-        title = "ハイパフォーマンスショートボード";
-        desc  = "技を磨く一本。モデルは波質や好みで選択を。";
-        amazon= "https://www.amazon.co.jp/s?k=アルメリック+サーフボード";
-        rakuten="https://search.rakuten.co.jp/search/mall/アルメリック+サーフボード/";
+    /* ===== 診断ロジック（参考を要約し自作したもの） =====
+       推奨ボリューム = weight * factor
+       factorはレベル/体力目安で 0.50 / 0.45 / 0.40 を基準に微調整。
+       板タイプは レベル・波サイズ・スタイルから推定。
+    */
+
+    function calcVolume(weight, level, fitness){
+      // 基準係数
+      let base = 0.45; // 中間
+      if(level === 'beginner') base = 0.50;
+      if(level === 'advanced') base = 0.40;
+
+      // 体力で微調整（±0.03）
+      if(fitness === 'low') base += 0.03;
+      if(fitness === 'high') base -= 0.03;
+
+      const liters = Math.round(weight * base * 10)/10; // 0.1刻み
+      // ±10%のレンジも併記
+      const low = Math.round(liters * 0.9 * 10)/10;
+      const high = Math.round(liters * 1.1 * 10)/10;
+      return { liters, range:[low, high], factor: base };
+    }
+
+    function pickBoardType(level, wave, style){
+      // シンプルな分岐（あなたの考えで上書き歓迎）
+      if(level === 'beginner'){
+        if(style === 'maneuver' && wave !== 'small') return {type:'ミッドレングス', why:'安定と操作性を両立しつつステップアップ'};
+        if(style === 'cruise') return {type:'ロング/ミッド', why:'テイクオフが早く、クルーズを楽しみやすい'};
+        return {type:'ソフトボード/ファン', why:'安定＆パドルしやすく、乗れる本数を増やしやすい'};
       }
+      if(level === 'intermediate'){
+        if(style === 'maneuver'){
+          return (wave === 'small') ? {type:'フィッシュ/ツイン寄りショート', why:'小波でスピードを得やすい'} :
+                                      {type:'オールラウンドショート', why:'技と走りのバランス'};
+        }
+        if(style === 'cruise') return {type:'ミッド/ロング', why:'ゆったり乗る本数と感覚を優先'};
+        return {type:'ミッド/ショート(ややボリューム多め)', why:'取り回しと安定のバランス'};
+      }
+      // advanced
+      if(style === 'cruise') return {type:'ロング', why:'ライン取りを大きく、クルーズ重視'};
+      return (wave === 'small') ? {type:'ハイボリュームショート/フィッシュ', why:'小波でドライブ感を確保'} :
+                                  {type:'HPショート', why:'操作性・パフォーマンス重視'};
+    }
+
+    function suggestFins(type, style){
+      // ざっくりの推奨（参考の一般論を踏まえた傾向）
+      if(type.includes('ロング')) return {fins:'シングル中心（2+1も可）', note:'直進安定と大きいライン'};
+      if(type.includes('フィッシュ') || style==='maneuver') return {fins:'ツイン or クワッド', note:'回転性or加速を重視'};
+      if(type.includes('ソフト') || type.includes('ファン') || type.includes('ミッド')) return {fins:'トライ', note:'汎用でコントロールしやすい'};
+      return {fins:'トライ', note:'最もポピュラー'};
+    }
+
+    function diagnose(){
+      const weight = Number(document.getElementById('weight').value || 0);
+      const level = document.getElementById('level').value;
+      const wave = document.getElementById('wave').value;
+      const style = document.getElementById('style').value;
+      const fitness = document.getElementById('fitness').value;
+
+      if(!weight || weight < 35){
+        alert('体重(kg)を入力してください'); return;
+      }
+
+      const vol = calcVolume(weight, level, fitness);
+      const board = pickBoardType(level, wave, style);
+      const fins = suggestFins(board.type, style);
+
+      const img = (board.type.includes('ロング')) ? 'images/stays.jpg'
+                : (board.type.includes('ミッド')) ? 'images/diagnosis.jpg'
+                : 'images/apparel.jpg';
+
       const html = `
         <article class="card">
-          <img src="${img}" alt="${title}">
+          <img src="${img}" alt="${board.type}">
           <div class="card-body">
-            <h3>${title}</h3>
-            <p>${desc}</p>
+            <h3>${board.type}</h3>
+            <p>${board.why}</p>
+            <p><strong>推奨ボリューム(目安)：</strong>${vol.liters}ℓ（約${vol.range[0]}〜${vol.range[1]}ℓ）</p>
+            <p class="hint">※ボリュームは目安です。浮力の好み・パドル力・着用ウェット・波の力で前後します。</p>
+            <p><strong>推奨フィン構成：</strong>${fins.fins}（${fins.note}）</p>
             <div class="cta-row">
-              <a class="btn link" target="_blank" href="${amazon}">Amazonで探す</a>
-              <a class="btn link" target="_blank" href="${rakuten}">楽天で探す</a>
+              <a class="btn link" target="_blank" href="https://www.amazon.co.jp/s?k=サーフボード+${encodeURIComponent(board.type)}">Amazonで探す</a>
+              <a class="btn link" target="_blank" href="https://search.rakuten.co.jp/search/mall/${encodeURIComponent(board.type)}">楽天で探す</a>
             </div>
           </div>
         </article>
@@ -115,7 +201,7 @@
       document.getElementById('result').innerHTML = html;
     }
 
-    /* 共通JS（モバイルメニュー & デスクトップドロップダウン） */
+    /* ===== 共通：モバイルメニュー&デスクトップドロップダウン ===== */
     (function(){
       const body = document.body;
       const burger = document.querySelector('.hamburger');
