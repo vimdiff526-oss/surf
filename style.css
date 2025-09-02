@@ -31,8 +31,7 @@ body{
   padding: 0 24px; background: rgba(0,0,0,0.55); backdrop-filter: blur(6px);
   z-index: 1000;
 }
-
-/* ヘッダー分のスペーサー（全ページで header の直後に置く） */
+/* ヘッダーぶんのスペーサー */
 .header-spacer{ height: var(--header-h); }
 
 .logo{
@@ -44,21 +43,36 @@ body{
 }
 .site-nav a:hover, .site-nav a.is-active{ background: rgba(255,255,255,0.1); }
 
-/* ドロップダウン */
+/* ===== ドロップダウン ===== */
 .dropdown{ position: relative; }
 .dropbtn{
   border:none; background: transparent; color:#fff; padding:8px 10px;
   border-radius:8px; cursor:pointer; font-size:16px;
 }
 .dropbtn:hover{ background: rgba(255,255,255,0.1); }
+
 .dropdown-content{
-  position:absolute; top: calc(100% + 8px); left:0; min-width: 200px;
+  position:absolute; top:100%; left:0; min-width: 220px;
   display:none; flex-direction:column; background: rgba(0,0,0,0.9);
   border-radius:10px; padding:8px; box-shadow: var(--shadow);
+  margin-top: 8px;   /* 見た目の余白（hover切れ防止の橋は::beforeで追加） */
+  z-index: 1100;
 }
-.dropdown-content a{ padding:10px 12px; color:#fff; text-decoration:none; border-radius:8px; }
+.dropdown-content::before{
+  content:""; position:absolute; left:0; right:0; height:10px; top:-10px;
+  /* 透明の“橋”でボタンとメニューのすき間を埋め、hoverが切れないようにする */
+}
+.dropdown-content a{
+  padding:10px 12px; color:#fff; text-decoration:none; border-radius:8px;
+}
 .dropdown-content a:hover{ background: rgba(255,255,255,0.08); }
-.dropdown:hover .dropdown-content{ display:flex; }
+
+/* 開き条件：hover / フォーカス内 / JSで .open 付与 */
+.dropdown:hover .dropdown-content,
+.dropdown:focus-within .dropdown-content,
+.dropdown.open .dropdown-content{
+  display:flex;
+}
 
 /* ===== ヒーロー ===== */
 .overlay{ background: var(--c-bg-overlay); }

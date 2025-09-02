@@ -13,11 +13,11 @@
     <nav class="site-nav">
       <a href="index.html">ホーム</a>
       <div class="dropdown">
-        <button class="dropbtn">メニュー ▾</button>
-        <div class="dropdown-content">
-          <a href="diagnosis.html">サーフボード診断</a>
-          <a href="apparel.html">アパレル（Tシャツ）</a>
-          <a href="stays.html" class="is-active">海沿い民泊</a>
+        <button class="dropbtn" aria-haspopup="true" aria-expanded="false">メニュー ▾</button>
+        <div class="dropdown-content" role="menu">
+          <a href="diagnosis.html" role="menuitem">サーフボード診断</a>
+          <a href="apparel.html" role="menuitem">アパレル（Tシャツ）</a>
+          <a href="stays.html" class="is-active" role="menuitem">海沿い民泊</a>
         </div>
       </div>
       <a href="index.html#about">このサイトについて</a>
@@ -54,6 +54,25 @@
   <footer class="site-footer">
     <p>© <span id="year"></span> SEA LIFE HUB</p>
   </footer>
-  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    (function(){
+      const dropdown = document.querySelector('.dropdown');
+      const btn = dropdown?.querySelector('.dropbtn');
+      const menu = dropdown?.querySelector('.dropdown-content');
+      if(!dropdown || !btn || !menu) return;
+      const closeAll = () => { dropdown.classList.remove('open'); btn.setAttribute('aria-expanded','false'); };
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const willOpen = !dropdown.classList.contains('open');
+        document.querySelectorAll('.dropdown.open').forEach(d => d.classList.remove('open'));
+        if (willOpen) { dropdown.classList.add('open'); btn.setAttribute('aria-expanded','true'); }
+        else { closeAll(); }
+      });
+      menu.addEventListener('click', () => closeAll());
+      document.addEventListener('click', (e) => { if (!dropdown.contains(e.target)) closeAll(); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAll(); });
+    })();
+  </script>
 </body>
 </html>
