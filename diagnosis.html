@@ -1,176 +1,106 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>サーフボード診断</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <title>サーフボード診断 | SEA LIFE HUB</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="初心者〜中級者向けのサーフボード診断ツール。" />
+  <link rel="stylesheet" href="style.css" />
   <style>
-    /* フォーム専用の追加デザイン */
-    form {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1rem;
-      margin-top: 2rem;
-    }
-    label {
-      font-size: 1.1rem;
-    }
-    select {
-      padding: 0.5rem;
-      font-size: 1rem;
-      border-radius: 6px;
-      border: none;
-    }
-    button {
-      margin-top: 1rem;
-      padding: 0.7rem 1.2rem;
-      background: #00b4d8;
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      font-size: 1.1rem;
-      font-weight: bold;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-    button:hover {
-      background: #0077b6;
-      transform: scale(1.05);
-    }
-    /* 診断結果カード */
-    .card {
-      margin-top: 2rem;
-      padding: 1.5rem;
-      background: rgba(255,255,255,0.1);
-      border-radius: 10px;
-      max-width: 500px;
-      text-align: center;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-    }
-    .card img {
-      max-width: 100%;
-      border-radius: 8px;
-      margin-bottom: 1rem;
-    }
-    .card h2 {
-      margin-bottom: 0.5rem;
-      color: #00d9ff;
-    }
-    .links a {
-      display: inline-block;
-      margin: 0.5rem;
-      padding: 0.5rem 1rem;
-      background: #00b4d8;
-      color: #fff;
-      text-decoration: none;
-      border-radius: 6px;
-      transition: background 0.3s;
-    }
-    .links a:hover {
-      background: #0077b6;
-    }
+    form{ display:flex; flex-direction:column; gap:12px; max-width:520px; margin: 16px auto 0; }
+    select, input{ padding:10px; border-radius:8px; border:none; }
+    .result{ margin-top: 20px; display:grid; gap: 16px; }
+    .card img{ height: 200px; }
   </style>
 </head>
 <body>
-  <header>
-    <a href="index.html" class="logo">🌊 SurfBoard診断</a>
-    <nav>
+  <header class="site-header">
+    <a href="index.html" class="logo">🌊 SEA LIFE HUB</a>
+    <nav class="site-nav">
       <a href="index.html">ホーム</a>
-      <a href="diagnosis.html">診断</a>
-      <a href="#">お問い合わせ</a>
+      <div class="dropdown">
+        <button class="dropbtn">メニュー ▾</button>
+        <div class="dropdown-content">
+          <a href="diagnosis.html" class="is-active">サーフボード診断</a>
+          <a href="apparel.html">アパレル（Tシャツ）</a>
+          <a href="stays.html">海沿い民泊</a>
+        </div>
+      </div>
+      <a href="index.html#about">このサイトについて</a>
     </nav>
   </header>
+  <div class="header-spacer"></div>
 
-  <div class="overlay">
-    <h1>あなたに合うサーフボード診断</h1>
-    <p>
-      いくつかの質問に答えると、あなたにおすすめのサーフボードタイプを提案します。<br>
-      初心者から中級者まで、自分にピッタリの一本を見つけましょう！
-    </p>
+  <section class="overlay">
+    <main class="container">
+      <h1 class="section-title">サーフボード診断</h1>
+      <p>あなたの経験・体格・好みから、おすすめのボードタイプを提案します。</p>
 
-    <form id="surfForm">
-      <label>サーフィン歴を選んでください:
-        <select id="experience">
-          <option value="beginner">初心者（～1年）</option>
-          <option value="intermediate">中級者（1〜3年）</option>
-          <option value="advanced">上級者（3年以上）</option>
-        </select>
-      </label>
+      <form id="surfForm">
+        <label>サーフィン歴
+          <select id="experience">
+            <option value="beginner">初心者（〜1年）</option>
+            <option value="intermediate">中級（1〜3年）</option>
+            <option value="advanced">上級（3年以上）</option>
+          </select>
+        </label>
+        <label>身長
+          <select id="height">
+            <option value="short">〜160cm</option>
+            <option value="medium">160〜175cm</option>
+            <option value="tall">175cm以上</option>
+          </select>
+        </label>
+        <button class="btn primary" type="button" onclick="diagnose()">診断する</button>
+      </form>
 
-      <label>身長を選んでください:
-        <select id="height">
-          <option value="short">〜160cm</option>
-          <option value="medium">160〜175cm</option>
-          <option value="tall">175cm以上</option>
-        </select>
-      </label>
+      <div id="result" class="result"></div>
+    </main>
+  </section>
 
-      <button type="button" onclick="diagnose()">診断する</button>
-    </form>
-
-    <div id="result"></div>
-  </div>
+  <footer class="site-footer">
+    <p>© <span id="year"></span> SEA LIFE HUB</p>
+  </footer>
 
   <script>
-    function diagnose() {
-      const exp = document.getElementById("experience").value;
-      const height = document.getElementById("height").value;
-      let resultHTML = "";
+    document.getElementById('year').textContent = new Date().getFullYear();
 
-      if (exp === "beginner") {
-        resultHTML = `
-          <div class="card">
-            <h2>おすすめ: ソフトボード / ファンボード</h2>
-            <img src="https://via.placeholder.com/400x200.png?text=Soft+Board" alt="ソフトボード">
-            <p>安定感があり、初心者でも安心して波に乗れるボードです。</p>
-            <div class="links">
-              <a href="https://www.amazon.co.jp/" target="_blank">Amazonで探す</a>
-              <a href="https://www.rakuten.co.jp/" target="_blank">楽天で探す</a>
-            </div>
-          </div>
-        `;
-      } else if (exp === "intermediate") {
-        if (height === "tall") {
-          resultHTML = `
-            <div class="card">
-              <h2>おすすめ: ミッドレングス</h2>
-              <img src="https://via.placeholder.com/400x200.png?text=Mid+Length" alt="ミッドレングス">
-              <p>扱いやすさと機動性を両立。体格が大きい方にも最適です。</p>
-              <div class="links">
-                <a href="https://www.amazon.co.jp/" target="_blank">Amazonで探す</a>
-                <a href="https://www.rakuten.co.jp/" target="_blank">楽天で探す</a>
-              </div>
-            </div>
-          `;
-        } else {
-          resultHTML = `
-            <div class="card">
-              <h2>おすすめ: ショートボード</h2>
-              <img src="https://via.placeholder.com/400x200.png?text=Short+Board" alt="ショートボード">
-              <p>ステップアップを目指すサーファーに最適です。</p>
-              <div class="links">
-                <a href="https://www.amazon.co.jp/" target="_blank">Amazonで探す</a>
-                <a href="https://www.rakuten.co.jp/" target="_blank">楽天で探す</a>
-              </div>
-            </div>
-          `;
-        }
-      } else {
-        resultHTML = `
-          <div class="card">
-            <h2>おすすめ: ハイパフォーマンスショートボード</h2>
-            <img src="https://via.placeholder.com/400x200.png?text=High+Performance" alt="ハイパフォーマンスショートボード">
-            <p>高度なテクニックを発揮できる上級者向けのボードです。</p>
-            <div class="links">
-              <a href="https://www.amazon.co.jp/" target="_blank">Amazonで探す</a>
-              <a href="https://www.rakuten.co.jp/" target="_blank">楽天で探す</a>
-            </div>
-          </div>
-        `;
+    function diagnose(){
+      const exp = document.getElementById('experience').value;
+      const height = document.getElementById('height').value;
+
+      let title = "ソフトボード / ファンボード";
+      let desc  = "安定感があり、初心者でも安心。";
+      let img   = "images/diagnosis.jpg";
+      let amazon= "https://www.amazon.co.jp/s?k=サーフィン+ソフトボード";
+      let rakuten="https://search.rakuten.co.jp/search/mall/サーフィン+ソフトボード/";
+
+      if(exp === 'intermediate'){
+        title = (height === 'tall') ? "ミッドレングス" : "ショートボード（オールラウンド）";
+        desc  = (height === 'tall') ? "扱いやすさと機動性を両立。体格が大きめでも◎" : "ステップアップに最適。";
+        amazon= "https://www.amazon.co.jp/s?k=サーフィン+ショートボード";
+        rakuten="https://search.rakuten.co.jp/search/mall/ショートボード+サーフィン/";
+      }else if(exp === 'advanced'){
+        title = "ハイパフォーマンスショートボード";
+        desc  = "技を磨く一本。モデルは波質や好みで選択を。";
+        amazon= "https://www.amazon.co.jp/s?k=アルメリック+サーフボード";
+        rakuten="https://search.rakuten.co.jp/search/mall/アルメリック+サーフボード/";
       }
 
-      document.getElementById("result").innerHTML = resultHTML;
+      const html = `
+        <article class="card">
+          <img src="${img}" alt="${title}">
+          <div class="card-body">
+            <h3>${title}</h3>
+            <p>${desc}</p>
+            <div class="cta-row">
+              <a class="btn link" target="_blank" href="${amazon}">Amazonで探す</a>
+              <a class="btn link" target="_blank" href="${rakuten}">楽天で探す</a>
+            </div>
+          </div>
+        </article>
+      `;
+      document.getElementById('result').innerHTML = html;
     }
   </script>
 </body>

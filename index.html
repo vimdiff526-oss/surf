@@ -1,28 +1,86 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>サーフボード診断サイト</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <title>SEA LIFE HUB | 海と暮らすためのポータル</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="サーフボード診断、アパレル(Tシャツ)販売、海沿い民泊紹介など、海のある暮らしを楽しむ人のためのハブサイト。" />
+  <meta property="og:title" content="SEA LIFE HUB | 海と暮らすためのポータル" />
+  <meta property="og:description" content="サーフボード診断、アパレル販売、海沿い民泊紹介まで、海のある暮らしをもっと自由に。" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="images/surf-bg.jpg" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header>
-    <a href="index.html" class="logo">🌊 SurfBoard診断</a>
-    <nav>
-      <a href="index.html">ホーム</a>
-      <a href="diagnosis.html">診断</a>
-      <a href="#">お問い合わせ</a>
+  <header class="site-header">
+    <a href="index.html" class="logo">🌊 SEA LIFE HUB</a>
+    <nav class="site-nav">
+      <a href="index.html" class="is-active">ホーム</a>
+      <div class="dropdown">
+        <button class="dropbtn">メニュー ▾</button>
+        <div class="dropdown-content">
+          <a href="diagnosis.html">サーフボード診断</a>
+          <a href="apparel.html">アパレル（Tシャツ）</a>
+          <a href="stays.html">海沿い民泊</a>
+        </div>
+      </div>
+      <a href="#about">このサイトについて</a>
     </nav>
   </header>
+  <div class="header-spacer"></div>
 
-  <div class="overlay">
-    <h1>サーフボード診断サイト</h1>
+  <section class="hero overlay">
+    <div class="hero-inner">
+      <h1>海と暮らす、をもっと自由に。</h1>
+      <p>サーフボード診断、Tシャツ販売、海沿いの民泊紹介。<br>“海のある生活”を、あなたのペースで育てよう。</p>
+      <div class="cta-row">
+        <a class="btn primary" href="diagnosis.html">診断を試す</a>
+        <a class="btn ghost" href="#sections">コンテンツを見る</a>
+      </div>
+    </div>
+  </section>
+
+  <main id="sections" class="container">
+    <h2 class="section-title">コンテンツ</h2>
+    <div class="card-grid">
+      <article class="card">
+        <img src="images/diagnosis.jpg" alt="サーフボード診断のイメージ">
+        <div class="card-body">
+          <h3>サーフボード診断</h3>
+          <p>経験や体格、波質から、あなたに合うボードタイプを提案します。結果からECやショップへもスムーズに。</p>
+          <a class="btn link" href="diagnosis.html">診断ページへ</a>
+        </div>
+      </article>
+      <article class="card">
+        <img src="images/apparel.jpg" alt="アパレル（Tシャツ）">
+        <div class="card-body">
+          <h3>アパレル（Tシャツ）</h3>
+          <p>海の気分を日常に。オリジナルTシャツの販売を準備中。受注生産・少数限定で“好き”にこだわる。</p>
+          <a class="btn link" href="apparel.html">アパレルを見る</a>
+        </div>
+      </article>
+      <article class="card">
+        <img src="images/stays.jpg" alt="海沿いの民泊">
+        <div class="card-body">
+          <h3>海沿いの民泊</h3>
+          <p>波の音で目覚め、夕暮れに散歩。ローカルの雰囲気を大切にした海沿いの宿をご紹介していきます。</p>
+          <a class="btn link" href="stays.html">民泊を見る</a>
+        </div>
+      </article>
+    </div>
+  </main>
+
+  <section id="about" class="about container">
+    <h2 class="section-title">このサイトについて</h2>
     <p>
-      サーフィンは自然の波に乗るスポーツであり、ライフスタイルそのものです。<br>
-      自分に合ったサーフボードを選ぶことで、楽しさも上達も大きく変わります。<br>
-      経験やスタイルに合わせた診断ツールで、あなたにピッタリのボードを見つけましょう！
+      SEA LIFE HUB は、海を中心に暮らすための“情報と導線”をまとめた個人運営のミニポータルです。<br>
+      まずは診断コンテンツからスタートし、アパレル（Tシャツ）や民泊の紹介へ、段階的に拡張していきます。
     </p>
-    <a href="diagnosis.html" class="link-button">診断ページへ</a>
-  </div>
+  </section>
+
+  <footer class="site-footer">
+    <p>© <span id="year"></span> SEA LIFE HUB</p>
+  </footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
 </body>
 </html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>アパレル | SEA LIFE HUB</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="SEA LIFE HUBのオリジナルTシャツや海を感じるアパレル。" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <a href="index.html" class="logo">🌊 SEA LIFE HUB</a>
+    <nav class="site-nav">
+      <a href="index.html">ホーム</a>
+      <div class="dropdown">
+        <button class="dropbtn">メニュー ▾</button>
+        <div class="dropdown-content">
+          <a href="diagnosis.html">サーフボード診断</a>
+          <a href="apparel.html" class="is-active">アパレル（Tシャツ）</a>
+          <a href="stays.html">海沿い民泊</a>
+        </div>
+      </div>
+      <a href="index.html#about">このサイトについて</a>
+    </nav>
+  </header>
+  <div class="header-spacer"></div>
+
+  <section class="overlay">
+    <main class="container">
+      <h1 class="section-title">アパレル（Tシャツ）</h1>
+      <p>準備中：受注生産で少数限定のTシャツを展開予定です。<br>サイズ・カラー・デザインの要望も取り入れていきます。</p>
+
+      <div class="card-grid">
+        <article class="card">
+          <img src="images/apparel.jpg" alt="Tシャツ">
+          <div class="card-body">
+            <h3>Basic Logo Tee</h3>
+            <p>海風に似合うミニマルなロゴT。ドライ・ヘビーウェイト選択可。</p>
+            <a class="btn link" href="#">詳細を見る（準備中）</a>
+          </div>
+        </article>
+        <article class="card">
+          <img src="images/apparel.jpg" alt="Tシャツ">
+          <div class="card-body">
+            <h3>Wave Pattern Tee</h3>
+            <p>波紋グラフィックを全面に。軽やかな着心地。</p>
+            <a class="btn link" href="#">詳細を見る（準備中）</a>
+          </div>
+        </article>
+      </div>
+    </main>
+  </section>
+
+  <footer class="site-footer">
+    <p>© <span id="year"></span> SEA LIFE HUB</p>
+  </footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
