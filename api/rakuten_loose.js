@@ -2,6 +2,27 @@
 // 「まずは表示されること」を最優先にした超ゆる検索エンドポイント
 // 必要環境変数: RAKUTEN_APP_ID
 
+import https from "node:https";
+
+// Node.js 16 などで fetch が存在しない場合に備えて簡易実装を用意
+async function fetchJson(url) {
+  return new Promise((resolve, reject) => {
+    https
+      .get(url, (res) => {
+        let data = "";
+        res.on("data", (chunk) => (data += chunk));
+        res.on("end", () =>
+          resolve({
+            ok: res.statusCode >= 200 && res.statusCode < 300,
+            status: res.statusCode,
+            json: async () => JSON.parse(data),
+          })
+        );
+      })
+      .on("error", reject);
+  });
+}
+
 export default async function handler(req, res) {
   try {
     const {
@@ -37,7 +58,8 @@ export default async function handler(req, res) {
     if (maxPrice) url.searchParams.set("maxPrice", String(maxPrice));
     if (page) url.searchParams.set("page", String(page));
 
-    const resp = await fetch(url.toString());
+    const fetchFn = globalThis.fetch || fetchJson;
+    const resp = await fetchFn(url.toString());
     if (!resp.ok) throw new Error(`Rakuten API HTTP ${resp.status}`);
     const data = await resp.json();
 
