@@ -1,0 +1,13 @@
+{
+  "name": "surf",
+  "version": "1.0.0",
+  "description": "SurfBoard 診断サイト",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"no tests\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module"
+}
