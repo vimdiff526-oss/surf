@@ -4,17 +4,18 @@
   <meta charset="UTF-8" />
   <title>サーフボード診断 | SEA LIFE HUB</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="推奨サイズを計算し、ECを“サーフボード限定”で検索。0件を避けるために、厳密/標準/ゆるめの曖昧検索リンクを自動生成します。" />
+  <meta name="description" content="推奨サイズを計算し、曖昧検索リンクと楽天APIで候補を表示。0件でも段階的に検索条件を緩めて再トライします。" />
   <link rel="stylesheet" href="style.css" />
   <style>
     form#surfForm{
-      display:grid; gap:12px; max-width:860px; margin:16px auto 0; grid-template-columns:1fr 1fr;
+      display:grid; gap:12px; max-width:920px; margin:16px auto 0; grid-template-columns:1fr 1fr;
       background: rgba(0,0,0,0.35); padding:16px; border-radius:12px;
     }
     form#surfForm label{ display:flex; flex-direction:column; gap:6px; font-weight:600; }
     form#surfForm select, form#surfForm input{ padding:10px; border-radius:8px; border:none; }
     .span2{ grid-column:1/-1; }
     .mini{ font-size:.9rem; opacity:.9; }
+    .row{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
     .result{ margin-top:20px; display:grid; gap:16px; }
     .result .grid{ display:grid; gap:16px; grid-template-columns: 1.2fr 1fr; }
     @media (max-width: 900px){ .result .grid{ grid-template-columns: 1fr; } }
@@ -23,7 +24,6 @@
     .table th, .table td{ padding:10px 12px; border-bottom: 1px solid rgba(255,255,255,0.1); }
     .table th{ text-align:left; color: var(--c-accent); }
     .badge{ display:inline-block; padding:2px 8px; border-radius:9999px; background: rgba(255,255,255,0.15); font-size:.85rem; }
-    .row{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
 
     /* プロバイダ検索カード */
     .providers{ display:grid; gap:12px; grid-template-columns: repeat(2, 1fr); }
@@ -34,14 +34,23 @@
     .prov-links a{ text-decoration:none; border-radius:10px; padding:8px 10px; background: rgba(255,255,255,0.12); }
     .prov-links a:hover{ background: rgba(255,255,255,0.2); }
 
-    /* 学習モード（簡易） */
-    .accordion{ margin-top:24px; }
-    .acc-item{ background: rgba(0,0,0,0.35); border-radius:12px; margin-bottom:10px; overflow:hidden; }
-    .acc-head{ width:100%; text-align:left; background: transparent; border:none; padding:14px 16px; color:#fff; display:flex; justify-content:space-between; align-items:center; cursor:pointer; }
-    .acc-body{ display:none; padding:0 16px 16px; }
-    .acc-item.open .acc-body{ display:block; }
-    .chev{ transition: transform .2s ease; }
-    .acc-item.open .chev{ transform: rotate(90deg); }
+    /* 楽天アイテムグリッド */
+    .items-grid{ display:grid; gap:12px; grid-template-columns: repeat(3, 1fr); }
+    @media (max-width:960px){ .items-grid{ grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width:640px){ .items-grid{ grid-template-columns: 1fr; } }
+    .item-card .card-body h3{ font-size:1rem; margin:0 0 6px; }
+    .skeleton{
+      background: linear-gradient(90deg, rgba(255,255,255,0.08), rgba(255,255,255,0.18), rgba(255,255,255,0.08));
+      background-size: 200% 100%; animation: shine 1.2s linear infinite;
+      height: 200px; border-radius: 12px;
+    }
+    @keyframes shine { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+    .error-box{
+      background: rgba(255,60,60,0.15); border: 1px solid rgba(255,60,60,0.35);
+      padding:12px; border-radius:10px; margin-top:8px; white-space:pre-wrap;
+    }
+    .chip{ display:inline-block; padding:4px 8px; border-radius:9999px; background: rgba(255,255,255,0.12); margin:2px; font-size:.85rem; }
   </style>
 </head>
 <body>
@@ -78,7 +87,7 @@
   <!-- 本文 -->
   <section class="overlay">
     <main class="container">
-      <h1 class="section-title">サーフボード診断 + 曖昧検索（強度切替）</h1>
+      <h1 class="section-title">サーフボード診断 + 楽天アイテム（フォールバック検索）</h1>
 
       <form id="surfForm">
         <label>体重（kg）<input id="weight" type="number" min="35" max="120" step="1" placeholder="例）68" required /></label>
@@ -98,22 +107,23 @@
           <select id="floatPref"><option value="more">やや多め</option><option value="neutral" selected>ふつう</option><option value="less">やや少なめ</option></select>
         </label>
 
-        <label class="span2">検索の厳しさ
-          <select id="strictness">
-            <option value="strict">厳密（条件強め・ノイズ少なめ）</option>
-            <option value="normal" selected>標準（おすすめ）</option>
-            <option value="loose">ゆるめ（ヒット重視）</option>
-          </select>
+        <label>価格（最小・円）<input id="minPrice" type="number" min="0" step="1000" placeholder="例）10000" /></label>
+        <label>価格（最大・円）<input id="maxPrice" type="number" min="0" step="1000" placeholder="例）150000" /></label>
+
+        <label class="span2 row">
+          <input id="brandBoost" type="checkbox" />
+          <span>ブランドブースト（Channel Islands / JS / LOST / DHD / Christenson などを付与）</span>
         </label>
 
         <div class="span2 mini">
-          ※0件のときは「ゆるめ」リンクをお試しください。長さ・体積・除外語を段階的に弱めます。
+          ※APIは <code>/api/rakuten</code> を叩きます。0件なら自動で条件を徐々に緩めて再検索します。
         </div>
 
         <button class="btn primary span2" type="button" onclick="diagnose()">診断する</button>
       </form>
 
       <div id="result" class="result"></div>
+      <div id="rakuten" class="container" style="padding-top:0"></div>
 
       <section class="accordion">
         <h2 class="section-title">学習モード</h2>
@@ -136,8 +146,9 @@
 
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
+    const API_BASE = location.origin;
 
-    /* ===== 診断ロジック（従来通り） ===== */
+    /* ===== 診断ロジック ===== */
     function calcVolume(weight, level, fitness, floatPref){
       let base = (level==='beginner')?0.50:(level==='advanced')?0.40:0.45;
       if(fitness==='low') base += 0.03; if(fitness==='high') base -= 0.03;
@@ -148,7 +159,6 @@
       const high = Math.round(liters * 1.1 * 10)/10;
       return { liters, range:[low, high], factor: base };
     }
-
     function pickBoardType(level, wave, style){
       if(level==='beginner'){
         if(style==='maneuver' && wave!=='small') return {type:'オールラウンドショート', why:'上達を見据えつつ取り回しやすい'};
@@ -163,7 +173,6 @@
       if(style==='cruise') return {type:'ロング', why:'大きいラインでクルーズ'};
       return (wave==='small')?{type:'ハイボリュームショート/フィッシュ', why:'小波でも推進力'}:{type:'HPショート', why:'機動性・性能重視'};
     }
-
     const sizeTable = {
       'ソフトボード/ファン':   { len:[7.0, 8.0],   wid:[21.0, 23.0], thick:[2.75, 3.3] },
       'ミッドレングス':        { len:[6.8, 7.6],   wid:[20.5, 22.5], thick:[2.6, 3.0] },
@@ -175,7 +184,6 @@
       'HPショート':            { len:[5.8, 6.2],  wid:[18.0, 19.5], thick:[2.25, 2.5] },
       'ロング':                { len:[9.0, 9.6],  wid:[22.5, 23.5], thick:[2.75, 3.25] }
     };
-
     function adjustByWeightAndWave(base, weight, wave){
       const bucket = (weight<55)? -1 : (weight<=75)? 0 : 1;
       const waveAdj = (wave==='small')? +0.0 : (wave==='mid')? +0.05 : +0.1;
@@ -187,44 +195,12 @@
       return {len,wid,thk};
     }
 
-    /* ===== 曖昧検索ユーティリティ ===== */
+    /* ===== 便利関数 ===== */
     const toFeetInches = (val)=>{ const f=Math.floor(val); const i=Math.round((val-f)*12); return {feet:f, inches:i}; };
     const fmtFeetInches = ({feet,inches}) => `${feet}'${inches}"`;
     const rangeFeetInches = ([a,b])=>{ const A=toFeetInches(a), B=toFeetInches(b); return `${fmtFeetInches(A)} 〜 ${fmtFeetInches(B)}`; };
     const rangeCm = ([a,b])=>`${Math.round(a*30.48)}〜${Math.round(b*30.48)}cm`;
     const rangeInch = ([a,b])=>`${a.toFixed(2)}〜${b.toFixed(2)}"`;
-
-    // 中央長を抽出 → 長さの表記揺れバリエーション
-    function lengthPatterns(lenRange, mode){
-      const mid = (lenRange[0] + lenRange[1]) / 2;
-      const {feet,inches} = toFeetInches(mid);
-      const prime = `${feet}'${inches}"`;    // 5'10"
-      const dot   = `${feet}.${String(inches).padStart(2,'0')}`; // 5.10
-      const dash  = `${feet}-${inches}`;     // 5-10
-      const ft    = `${feet}ft${inches}`;    // 5ft10
-      if(mode==='strict') return [prime, dot, dash, ft];
-      if(mode==='normal') return [prime, dot, dash]; // 少し緩める
-      return []; // ゆるめ：長さを使わない（ヒット重視）
-    }
-
-    // 体積レンジ（厳密±10%、標準±18%、ゆるめ：無し）
-    function literTokens(liters, mode){
-      if(mode==='strict') return [`${liters}L`, `${Math.round(liters-1)}L`, `${Math.round(liters+1)}L`];
-      if(mode==='normal') {
-        const lo = Math.round(liters*0.82), hi = Math.round(liters*1.18);
-        return [`${liters}L`, `${lo}L`, `${hi}L`];
-      }
-      return []; // ゆるめは体積で縛らない
-    }
-
-    // 除外語（アクセサリ等）：厳密のみ強、標準は軽、ゆるめは無し
-    function exclusions(mode){
-      if(mode==='strict') return ' -"フィン" -"FCS" -"リーシュ" -"ケース" -"ボードケース" -"デッキパッド" -"ワックス" -"ネジ" -"スクリュー"';
-      if(mode==='normal') return ' -"リーシュ" -"ケース"';
-      return ''; // ゆるめ：除外しない
-    }
-
-    // 種別の表記ゆれを吸収
     function normalizeTypeForQuery(type){
       return type
         .replace('ミッド/ショート(ややボリューム多め)','ショート')
@@ -234,94 +210,113 @@
         .replace('オールラウンドショート','ショート オールラウンド');
     }
 
-    // クエリビルド（mode: strict / normal / loose）
-    function buildQuery(type, lenRange, liters, mode){
-      const head = 'サーフボード'; // サーフボード限定
+    /* ===== 楽天API：段階的フォールバック検索 =====
+       1) 厳しめ：サーフボード + 種別 + 長さ + 体積 + ブランド
+       2) 標準 ：サーフボード + 種別 + 体積 + ブランド
+       3) ゆるめ：サーフボード + 種別 + ブランド
+       4) 最後   ：サーフボード + ブランド（種別も外す）
+    */
+    function buildRakutenKeywordCandidates(type, lenRange, liters, brandBoost){
+      const base = `サーフボード`;
       const t = normalizeTypeForQuery(type);
-      const lens = lengthPatterns(lenRange, mode);
-      const Ls = literTokens(liters, mode);
-      const excl = exclusions(mode);
+      const mid = (lenRange[0]+lenRange[1])/2;
+      const {feet,inches} = toFeetInches(mid);
+      const len = `${feet}'${inches}"`;
 
-      // 組み合わせの優先：厳密=タイプ+長さ+L、標準=タイプ+（長さ or L）、ゆるめ=タイプのみ
-      if(mode==='strict'){
-        return [
-          `${head} ${t} ${lens[0]} ${Ls[0]}${excl}`,
-          `${head} ${t} ${lens[1]} ${Ls[0]}${excl}`,
-          `${head} ${t} ${lens[0]} ${Ls[1]}${excl}`,
-        ].filter(Boolean);
-      }
-      if(mode==='normal'){
-        const qs = [];
-        if(lens.length) qs.push(`${head} ${t} ${lens[0]} ${Ls[0]||''} ${excl}`.trim());
-        if(Ls.length)   qs.push(`${head} ${t} ${Ls[0]} ${excl}`.trim());
-        qs.push(`${head} ${t} ${excl}`.trim()); // 保険：タイプのみ
-        return qs;
-      }
-      // loose
+      const brands = brandBoost
+        ? ' ChannelIslands JS LOST DHD Christenson Sharpeye Firewire'
+        : '';
+
       return [
-        `${head} ${t}`.trim(),
-        `${head} ${t} 中古`.trim(), // 中古も一応
+        `${base} ${t} ${len} ${liters}L${brands}`,
+        `${base} ${t} ${liters}L${brands}`,
+        `${base} ${t}${brands}`,
+        `${base}${brands}`
       ];
     }
 
-    // 各サイト用リンクを生成（mode別）
-    function providerLinksForMode(mode, type, lenRange, liters){
-      const enc = encodeURIComponent;
-      const qs = buildQuery(type, lenRange, liters, mode);
+    async function fetchRakuten(keyword, minPrice, maxPrice){
+      const p = new URLSearchParams({ keyword, hits:'12' });
+      if(minPrice) p.set('minPrice', String(minPrice));
+      if(maxPrice) p.set('maxPrice', String(maxPrice));
+      const r = await fetch(`${API_BASE}/api/rakuten?${p.toString()}`);
+      const ct = r.headers.get('content-type') || '';
+      if(!ct.includes('application/json')){
+        const txt = await r.text();
+        throw new Error(`非JSON応答: ${r.status} ${r.statusText} / ${ct}\n${txt.slice(0,200)}`);
+      }
+      return r.json();
+    }
 
-      // 各サイトはクエリ配列の先頭を使い、代替も1つ持つ（0件対策）
-      const qMain = qs[0] || '';
-      const qAlt = qs[1] || qs[0] || '';
+    async function renderRakuten(type, lenRange, liters, opts){
+      const mount = document.getElementById('rakuten');
+      const { minPrice, maxPrice, brandBoost } = opts;
+      const candidates = buildRakutenKeywordCandidates(type, lenRange, liters, brandBoost);
 
+      mount.innerHTML = `
+        <h2 class="section-title">楽天の候補（API経由）</h2>
+        <div class="mini" style="margin:-6px 0 8px;">段階的に条件を緩めながら検索します。</div>
+        <div class="items-grid">${Array.from({length:6}).map(()=>`<div class="skeleton"></div>`).join('')}</div>
+      `;
+
+      let found = null, used = null, errorLog = [];
+      for(const kw of candidates){
+        try{
+          const data = await fetchRakuten(kw, minPrice, maxPrice);
+          if(data.items && data.items.length){
+            found = data; used = kw; break;
+          }
+        }catch(e){ errorLog.push(`${kw} → ${String(e)}`); }
+      }
+
+      if(!found){
+        mount.innerHTML = `
+          <h2 class="section-title">楽天の候補（0件）</h2>
+          <p class="mini">該当アイテムが見つかりませんでした。条件を緩めるか、価格帯を広げて再検索してください。</p>
+          <div class="error-box" style="display:${errorLog.length?'block':'none'}">
+            内部ログ（先頭のみ）:<br>${errorLog.slice(0,2).join('\n\n')}
+          </div>
+          <div class="mini" style="margin-top:8px;">試行キーワード候補：</div>
+          <div>${candidates.map(c=>`<span class="chip">${c}</span>`).join('')}</div>
+        `;
+        return;
+      }
+
+      mount.innerHTML = `
+        <h2 class="section-title">楽天の候補（${found.count}件）</h2>
+        <div class="mini" style="margin:-6px 0 10px;">使用キーワード：<code>${used}</code>${(minPrice||maxPrice)?` ／ 価格帯: <code>${minPrice||0}〜${maxPrice||'上限なし'}</code>`:''}</div>
+        <div class="items-grid">
+          ${found.items.map(x=>`
+            <article class="card item-card">
+              <img src="${x.image || 'images/diagnosis.jpg'}" alt="${x.name}">
+              <div class="card-body">
+                <h3>${x.name}</h3>
+                <p class="mini">${x.shop}</p>
+                <p><strong>¥${Number(x.price).toLocaleString()}</strong></p>
+                <a class="btn link" target="_blank" href="${x.url}">商品ページへ</a>
+              </div>
+            </article>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    /* ===== リンク検索（Amazon/楽天等）—簡易版 ===== */
+    function providerLinks(type, lenRange, liters){
+      const enc=encodeURIComponent;
+      const t = normalizeTypeForQuery(type);
+      const {feet,inches}=toFeetInches((lenRange[0]+lenRange[1])/2);
+      const qMain = `サーフボード ${t} ${feet}'${inches}" ${liters}L -リーシュ -ケース`;
+      const qAlt = `サーフボード ${t}`;
       return [
-        {
-          name:'Amazon',
-          urls:[
-            { label: '検索', url:`https://www.amazon.co.jp/s?k=${enc(qMain)}` },
-            { label: '代替', url:`https://www.amazon.co.jp/s?k=${enc(qAlt)}` },
-          ]
-        },
-        {
-          name:'楽天',
-          urls:[
-            { label: '検索', url:`https://search.rakuten.co.jp/search/mall/${enc(qMain)}/?st=t&f=0` },
-            { label: '代替', url:`https://search.rakuten.co.jp/search/mall/${enc(qAlt)}/?st=t&f=0` },
-          ]
-        },
-        {
-          name:'メルカリ（中古）',
-          urls:[
-            { label: '検索', url:`https://www.mercari.com/jp/search/?keyword=${enc(qMain)}` },
-            { label: '代替', url:`https://www.mercari.com/jp/search/?keyword=${enc(qAlt)}` },
-          ]
-        },
-        {
-          name:'ヤフオク（中古）',
-          urls:[
-            { label: '検索', url:`https://auctions.yahoo.co.jp/search/search?p=${enc(qMain)}&n=50&exflg=1` },
-            { label: '代替', url:`https://auctions.yahoo.co.jp/search/search?p=${enc(qAlt)}&n=50&exflg=1` },
-          ]
-        },
-        {
-          name:'Google（広域）',
-          urls:[
-            { label: '検索', url:`https://www.google.com/search?q=${enc(qMain)}` },
-            { label: '代替', url:`https://www.google.com/search?q=${enc(qAlt)}` },
-          ]
-        }
+        { name:'Amazon', urls:[{label:'検索',url:`https://www.amazon.co.jp/s?k=${enc(qMain)}`},{label:'代替',url:`https://www.amazon.co.jp/s?k=${enc(qAlt)}`}]},
+        { name:'楽天(サイト内検索)',   urls:[{label:'検索',url:`https://search.rakuten.co.jp/search/mall/${enc(qMain)}/?st=t&f=0`},{label:'代替',url:`https://search.rakuten.co.jp/search/mall/${enc(qAlt)}/?st=t&f=0`} ]},
+        { name:'メルカリ', urls:[{label:'検索',url:`https://www.mercari.com/jp/search/?keyword=${enc(qMain)}`},{label:'代替',url:`https://www.mercari.com/jp/search/?keyword=${enc(qAlt)}`} ]},
+        { name:'ヤフオク', urls:[{label:'検索',url:`https://auctions.yahoo.co.jp/search/search?p=${enc(qMain)}&n=50&exflg=1`},{label:'代替',url:`https://auctions.yahoo.co.jp/search/search?p=${enc(qAlt)}&n=50&exflg=1`} ]},
       ];
     }
 
-    function buildAllProviders(type, lenRange, liters){
-      const modes = ['strict', 'normal', 'loose'];
-      const modeLabel = { strict: '厳密', normal: '標準', loose: 'ゆるめ' };
-      return modes.map(mode => {
-        const links = providerLinksForMode(mode, type, lenRange, liters);
-        return { mode, label: modeLabel[mode], links };
-      });
-    }
-
-    /* ===== メイン：診断 → リンク生成 ===== */
+    /* ===== メイン：診断 → リンク + 楽天API ===== */
     function diagnose(){
       const weight = Number(document.getElementById('weight').value || 0);
       const level = document.getElementById('level').value;
@@ -329,7 +324,9 @@
       const style = document.getElementById('style').value;
       const fitness = document.getElementById('fitness').value;
       const floatPref = document.getElementById('floatPref').value;
-      const strictness = document.getElementById('strictness').value;
+      const minPrice = Number(document.getElementById('minPrice').value || 0);
+      const maxPrice = Number(document.getElementById('maxPrice').value || 0);
+      const brandBoost = document.getElementById('brandBoost').checked;
 
       if(!weight || weight < 35){ alert('体重(kg)を入力してください'); return; }
 
@@ -342,17 +339,12 @@
                 : (board.type.includes('ミッド')) ? 'images/diagnosis.jpg'
                 : 'images/apparel.jpg';
 
-      // 3段階（厳密/標準/ゆるめ）のリンクセットをまとめて用意
-      const bundles = buildAllProviders(board.type, sized.len, vol.liters);
-
-      // 最初に選択中の厳しさを上に表示
-      const sorted = bundles.sort(b => (b.mode===strictness? -1 : 0));
-
-      const providersHtml = sorted.map(b => `
+      const links = providerLinks(board.type, sized.len, vol.liters);
+      const providersHtml = links.map(p=>`
         <div class="prov-card">
-          <h4>${b.label} 検索</h4>
+          <h4>${p.name}</h4>
           <div class="prov-links">
-            ${b.links.map(p => p.urls.map(u => `<a class="btn link" target="_blank" href="${u.url}">${p.name}・${u.label}</a>`).join('')).join('')}
+            ${p.urls.map(u=>`<a class="btn link" target="_blank" href="${u.url}">${u.label}</a>`).join('')}
           </div>
         </div>
       `).join('');
@@ -364,7 +356,7 @@
             <div class="card-body">
               <h3>${board.type}</h3>
               <p>${board.why}</p>
-              <p class="mini">0件のときは<strong>「標準」→「ゆるめ」</strong>の順でリンクをお試しください。</p>
+              <p class="mini">※楽天APIは0件時に自動フォールバックで条件を緩めて再検索します。</p>
             </div>
           </article>
 
@@ -380,38 +372,36 @@
               </tbody>
             </table>
 
-            <h3 style="margin:12px 0 8px;">候補を探す（曖昧検索リンク）</h3>
-            <div class="mini" style="margin-bottom:8px;">※厳密→標準→ゆるめの順で、長さ/体積/除外語の拘束を弱めたリンクを並べています。</div>
-            <div class="providers">
-              ${providersHtml}
-            </div>
+            <h3 style="margin:12px 0 8px;">他サイトで探す（リンク検索）</h3>
+            <div class="providers">${providersHtml}</div>
           </div>
         </div>
       `;
-
       document.getElementById('result').innerHTML = html;
       window.scrollTo({ top: document.getElementById('result').offsetTop - 20, behavior: 'smooth' });
+
+      // 楽天API（段階的フォールバック）
+      renderRakuten(board.type, sized.len, vol.liters, { minPrice: minPrice||undefined, maxPrice: maxPrice||undefined, brandBoost });
     }
 
-    // アコーディオン
-    document.addEventListener('click', (e)=>{
-      const head = e.target.closest('.acc-head'); if(!head) return;
-      head.parentElement.classList.toggle('open');
-    });
-
-    // モバイルメニュー（前実装と同等）
+    // アコーディオン & モバイルメニュー（簡略）
+    document.addEventListener('click', (e)=>{ const head=e.target.closest('.acc-head'); if(head) head.parentElement.classList.toggle('open'); });
     (function(){
       const body=document.body, burger=document.querySelector('.hamburger');
       const mobileNav=document.getElementById('mobileNav'), backdrop=document.getElementById('backdrop');
       const deskDropdown=document.querySelector('.dropdown'), deskBtn=deskDropdown?.querySelector('.dropbtn');
       const closeMobile=()=>{ body.classList.remove('nav-open'); burger?.setAttribute('aria-expanded','false'); };
-      burger?.addEventListener('click', (e)=>{ e.stopPropagation(); const willOpen=!body.classList.contains('nav-open'); document.querySelectorAll('.dropdown.open').forEach(d=>d.classList.remove('open')); if(willOpen){ body.classList.add('nav-open'); burger.setAttribute('aria-expanded','true'); } else { closeMobile(); }});
+      burger?.addEventListener('click', (e)=>{ e.stopPropagation(); const willOpen=!body.classList.contains('nav-open');
+        document.querySelectorAll('.dropdown.open').forEach(d=>d.classList.remove('open'));
+        if(willOpen){ body.classList.add('nav-open'); burger.setAttribute('aria-expanded','true'); } else { closeMobile(); }});
       backdrop?.addEventListener('click', closeMobile);
       mobileNav?.addEventListener('click', (e)=>{ if(e.target.tagName==='A') closeMobile(); });
       document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeMobile(); });
       if(deskDropdown && deskBtn){
         const closeAll=()=>deskDropdown.classList.remove('open');
-        deskBtn.addEventListener('click', (e)=>{ e.stopPropagation(); const willOpen=!deskDropdown.classList.contains('open'); document.querySelectorAll('.dropdown.open').forEach(d=>d.classList.remove('open')); if(willOpen) deskDropdown.classList.add('open'); else closeAll(); });
+        deskBtn.addEventListener('click', (e)=>{ e.stopPropagation(); const willOpen=!deskDropdown.classList.contains('open');
+          document.querySelectorAll('.dropdown.open').forEach(d=>d.classList.remove('open'));
+          if(willOpen) deskDropdown.classList.add('open'); else closeAll(); });
         document.addEventListener('click', (e)=>{ if(!deskDropdown.contains(e.target)) deskDropdown.classList.remove('open'); });
         document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') deskDropdown.classList.remove('open'); });
       }
