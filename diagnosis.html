@@ -4,57 +4,38 @@
   <meta charset="UTF-8" />
   <title>サーフボード診断 | SEA LIFE HUB</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="推奨サイズを計算し、曖昧検索リンクと楽天APIで候補を表示。0件でも段階的に検索条件を緩めて再トライします。" />
+  <meta name="description" content="推奨サイズを計算し、楽天APIで段階的に曖昧検索。field=0, orFlag=1等でヒット率を高めます。" />
   <link rel="stylesheet" href="style.css" />
   <style>
-    form#surfForm{
-      display:grid; gap:12px; max-width:920px; margin:16px auto 0; grid-template-columns:1fr 1fr;
-      background: rgba(0,0,0,0.35); padding:16px; border-radius:12px;
-    }
+    form#surfForm{ display:grid; gap:12px; max-width:920px; margin:16px auto 0; grid-template-columns:1fr 1fr;
+      background: rgba(0,0,0,0.35); padding:16px; border-radius:12px; }
     form#surfForm label{ display:flex; flex-direction:column; gap:6px; font-weight:600; }
     form#surfForm select, form#surfForm input{ padding:10px; border-radius:8px; border:none; }
     .span2{ grid-column:1/-1; }
     .mini{ font-size:.9rem; opacity:.9; }
-    .row{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
     .result{ margin-top:20px; display:grid; gap:16px; }
-    .result .grid{ display:grid; gap:16px; grid-template-columns: 1.2fr 1fr; }
-    @media (max-width: 900px){ .result .grid{ grid-template-columns: 1fr; } }
-    .card img{ height: 200px; }
-    .table{ width:100%; border-collapse: collapse; overflow:hidden; border-radius:12px; background: rgba(0,0,0,0.25); }
-    .table th, .table td{ padding:10px 12px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .result .grid{ display:grid; gap:16px; grid-template-columns:1.2fr 1fr; }
+    @media (max-width: 900px){ .result .grid{ grid-template-columns:1fr; } }
+    .card img{ height:200px; }
+    .table{ width:100%; border-collapse:collapse; overflow:hidden; border-radius:12px; background:rgba(0,0,0,0.25); }
+    .table th,.table td{ padding:10px 12px; border-bottom:1px solid rgba(255,255,255,0.1); }
     .table th{ text-align:left; color: var(--c-accent); }
-    .badge{ display:inline-block; padding:2px 8px; border-radius:9999px; background: rgba(255,255,255,0.15); font-size:.85rem; }
-
-    /* プロバイダ検索カード */
-    .providers{ display:grid; gap:12px; grid-template-columns: repeat(2, 1fr); }
-    @media (max-width:720px){ .providers{ grid-template-columns: 1fr; } }
-    .prov-card{ background: rgba(255,255,255,0.07); border-radius:12px; padding:12px; display:flex; flex-direction:column; gap:8px; }
-    .prov-card h4{ margin:0; font-size:1rem; color: var(--c-accent); }
+    .providers{ display:grid; gap:12px; grid-template-columns:repeat(2,1fr); }
+    @media (max-width:720px){ .providers{ grid-template-columns:1fr; } }
+    .prov-card{ background:rgba(255,255,255,0.07); border-radius:12px; padding:12px; display:flex; flex-direction:column; gap:8px; }
     .prov-links{ display:flex; gap:8px; flex-wrap:wrap; }
-    .prov-links a{ text-decoration:none; border-radius:10px; padding:8px 10px; background: rgba(255,255,255,0.12); }
-    .prov-links a:hover{ background: rgba(255,255,255,0.2); }
-
-    /* 楽天アイテムグリッド */
-    .items-grid{ display:grid; gap:12px; grid-template-columns: repeat(3, 1fr); }
-    @media (max-width:960px){ .items-grid{ grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width:640px){ .items-grid{ grid-template-columns: 1fr; } }
-    .item-card .card-body h3{ font-size:1rem; margin:0 0 6px; }
-    .skeleton{
-      background: linear-gradient(90deg, rgba(255,255,255,0.08), rgba(255,255,255,0.18), rgba(255,255,255,0.08));
-      background-size: 200% 100%; animation: shine 1.2s linear infinite;
-      height: 200px; border-radius: 12px;
-    }
-    @keyframes shine { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
-
-    .error-box{
-      background: rgba(255,60,60,0.15); border: 1px solid rgba(255,60,60,0.35);
-      padding:12px; border-radius:10px; margin-top:8px; white-space:pre-wrap;
-    }
-    .chip{ display:inline-block; padding:4px 8px; border-radius:9999px; background: rgba(255,255,255,0.12); margin:2px; font-size:.85rem; }
+    .items-grid{ display:grid; gap:12px; grid-template-columns:repeat(3,1fr); }
+    @media (max-width:960px){ .items-grid{ grid-template-columns:repeat(2,1fr);} }
+    @media (max-width:640px){ .items-grid{ grid-template-columns:1fr;} }
+    .skeleton{ background:linear-gradient(90deg, rgba(255,255,255,0.08), rgba(255,255,255,0.18), rgba(255,255,255,0.08));
+      background-size:200% 100%; animation:shine 1.2s linear infinite; height:200px; border-radius:12px; }
+    @keyframes shine{0%{background-position:200% 0}100%{background-position:-200% 0}}
+    .error-box{ background:rgba(255,60,60,0.15); border:1px solid rgba(255,60,60,0.35);
+      padding:12px; border-radius:10px; margin-top:8px; white-space:pre-wrap; }
+    .chip{ display:inline-block; padding:4px 8px; border-radius:9999px; background:rgba(255,255,255,0.12); margin:2px; font-size:.85rem; }
   </style>
 </head>
 <body>
-  <!-- ヘッダー -->
   <header class="site-header">
     <a href="index.html" class="logo">🌊 SEA LIFE HUB</a>
     <nav class="site-nav" aria-label="Primary">
@@ -73,7 +54,6 @@
   </header>
   <div class="header-spacer"></div>
 
-  <!-- モバイルメニュー -->
   <div class="mobile-nav-backdrop" id="backdrop"></div>
   <nav class="mobile-nav" id="mobileNav" aria-label="Mobile">
     <div class="mobile-title">🌊 SEA LIFE HUB</div>
@@ -84,10 +64,9 @@
     <a href="index.html#about">このサイトについて</a>
   </nav>
 
-  <!-- 本文 -->
   <section class="overlay">
     <main class="container">
-      <h1 class="section-title">サーフボード診断 + 楽天アイテム（フォールバック検索）</h1>
+      <h1 class="section-title">サーフボード診断 + 楽天アイテム（超ゆるめフォールバック）</h1>
 
       <form id="surfForm">
         <label>体重（kg）<input id="weight" type="number" min="35" max="120" step="1" placeholder="例）68" required /></label>
@@ -110,35 +89,15 @@
         <label>価格（最小・円）<input id="minPrice" type="number" min="0" step="1000" placeholder="例）10000" /></label>
         <label>価格（最大・円）<input id="maxPrice" type="number" min="0" step="1000" placeholder="例）150000" /></label>
 
-        <label class="span2 row">
-          <input id="brandBoost" type="checkbox" />
-          <span>ブランドブースト（Channel Islands / JS / LOST / DHD / Christenson などを付与）</span>
-        </label>
+        <label class="span2"><input id="brandBoost" type="checkbox" /> ブランドブースト（CI / JS / LOST / DHD / Christenson / Firewire など）</label>
 
-        <div class="span2 mini">
-          ※APIは <code>/api/rakuten</code> を叩きます。0件なら自動で条件を徐々に緩めて再検索します。
-        </div>
+        <div class="span2 mini">※0件時は <code>field=0</code> や <code>orFlag=1</code> を使って徐々に緩めます。最終段は売切も含めて候補表示します。</div>
 
         <button class="btn primary span2" type="button" onclick="diagnose()">診断する</button>
       </form>
 
       <div id="result" class="result"></div>
       <div id="rakuten" class="container" style="padding-top:0"></div>
-
-      <section class="accordion">
-        <h2 class="section-title">学習モード</h2>
-        <div class="acc-item">
-          <button class="acc-head"><strong>テール形状の基本</strong><span class="chev">▶</span></button>
-          <div class="acc-body">
-            <ul>
-              <li><strong>スクアッシュ</strong>：汎用性が高く切り返し軽快。</li>
-              <li><strong>スワロー</strong>：小波でのグリップとスピード。</li>
-              <li><strong>ラウンド</strong>：ターンがスムーズ。</li>
-              <li><strong>ピン</strong>：サイズある波でのホールド重視。</li>
-            </ul>
-          </div>
-        </div>
-      </section>
     </main>
   </section>
 
@@ -148,7 +107,7 @@
     document.getElementById('year').textContent = new Date().getFullYear();
     const API_BASE = location.origin;
 
-    /* ===== 診断ロジック ===== */
+    /* ===== 診断ロジック（簡略） ===== */
     function calcVolume(weight, level, fitness, floatPref){
       let base = (level==='beginner')?0.50:(level==='advanced')?0.40:0.45;
       if(fitness==='low') base += 0.03; if(fitness==='high') base -= 0.03;
@@ -184,23 +143,12 @@
       'HPショート':            { len:[5.8, 6.2],  wid:[18.0, 19.5], thick:[2.25, 2.5] },
       'ロング':                { len:[9.0, 9.6],  wid:[22.5, 23.5], thick:[2.75, 3.25] }
     };
-    function adjustByWeightAndWave(base, weight, wave){
-      const bucket = (weight<55)? -1 : (weight<=75)? 0 : 1;
-      const waveAdj = (wave==='small')? +0.0 : (wave==='mid')? +0.05 : +0.1;
-      const lerpRange = ([min,max], k)=>[ +(min+(max-min)*k).toFixed(2), +(max+(max-min)*k).toFixed(2) ];
-      const k = (bucket===-1)? -0.05 : (bucket===1)? 0.05 : 0;
-      let len=lerpRange(base.len, k + waveAdj*0.3);
-      let wid=lerpRange(base.wid, k*0.8 + waveAdj*0.2);
-      let thk=lerpRange(base.thick, k + waveAdj*0.4);
-      return {len,wid,thk};
-    }
-
-    /* ===== 便利関数 ===== */
-    const toFeetInches = (val)=>{ const f=Math.floor(val); const i=Math.round((val-f)*12); return {feet:f, inches:i}; };
+    const toFeetInches = (v)=>{ const f=Math.floor(v); const i=Math.round((v-f)*12); return {feet:f,inches:i}; };
     const fmtFeetInches = ({feet,inches}) => `${feet}'${inches}"`;
     const rangeFeetInches = ([a,b])=>{ const A=toFeetInches(a), B=toFeetInches(b); return `${fmtFeetInches(A)} 〜 ${fmtFeetInches(B)}`; };
     const rangeCm = ([a,b])=>`${Math.round(a*30.48)}〜${Math.round(b*30.48)}cm`;
     const rangeInch = ([a,b])=>`${a.toFixed(2)}〜${b.toFixed(2)}"`;
+
     function normalizeTypeForQuery(type){
       return type
         .replace('ミッド/ショート(ややボリューム多め)','ショート')
@@ -210,81 +158,83 @@
         .replace('オールラウンドショート','ショート オールラウンド');
     }
 
-    /* ===== 楽天API：段階的フォールバック検索 =====
-       1) 厳しめ：サーフボード + 種別 + 長さ + 体積 + ブランド
-       2) 標準 ：サーフボード + 種別 + 体積 + ブランド
-       3) ゆるめ：サーフボード + 種別 + ブランド
-       4) 最後   ：サーフボード + ブランド（種別も外す）
+    /* ====== “超ゆるめ” 楽天APIフォールバック ======
+      段階ごとに (keyword, params) を変えて最大ヒットを狙います。
+      - field=0（広い検索）
+      - orFlag=1（OR検索）
+      - availability=0（売切含む）
+      - NGKeyword は厳しい段階のみで軽く使用（フィン等を除外）
     */
-    function buildRakutenKeywordCandidates(type, lenRange, liters, brandBoost){
+    function buildRakutenCandidates(type, lenRange, liters, brandBoost){
       const base = `サーフボード`;
       const t = normalizeTypeForQuery(type);
       const mid = (lenRange[0]+lenRange[1])/2;
       const {feet,inches} = toFeetInches(mid);
       const len = `${feet}'${inches}"`;
-
       const brands = brandBoost
-        ? ' ChannelIslands JS LOST DHD Christenson Sharpeye Firewire'
-        : '';
+        ? " ChannelIslands JS LOST DHD Christenson Sharpeye Firewire Pukas HaydenShapes Pyzel"
+        : "";
+
+      // NGKeyword は最初だけ軽く（アクセサリ除外）。後半は付けない＝ヒット最優先
+      const NG = "フィン リーシュ ケース デッキパッド ステッカー ラック カバー ワックス";
 
       return [
-        `${base} ${t} ${len} ${liters}L${brands}`,
-        `${base} ${t} ${liters}L${brands}`,
-        `${base} ${t}${brands}`,
-        `${base}${brands}`
+        // 1) かなり絞る（命中時は精度高め）
+        { kw: `${base} ${t} ${len} ${liters}L${brands}`, p:{ hits: "30", field:"1", orFlag:"0", availability:"1", NGKeyword: NG } },
+
+        // 2) 長さ/Lを外して少し緩める
+        { kw: `${base} ${t}${brands}`, p:{ hits: "30", field:"0", orFlag:"0", availability:"1" } },
+
+        // 3) OR検索で語彙をばらす（種別語も展開）
+        { kw: `${base} ショート ミッド ロング フィッシュ${brands}`, p:{ hits:"30", field:"0", orFlag:"1", availability:"1" } },
+
+        // 4) 最ゆる（まず“ボードらしきもの”を拾う）※売切含む
+        { kw: `${base}${brands}`, p:{ hits:"30", field:"0", orFlag:"1", availability:"0" } },
       ];
     }
 
-    async function fetchRakuten(keyword, minPrice, maxPrice){
-      const p = new URLSearchParams({ keyword, hits:'12' });
-      if(minPrice) p.set('minPrice', String(minPrice));
-      if(maxPrice) p.set('maxPrice', String(maxPrice));
-      const r = await fetch(`${API_BASE}/api/rakuten?${p.toString()}`);
+    async function callRakuten(keyword, params, minPrice, maxPrice){
+      const sp = new URLSearchParams({ keyword, ...params });
+      if(minPrice) sp.set("minPrice", String(minPrice));
+      if(maxPrice) sp.set("maxPrice", String(maxPrice));
+      const r = await fetch(`${API_BASE}/api/rakuten?${sp.toString()}`);
       const ct = r.headers.get('content-type') || '';
-      if(!ct.includes('application/json')){
-        const txt = await r.text();
-        throw new Error(`非JSON応答: ${r.status} ${r.statusText} / ${ct}\n${txt.slice(0,200)}`);
-      }
+      if(!ct.includes('application/json')) throw new Error(`非JSON応答: ${r.status} ${r.statusText} / ${ct}`);
       return r.json();
     }
 
     async function renderRakuten(type, lenRange, liters, opts){
       const mount = document.getElementById('rakuten');
       const { minPrice, maxPrice, brandBoost } = opts;
-      const candidates = buildRakutenKeywordCandidates(type, lenRange, liters, brandBoost);
+      const candidates = buildRakutenCandidates(type, lenRange, liters, brandBoost);
 
       mount.innerHTML = `
         <h2 class="section-title">楽天の候補（API経由）</h2>
-        <div class="mini" style="margin:-6px 0 8px;">段階的に条件を緩めながら検索します。</div>
+        <div class="mini" style="margin:-6px 0 8px;">0件時は自動で検索条件を緩めます（field=0, orFlag=1 など）。</div>
         <div class="items-grid">${Array.from({length:6}).map(()=>`<div class="skeleton"></div>`).join('')}</div>
       `;
 
-      let found = null, used = null, errorLog = [];
-      for(const kw of candidates){
+      let found=null, used=null, usedParams=null;
+      for(const c of candidates){
         try{
-          const data = await fetchRakuten(kw, minPrice, maxPrice);
-          if(data.items && data.items.length){
-            found = data; used = kw; break;
-          }
-        }catch(e){ errorLog.push(`${kw} → ${String(e)}`); }
+          const data = await callRakuten(c.kw, c.p, minPrice, maxPrice);
+          if(data.items && data.items.length){ found=data; used=c.kw; usedParams=c.p; break; }
+        }catch(_e){ /* スルー（次の候補へ） */ }
       }
 
       if(!found){
         mount.innerHTML = `
           <h2 class="section-title">楽天の候補（0件）</h2>
-          <p class="mini">該当アイテムが見つかりませんでした。条件を緩めるか、価格帯を広げて再検索してください。</p>
-          <div class="error-box" style="display:${errorLog.length?'block':'none'}">
-            内部ログ（先頭のみ）:<br>${errorLog.slice(0,2).join('\n\n')}
-          </div>
-          <div class="mini" style="margin-top:8px;">試行キーワード候補：</div>
-          <div>${candidates.map(c=>`<span class="chip">${c}</span>`).join('')}</div>
+          <p class="mini">今回はヒットしませんでした。キーワードをさらに広くするか、価格帯を広げてお試しください。</p>
+          <div class="mini" style="margin-top:8px;">試行キーワード：</div>
+          <div>${candidates.map(c=>`<span class="chip">${c.kw}</span>`).join('')}</div>
         `;
         return;
       }
 
       mount.innerHTML = `
         <h2 class="section-title">楽天の候補（${found.count}件）</h2>
-        <div class="mini" style="margin:-6px 0 10px;">使用キーワード：<code>${used}</code>${(minPrice||maxPrice)?` ／ 価格帯: <code>${minPrice||0}〜${maxPrice||'上限なし'}</code>`:''}</div>
+        <div class="mini" style="margin:-6px 0 10px;">使用キーワード：<code>${used}</code> ／ パラメータ：<code>${Object.entries(usedParams).map(([k,v])=>`${k}=${v}`).join('&')}</code>${(minPrice||maxPrice)?` ／ 価格: <code>${minPrice||0}〜${maxPrice||'上限なし'}</code>`:''}</div>
         <div class="items-grid">
           ${found.items.map(x=>`
             <article class="card item-card">
@@ -301,22 +251,30 @@
       `;
     }
 
-    /* ===== リンク検索（Amazon/楽天等）—簡易版 ===== */
+    /* ===== リンク検索（補助） ===== */
     function providerLinks(type, lenRange, liters){
       const enc=encodeURIComponent;
       const t = normalizeTypeForQuery(type);
       const {feet,inches}=toFeetInches((lenRange[0]+lenRange[1])/2);
       const qMain = `サーフボード ${t} ${feet}'${inches}" ${liters}L -リーシュ -ケース`;
-      const qAlt = `サーフボード ${t}`;
+      const qAlt  = `サーフボード ${t}`;
       return [
         { name:'Amazon', urls:[{label:'検索',url:`https://www.amazon.co.jp/s?k=${enc(qMain)}`},{label:'代替',url:`https://www.amazon.co.jp/s?k=${enc(qAlt)}`}]},
-        { name:'楽天(サイト内検索)',   urls:[{label:'検索',url:`https://search.rakuten.co.jp/search/mall/${enc(qMain)}/?st=t&f=0`},{label:'代替',url:`https://search.rakuten.co.jp/search/mall/${enc(qAlt)}/?st=t&f=0`} ]},
-        { name:'メルカリ', urls:[{label:'検索',url:`https://www.mercari.com/jp/search/?keyword=${enc(qMain)}`},{label:'代替',url:`https://www.mercari.com/jp/search/?keyword=${enc(qAlt)}`} ]},
-        { name:'ヤフオク', urls:[{label:'検索',url:`https://auctions.yahoo.co.jp/search/search?p=${enc(qMain)}&n=50&exflg=1`},{label:'代替',url:`https://auctions.yahoo.co.jp/search/search?p=${enc(qAlt)}&n=50&exflg=1`} ]},
+        { name:'楽天(サイト内検索)', urls:[{label:'検索',url:`https://search.rakuten.co.jp/search/mall/${enc(qMain)}/?st=t&f=0`},{label:'代替',url:`https://search.rakuten.co.jp/search/mall/${enc(qAlt)}/?st=t&f=0`} ]},
       ];
     }
 
-    /* ===== メイン：診断 → リンク + 楽天API ===== */
+    function adjustByWeightAndWave(base, weight, wave){
+      const bucket = (weight<55)? -1 : (weight<=75)? 0 : 1;
+      const waveAdj = (wave==='small')? +0.0 : (wave==='mid')? +0.05 : +0.1;
+      const lerpRange = ([min,max], k)=>[ +(min+(max-min)*k).toFixed(2), +(max+(max-min)*k).toFixed(2) ];
+      const k = (bucket===-1)? -0.05 : (bucket===1)? 0.05 : 0;
+      let len=lerpRange(base.len, k + waveAdj*0.3);
+      let wid=lerpRange(base.wid, k*0.8 + waveAdj*0.2);
+      let thk=lerpRange(base.thick, k + waveAdj*0.4);
+      return {len,wid,thk};
+    }
+
     function diagnose(){
       const weight = Number(document.getElementById('weight').value || 0);
       const level = document.getElementById('level').value;
@@ -356,7 +314,7 @@
             <div class="card-body">
               <h3>${board.type}</h3>
               <p>${board.why}</p>
-              <p class="mini">※楽天APIは0件時に自動フォールバックで条件を緩めて再検索します。</p>
+              <p class="mini">※APIは 0件 → 条件を自動で緩めて再検索します（field=0 / orFlag=1 / availability=0 など）。</p>
             </div>
           </article>
 
@@ -380,32 +338,13 @@
       document.getElementById('result').innerHTML = html;
       window.scrollTo({ top: document.getElementById('result').offsetTop - 20, behavior: 'smooth' });
 
-      // 楽天API（段階的フォールバック）
-      renderRakuten(board.type, sized.len, vol.liters, { minPrice: minPrice||undefined, maxPrice: maxPrice||undefined, brandBoost });
+      // 楽天API（超ゆるめフォールバック）
+      renderRakuten(board.type, sized.len, vol.liters, {
+        minPrice: minPrice || undefined,
+        maxPrice: maxPrice || undefined,
+        brandBoost
+      });
     }
-
-    // アコーディオン & モバイルメニュー（簡略）
-    document.addEventListener('click', (e)=>{ const head=e.target.closest('.acc-head'); if(head) head.parentElement.classList.toggle('open'); });
-    (function(){
-      const body=document.body, burger=document.querySelector('.hamburger');
-      const mobileNav=document.getElementById('mobileNav'), backdrop=document.getElementById('backdrop');
-      const deskDropdown=document.querySelector('.dropdown'), deskBtn=deskDropdown?.querySelector('.dropbtn');
-      const closeMobile=()=>{ body.classList.remove('nav-open'); burger?.setAttribute('aria-expanded','false'); };
-      burger?.addEventListener('click', (e)=>{ e.stopPropagation(); const willOpen=!body.classList.contains('nav-open');
-        document.querySelectorAll('.dropdown.open').forEach(d=>d.classList.remove('open'));
-        if(willOpen){ body.classList.add('nav-open'); burger.setAttribute('aria-expanded','true'); } else { closeMobile(); }});
-      backdrop?.addEventListener('click', closeMobile);
-      mobileNav?.addEventListener('click', (e)=>{ if(e.target.tagName==='A') closeMobile(); });
-      document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeMobile(); });
-      if(deskDropdown && deskBtn){
-        const closeAll=()=>deskDropdown.classList.remove('open');
-        deskBtn.addEventListener('click', (e)=>{ e.stopPropagation(); const willOpen=!deskDropdown.classList.contains('open');
-          document.querySelectorAll('.dropdown.open').forEach(d=>d.classList.remove('open'));
-          if(willOpen) deskDropdown.classList.add('open'); else closeAll(); });
-        document.addEventListener('click', (e)=>{ if(!deskDropdown.contains(e.target)) deskDropdown.classList.remove('open'); });
-        document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') deskDropdown.classList.remove('open'); });
-      }
-    })();
   </script>
 </body>
 </html>
