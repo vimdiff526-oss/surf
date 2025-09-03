@@ -2,6 +2,7 @@
 // 楽天 Ichiba Item Search API を叩いて、最低限の項目に整形して返す。
 // 必要環境変数: RAKUTEN_APP_ID
 // メモ: 20220601 に更新。formatVersion=2 を優先しつつ、旧フォーマット(20170706)も吸収。
+import fetch from "node-fetch";
 
 export default async function handler(req, res) {
   try {

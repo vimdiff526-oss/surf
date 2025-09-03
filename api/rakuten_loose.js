@@ -2,6 +2,7 @@
 // 「まずは表示されること」を最優先にした超ゆる検索エンドポイント
 // 必要環境変数: RAKUTEN_APP_ID
 
+import fetch from "node-fetch";
 export default async function handler(req, res) {
   try {
     const {
