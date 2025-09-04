@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <title>サーフボード診断 | SEA LIFE HUB</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="初心者向け。体重・波質・目指すスタイルから、ショート/ミッド/オルタナ系の目安とサイズを提案し、候補検索まで行います。" />
+  <meta name="description" content="初心者向け。体重・波の傾向・スタイルから、推奨浮力とタイプ/サイズ目安、候補検索を提案します。" />
   <link rel="stylesheet" href="style.css" />
   <style>
     /* ===== 既存フォーム/レイアウト ===== */
@@ -109,27 +109,26 @@
   <!-- ===== 本文：診断フォーム/結果など ===== -->
   <section class="overlay">
     <main class="container">
-      <h2 class="section-title">サーフボード診断（初心者ベース：スタイルで提案）</h2>
+      <h2 class="section-title">サーフボード診断（自然文セレクト）</h2>
 
       <form id="surfForm">
         <label>体重（kg）
           <input id="weight" type="number" min="35" max="120" step="1" placeholder="例）68" required />
         </label>
 
-        <label>波サイズ
+        <label>波のイメージ
           <select id="wave">
-            <option value="small">小波（膝〜腹）</option>
-            <option value="mid" selected>ミドル（腰〜胸）</option>
-            <option value="solid">肩〜頭以上</option>
+            <option value="small" selected>小さい波でゆるく</option>
+            <option value="mid">ふつうの波でほどほど</option>
+            <option value="solid">大きい波にも挑戦</option>
           </select>
         </label>
 
-        <label>目指すスタイル
+        <label>スタイルのイメージ
           <select id="style">
-            <option value="cruise">ゆったりとクルーズしたい</option>
-            <option value="maneuver" selected>技を磨いていきたい</option>
-            <option value="quantity">とにかく本数を乗りたい</option>
-            <option value="smallfun">小波でも楽しみたい</option>
+            <option value="cruise" selected>ゆったりとクルーズしたい</option>
+            <option value="performance">機動性や技も楽しみたい</option>
+            <option value="alternative">オルタナ系に惹かれる</option>
           </select>
         </label>
 
@@ -141,10 +140,10 @@
           </select>
         </label>
 
+        <!-- ブランドブーストは任意で維持 -->
         <label class="span2"><input id="brandBoost" type="checkbox" /> ブランドブースト（CI / JS / LOST / DHD / Christenson / Firewire など）</label>
 
         <div class="span2 mini">
-          ※スタイルに応じて「ショートボード／ミッドレングス／オルタナ系」等を提案します。<br>
           ※0件時は検索条件を自動で緩めます（field=0 / orFlag=1 など）。
         </div>
 
@@ -162,13 +161,12 @@
     document.getElementById('year').textContent = new Date().getFullYear();
     const API_BASE = location.origin;
 
-    /* ===== 診断ロジック（初心者ベース） ===== */
+    /* ===== 推奨浮力（経験入力なし・体力だけで微調整） ===== */
     function calcVolume(weight, fitness){
-      // 初心者寄りの基準係数 0.47 を中心に体力で微調整
-      let base = 0.47;
+      let base = 0.45; // 初心者寄りの中庸
       if(fitness==='low') base += 0.03;
       if(fitness==='high') base -= 0.03;
-      base = Math.max(0.38, Math.min(0.60, base)); // 下限少し厚め
+      base = Math.max(0.35, Math.min(0.60, base));
 
       const liters = Math.round(weight * base * 10)/10;
       const low = Math.round(liters * 0.9 * 10)/10;
@@ -176,38 +174,42 @@
       return { liters, range:[low, high], factor: base };
     }
 
-    // スタイル → カテゴリ（ショート/ミッド/オルタナ系）と代表タイプ
-    function pickBoardByStyle(style, wave){
-      // カテゴリ名（表示用）
-      // type は検索用と説明用の代表種別
+    /* ===== スタイル/波 → タイプ提案（ショート/ミッド/オルタナ系） ===== */
+    function pickBoardType(wave, style){
+      // 自然文の意味をざっくり分類
+      const small = wave === 'small';
+      const solid = wave === 'solid';
+
       if(style === 'cruise'){
-        return (wave==='small')
-          ? { category:'ミッドレングス', type:'ミッドレングス', why:'早いテイクオフでクルーズ重視。小波でも本数◎' }
-          : { category:'ミッドレングス / ロング', type:'ロング/ミッド', why:'ゆったり滑走。安定と余裕を重視' };
+        if(solid) return {type:'ミッド/ロング', why:'テイクオフの早さと安定感で挑戦をサポート'};
+        if(small) return {type:'ミッドレングス', why:'小波でも本数を確保しやすい'};
+        return {type:'ミッドレングス', why:'ゆったりとしたライン取りに合う'};
       }
-      if(style === 'quantity'){
-        return (wave==='small')
-          ? { category:'オルタナ系', type:'ソフトボード/ファン', why:'安定＆本数重視。まずは波に多く乗る' }
-          : { category:'ミッドレングス', type:'ミッドレングス', why:'立ちやすく乗れる本数を確保' };
+
+      if(style === 'alternative'){
+        if(small) return {type:'フィッシュ/ツイン寄りショート', why:'小波での加速と遊び心'};
+        if(solid) return {type:'オルタナ系（エッグ/ピン）', why:'個性的なラインでパワーのある波にも'};
+        return {type:'オルタナ系（ツイン/エッグ）', why:'個性と楽しさを両立'};
       }
-      if(style === 'smallfun'){
-        return { category:'オルタナ系', type:'フィッシュ/ツイン寄りショート', why:'小波でも加速しやすく楽しい' };
-      }
-      // maneuver（技を磨く）
-      return (wave==='solid')
-        ? { category:'ショートボード', type:'HPショート', why:'機動性重視。上達を見据えて' }
-        : { category:'ショートボード', type:'オールラウンドショート', why:'バランス良く基本を磨く' };
+
+      // performance（機動性や技）
+      if(solid) return {type:'HPショート', why:'機動性・ターン性能を重視'};
+      if(small) return {type:'ハイボリュームショート/フィッシュ', why:'小波でも推進力と取り回し'};
+      return {type:'オールラウンドショート', why:'技と走りのバランス'};
     }
 
+    /* ===== 推奨サイズレンジ（タイプ毎の目安） ===== */
     const sizeTable = {
       'ソフトボード/ファン':   { len:[7.0, 8.0],   wid:[21.0, 23.0], thick:[2.75, 3.3] },
       'ミッドレングス':        { len:[6.8, 7.6],   wid:[20.5, 22.5], thick:[2.6, 3.0] },
       'ロング/ミッド':         { len:[9.0, 9.6],   wid:[22.5, 23.5], thick:[2.75, 3.25] },
       'フィッシュ/ツイン寄りショート': { len:[5.4, 6.0], wid:[19.5, 21.5], thick:[2.4, 2.7] },
       'オールラウンドショート': { len:[5.83, 6.33], wid:[18.5, 20.5], thick:[2.3, 2.6] },
+      'ミッド/ロング':         { len:[7.6, 9.0],  wid:[21.5, 23.5], thick:[2.6, 3.1] },
+      'オルタナ系（エッグ/ピン）': { len:[6.4, 7.4], wid:[20.0, 22.0], thick:[2.5, 2.9] },
+      'オルタナ系（ツイン/エッグ）': { len:[5.8, 6.8], wid:[19.75, 21.75], thick:[2.45, 2.85] },
       'ハイボリュームショート/フィッシュ': { len:[5.8, 6.4], wid:[19.5, 21.5], thick:[2.5, 2.8] },
-      'HPショート':            { len:[5.8, 6.2],  wid:[18.0, 19.5], thick:[2.25, 2.5] },
-      'ロング':                { len:[9.0, 9.6],  wid:[22.5, 23.5], thick:[2.75, 3.25] }
+      'HPショート':            { len:[5.8, 6.2],  wid:[18.0, 19.5], thick:[2.25, 2.5] }
     };
 
     const toFeetInches = (v)=>{ const f=Math.floor(v); const i=Math.round((v-f)*12); return {feet:f,inches:i}; };
@@ -218,10 +220,11 @@
 
     function normalizeTypeForQuery(type){
       return type
-        .replace('ミッド/ショート(ややボリューム多め)','ショート')
+        .replace('ミッド/ロング','ミッド ロング')
+        .replace('オルタナ系（エッグ/ピン）','オルタナ エッグ ピン')
+        .replace('オルタナ系（ツイン/エッグ）','オルタナ ツイン エッグ')
         .replace('ハイボリュームショート/フィッシュ','ショート フィッシュ')
         .replace('フィッシュ/ツイン寄りショート','ショート フィッシュ ツイン')
-        .replace('ロング/ミッド','ロング ミッド')
         .replace('オールラウンドショート','ショート オールラウンド');
     }
 
@@ -238,8 +241,8 @@
       const NG = "フィン リーシュ ケース デッキパッド ステッカー ラック カバー ワックス";
 
       return [
-        { kw: `${base} ${t} ${len} ${liters}L${brands}`, p:{ hits: "30", field:"1", orFlag:"0", availability:"1", NGKeyword: NG } },
-        { kw: `${base} ${t}${brands}`, p:{ hits: "30", field:"0", orFlag:"0", availability:"1" } },
+        { kw: `${base} ${t} ${len} ${liters}L${brands}`, p:{ hits:"30", field:"1", orFlag:"0", availability:"1", NGKeyword: NG } },
+        { kw: `${base} ${t}${brands}`, p:{ hits:"30", field:"0", orFlag:"0", availability:"1" } },
         { kw: `${base} ショート ミッド ロング フィッシュ${brands}`, p:{ hits:"30", field:"0", orFlag:"1", availability:"1" } },
         { kw: `${base}${brands}`, p:{ hits:"30", field:"0", orFlag:"1", availability:"0" } },
       ];
@@ -335,9 +338,60 @@
       if(!weight || weight < 35){ alert('体重(kg)を入力してください'); return; }
 
       const vol = calcVolume(weight, fitness);
-      const pick = pickBoardByStyle(style, wave);
-      const base = sizeTable[pick.type] || sizeTable['ミッドレングス'];
+      const board = pickBoardType(wave, style);
+      const base = sizeTable[board.type] || sizeTable['ミッドレングス'];
       const sized = adjustByWeightAndWave(base, weight, wave);
 
-      // 代表画像のあて方
-      const img = (pick.category.includes('ロング') ||
+      const img = board.type.includes('ロング') ? 'images/stays.jpg'
+                : board.type.includes('ミッド') ? 'images/diagnosis.jpg'
+                : 'images/apparel.jpg';
+
+      const links = providerLinks(board.type, sized.len, vol.liters);
+      const providersHtml = links.map(p=>`
+        <div class="prov-card">
+          <h4>${p.name}</h4>
+          <div class="prov-links">
+            ${p.urls.map(u=>`<a class="btn link" target="_blank" href="${u.url}">${u.label}</a>`).join('')}
+          </div>
+        </div>
+      `).join('');
+
+      const html = `
+        <div class="grid">
+          <article class="card">
+            <img src="${img}" alt="${board.type}">
+            <div class="card-body">
+              <h3>${board.type}</h3>
+              <p>${board.why}</p>
+              <p class="mini">推奨浮力の目安: <strong>${vol.liters}L</strong>（約${vol.range[0]}〜${vol.range[1]}L） <span class="mini">係数:${vol.factor.toFixed(2)}</span></p>
+            </div>
+          </article>
+
+          <div>
+            <table class="table">
+              <thead><tr><th>項目</th><th>推奨値（目安）</th></tr></thead>
+              <tbody>
+                <tr><td>体重</td><td>${weight} kg</td></tr>
+                <tr><td>波のイメージ</td><td>${
+                  wave==='small'?'小さい波でゆるく':(wave==='mid'?'ふつうの波でほどほど':'大きい波にも挑戦')
+                }</td></tr>
+                <tr><td>長さ</td><td>${rangeFeetInches(sized.len)} <span class="mini">（${rangeCm(sized.len)}）</span></td></tr>
+                <tr><td>幅</td><td>${rangeInch(sized.wid)}</td></tr>
+                <tr><td>厚み</td><td>${rangeInch(sized.thk)}</td></tr>
+              </tbody>
+            </table>
+
+            <h3 style="margin:12px 0 8px;">他サイトで探す（リンク検索）</h3>
+            <div class="providers">${providersHtml}</div>
+          </div>
+        </div>
+      `;
+      document.getElementById('result').innerHTML = html;
+      window.scrollTo({ top: document.getElementById('result').offsetTop - 20, behavior: 'smooth' });
+
+      // 楽天API（超ゆるめフォールバック）
+      renderRakuten(board.type, sized.len, vol.liters, { brandBoost });
+    }
+  </script>
+</body>
+</html>
