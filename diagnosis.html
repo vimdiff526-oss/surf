@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <title>サーフボード診断 | SEA LIFE HUB</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="推奨サイズを計算し、楽天APIで段階的に曖昧検索。field=0, orFlag=1等でヒット率を高めます。" />
+  <meta name="description" content="初心者向け。経験回数に応じて推奨浮力を自動調整し、タイプ・サイズ目安と候補検索を提案します。" />
   <link rel="stylesheet" href="style.css" />
   <style>
     /* ===== 既存フォーム/レイアウト ===== */
@@ -17,7 +17,7 @@
     .result{ margin-top:20px; display:grid; gap:16px; }
     .result .grid{ display:grid; gap:16px; grid-template-columns:1.2fr 1fr; }
     @media (max-width: 900px){ .result .grid{ grid-template-columns:1fr; } }
-    .card img{ height:200px; }
+    .card img{ height:200px; object-fit: cover; }
     .table{ width:100%; border-collapse:collapse; overflow:hidden; border-radius:12px; background:rgba(0,0,0,0.25); }
     .table th,.table td{ padding:10px 12px; border-bottom:1px solid rgba(255,255,255,0.1); }
     .table th{ text-align:left; color: var(--c-accent); }
@@ -47,7 +47,7 @@
     }
     .hero-diagnosis .hero-overlay {
       position: absolute; inset: 0;
-      background: rgba(0, 0, 0, 0.45); /* 半透明オーバーレイ */
+      background: rgba(0, 0, 0, 0.45);
     }
     .hero-diagnosis .hero-inner {
       position: relative; z-index: 1;
@@ -111,34 +111,52 @@
   <!-- ===== 本文：診断フォーム/結果など ===== -->
   <section class="overlay">
     <main class="container">
-      <!-- ※ 重複を避けるため、intro セクションは削除済み -->
-
-      <h2 class="section-title">サーフボード診断 + 楽天アイテム（超ゆるめフォールバック）</h2>
+      <h2 class="section-title">サーフボード診断（初心者～向け：経験回数で調整）</h2>
 
       <form id="surfForm">
-        <label>体重（kg）<input id="weight" type="number" min="35" max="120" step="1" placeholder="例）68" required /></label>
-        <label>レベル
-          <select id="level"><option value="beginner">初心者</option><option value="intermediate" selected>中級</option><option value="advanced">上級</option></select>
+        <label>体重（kg）
+          <input id="weight" type="number" min="35" max="120" step="1" placeholder="例）68" required />
         </label>
+
+        <label>経験回数
+          <select id="experience">
+            <option value="0-10" selected>0〜10回（+5L）</option>
+            <option value="10-20">10〜20回（+3L）</option>
+            <option value="20+">20回以上（+0L）</option>
+          </select>
+        </label>
+
         <label>波サイズ
-          <select id="wave"><option value="small">小波（膝〜腹）</option><option value="mid" selected>ミドル（腰〜胸）</option><option value="solid">肩〜頭以上</option></select>
+          <select id="wave">
+            <option value="small">小波（膝〜腹）</option>
+            <option value="mid" selected>ミドル（腰〜胸）</option>
+            <option value="solid">肩〜頭以上</option>
+          </select>
         </label>
+
         <label>スタイル
-          <select id="style"><option value="easy">本数重視</option><option value="maneuver" selected>技・機動性</option><option value="cruise">クルーズ</option></select>
+          <select id="style">
+            <option value="easy">本数重視</option>
+            <option value="maneuver" selected>技・機動性</option>
+            <option value="cruise">クルーズ</option>
+          </select>
         </label>
+
         <label>体力
-          <select id="fitness"><option value="low">弱め</option><option value="mid" selected>ふつう</option><option value="high">強め</option></select>
-        </label>
-        <label>浮力の好み
-          <select id="floatPref"><option value="more">やや多め</option><option value="neutral" selected>ふつう</option><option value="less">やや少なめ</option></select>
+          <select id="fitness">
+            <option value="low">弱め</option>
+            <option value="mid" selected>ふつう</option>
+            <option value="high">強め</option>
+          </select>
         </label>
 
-        <label>価格（最小・円）<input id="minPrice" type="number" min="0" step="1000" placeholder="例）10000" /></label>
-        <label>価格（最大・円）<input id="maxPrice" type="number" min="0" step="1000" placeholder="例）150000" /></label>
-
+        <!-- ブランドブーストは残す -->
         <label class="span2"><input id="brandBoost" type="checkbox" /> ブランドブースト（CI / JS / LOST / DHD / Christenson / Firewire など）</label>
 
-        <div class="span2 mini">※0件時は <code>field=0</code> や <code>orFlag=1</code> を使って徐々に緩めます。最終段は売切も含めて候補表示します。</div>
+        <div class="span2 mini">
+          ※経験回数に応じて推奨浮力を加算します（0〜10回:+5L / 10〜20回:+3L / 20回以上:+0L）。<br>
+          ※0件時は検索条件を自動で緩めます（field=0 / orFlag=1 など）。
+        </div>
 
         <button class="btn primary span2" type="button" onclick="diagnose()">診断する</button>
       </form>
@@ -154,31 +172,49 @@
     document.getElementById('year').textContent = new Date().getFullYear();
     const API_BASE = location.origin;
 
-    /* ===== 診断ロジック（簡略） ===== */
-    function calcVolume(weight, level, fitness, floatPref){
-      let base = (level==='beginner')?0.50:(level==='advanced')?0.40:0.45;
-      if(fitness==='low') base += 0.03; if(fitness==='high') base -= 0.03;
-      if(floatPref==='more') base += 0.02; if(floatPref==='less') base -= 0.02;
+    /* ===== 診断ロジック（経験回数で浮力加算） ===== */
+    function experienceBonusLiters(exp){
+      if(exp === '0-10') return 5;
+      if(exp === '10-20') return 3;
+      return 0; // 20+
+    }
+
+    function calcVolume(weight, fitness, exp){
+      // ベース係数は“中庸”の 0.45 を中心に、体力で ±0.03 調整
+      let base = 0.45;
+      if(fitness==='low') base += 0.03;
+      if(fitness==='high') base -= 0.03;
       base = Math.max(0.35, Math.min(0.60, base));
-      const liters = Math.round(weight * base * 10)/10;
+
+      // ベースのリッター
+      let litersBase = Math.round(weight * base * 10)/10;
+
+      // 経験回数ボーナス（加算）
+      const bonus = experienceBonusLiters(exp);
+      let liters = Math.round((litersBase + bonus) * 10) / 10;
+
+      // ±10% の目安レンジ（ボーナス加算後の中心から）
       const low = Math.round(liters * 0.9 * 10)/10;
       const high = Math.round(liters * 1.1 * 10)/10;
-      return { liters, range:[low, high], factor: base };
+
+      return { liters, range:[low, high], factor: base, bonus, baseLiters: litersBase };
     }
-    function pickBoardType(level, wave, style){
-      if(level==='beginner'){
-        if(style==='maneuver' && wave!=='small') return {type:'オールラウンドショート', why:'上達を見据えつつ取り回しやすい'};
-        if(style==='cruise') return {type:'ロング/ミッド', why:'早いテイクオフでクルーズ'};
-        return {type:'ソフトボード/ファン', why:'安定＆本数確保'};
+
+    function pickBoardType(wave, style, exp){
+      // 初心者寄りユースを想定して、やや安定系を優先
+      // 経験0-10は安定寄り、10-20は汎用、20+は好みに少し振る
+      const novice = (exp === '0-10');
+      const semi   = (exp === '10-20');
+
+      if(style==='cruise') return novice ? {type:'ロング/ミッド', why:'早いテイクオフで本数を確保'} : {type:'ミッド/ロング', why:'クルーズ重視の安定感'};
+      if(style==='maneuver'){
+        if(wave==='small') return novice ? {type:'ハイボリュームショート/フィッシュ', why:'小波での推進力と安定'} : {type:'フィッシュ/ツイン寄りショート', why:'小波での加速と軽快さ'};
+        return semi ? {type:'オールラウンドショート', why:'技と走りのバランス'} : (novice ? {type:'ミッド/ショート(ややボリューム多め)', why:'取り回しと安定の両立'} : {type:'HPショート', why:'機動性・性能重視'});
       }
-      if(level==='intermediate'){
-        if(style==='maneuver') return (wave==='small')?{type:'フィッシュ/ツイン寄りショート', why:'小波で加速'}:{type:'オールラウンドショート', why:'技と走りのバランス'};
-        if(style==='cruise') return {type:'ミッド/ロング', why:'本数とライン取り'};
-        return {type:'ミッド/ショート(ややボリューム多め)', why:'取り回しと安定の中庸'};
-      }
-      if(style==='cruise') return {type:'ロング', why:'大きいラインでクルーズ'};
-      return (wave==='small')?{type:'ハイボリュームショート/フィッシュ', why:'小波でも推進力'}:{type:'HPショート', why:'機動性・性能重視'};
+      // easy（本数重視）
+      return novice ? {type:'ソフトボード/ファン', why:'安定＆本数確保'} : {type:'ミッドレングス', why:'本数とライン取りを両立'};
     }
+
     const sizeTable = {
       'ソフトボード/ファン':   { len:[7.0, 8.0],   wid:[21.0, 23.0], thick:[2.75, 3.3] },
       'ミッドレングス':        { len:[6.8, 7.6],   wid:[20.5, 22.5], thick:[2.6, 3.0] },
@@ -190,6 +226,7 @@
       'HPショート':            { len:[5.8, 6.2],  wid:[18.0, 19.5], thick:[2.25, 2.5] },
       'ロング':                { len:[9.0, 9.6],  wid:[22.5, 23.5], thick:[2.75, 3.25] }
     };
+
     const toFeetInches = (v)=>{ const f=Math.floor(v); const i=Math.round((v-f)*12); return {feet:f,inches:i}; };
     const fmtFeetInches = ({feet,inches}) => `${feet}'${inches}"`;
     const rangeFeetInches = ([a,b])=>{ const A=toFeetInches(a), B=toFeetInches(b); return `${fmtFeetInches(A)} 〜 ${fmtFeetInches(B)}`; };
@@ -225,10 +262,8 @@
       ];
     }
 
-    async function callRakuten(keyword, params, minPrice, maxPrice){
+    async function callRakuten(keyword, params){
       const sp = new URLSearchParams({ keyword, ...params });
-      if(minPrice) sp.set("minPrice", String(minPrice));
-      if(maxPrice) sp.set("maxPrice", String(maxPrice));
       const r = await fetch(`${API_BASE}/api/rakuten?${sp.toString()}`);
       const ct = r.headers.get('content-type') || '';
       if(!ct.includes('application/json')) throw new Error(`非JSON応答: ${r.status} ${r.statusText} / ${ct}`);
@@ -237,7 +272,7 @@
 
     async function renderRakuten(type, lenRange, liters, opts){
       const mount = document.getElementById('rakuten');
-      const { minPrice, maxPrice, brandBoost } = opts;
+      const { brandBoost } = opts;
       const candidates = buildRakutenCandidates(type, lenRange, liters, brandBoost);
 
       mount.innerHTML = `
@@ -249,7 +284,7 @@
       let found=null, used=null, usedParams=null;
       for(const c of candidates){
         try{
-          const data = await callRakuten(c.kw, c.p, minPrice, maxPrice);
+          const data = await callRakuten(c.kw, c.p);
           if(data.items && data.items.length){ found=data; used=c.kw; usedParams=c.p; break; }
         }catch(_e){ /* 次へ */ }
       }
@@ -257,7 +292,7 @@
       if(!found){
         mount.innerHTML = `
           <h2 class="section-title">楽天の候補（0件）</h2>
-          <p class="mini">今回はヒットしませんでした。キーワードをさらに広くするか、価格帯を広げてお試しください。</p>
+          <p class="mini">今回はヒットしませんでした。キーワードをさらに広くしてお試しください。</p>
           <div class="mini" style="margin-top:8px;">試行キーワード：</div>
           <div>${candidates.map(c=>`<span class="chip">${c.kw}</span>`).join('')}</div>
         `;
@@ -266,14 +301,14 @@
 
       mount.innerHTML = `
         <h2 class="section-title">楽天の候補（${found.count}件）</h2>
-        <div class="mini" style="margin:-6px 0 10px;">使用キーワード：<code>${used}</code> ／ パラメータ：<code>${Object.entries(usedParams).map(([k,v])=>`${k}=${v}`).join('&')}</code>${(minPrice||maxPrice)?` ／ 価格: <code>${minPrice||0}〜${maxPrice||'上限なし'}</code>`:''}</div>
+        <div class="mini" style="margin:-6px 0 10px;">使用キーワード：<code>${used}</code> ／ パラメータ：<code>${Object.entries(usedParams).map(([k,v])=>`${k}=${v}`).join('&')}</code></div>
         <div class="items-grid">
           ${found.items.map(x=>`
             <article class="card item-card">
               <img src="${x.image || 'images/diagnosis.jpg'}" alt="${x.name}">
               <div class="card-body">
                 <h3>${x.name}</h3>
-                <p class="mini">${x.shop}</p>
+                <p class="mini">${x.shop || ''}</p>
                 <p><strong>¥${Number(x.price).toLocaleString()}</strong></p>
                 <a class="btn link" target="_blank" href="${x.url}">商品ページへ</a>
               </div>
@@ -309,19 +344,16 @@
 
     function diagnose(){
       const weight = Number(document.getElementById('weight').value || 0);
-      const level = document.getElementById('level').value;
+      const experience = document.getElementById('experience').value;
       const wave = document.getElementById('wave').value;
       const style = document.getElementById('style').value;
       const fitness = document.getElementById('fitness').value;
-      const floatPref = document.getElementById('floatPref').value;
-      const minPrice = Number(document.getElementById('minPrice').value || 0);
-      const maxPrice = Number(document.getElementById('maxPrice').value || 0);
       const brandBoost = document.getElementById('brandBoost').checked;
 
       if(!weight || weight < 35){ alert('体重(kg)を入力してください'); return; }
 
-      const vol = calcVolume(weight, level, fitness, floatPref);
-      const board = pickBoardType(level, wave, style);
+      const vol = calcVolume(weight, fitness, experience);
+      const board = pickBoardType(wave, style, experience);
       const base = sizeTable[board.type] || sizeTable['ミッドレングス'];
       const sized = adjustByWeightAndWave(base, weight, wave);
 
@@ -346,7 +378,7 @@
             <div class="card-body">
               <h3>${board.type}</h3>
               <p>${board.why}</p>
-              <p class="mini">※APIは 0件 → 条件を自動で緩めて再検索します（field=0 / orFlag=1 / availability=0 など）。</p>
+              <p class="mini">経験回数による浮力加算: <strong>+${vol.bonus}L</strong>（ベース${vol.baseLiters}L → 推奨${vol.liters}L）</p>
             </div>
           </article>
 
@@ -355,6 +387,10 @@
               <thead><tr><th>項目</th><th>推奨値（目安）</th></tr></thead>
               <tbody>
                 <tr><td>体重</td><td>${weight} kg</td></tr>
+                <tr><td>経験回数</td><td>${
+                  experience==='0-10'?'0〜10回':
+                  experience==='10-20'?'10〜20回':'20回以上'
+                }</td></tr>
                 <tr><td>推奨ボリューム</td><td><strong>${vol.liters}ℓ</strong>（約${vol.range[0]}〜${vol.range[1]}ℓ） <span class="mini">係数:${vol.factor.toFixed(2)}</span></td></tr>
                 <tr><td>長さ</td><td>${rangeFeetInches(sized.len)} <span class="mini">（${rangeCm(sized.len)}）</span></td></tr>
                 <tr><td>幅</td><td>${rangeInch(sized.wid)}</td></tr>
@@ -371,11 +407,7 @@
       window.scrollTo({ top: document.getElementById('result').offsetTop - 20, behavior: 'smooth' });
 
       // 楽天API（超ゆるめフォールバック）
-      renderRakuten(board.type, sized.len, vol.liters, {
-        minPrice: minPrice || undefined,
-        maxPrice: maxPrice || undefined,
-        brandBoost
-      });
+      renderRakuten(board.type, sized.len, vol.liters, { brandBoost });
     }
   </script>
 </body>
