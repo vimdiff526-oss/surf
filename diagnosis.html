@@ -7,6 +7,7 @@
   <meta name="description" content="推奨サイズを計算し、楽天APIで段階的に曖昧検索。field=0, orFlag=1等でヒット率を高めます。" />
   <link rel="stylesheet" href="style.css" />
   <style>
+    /* ===== 既存フォーム/レイアウト ===== */
     form#surfForm{ display:grid; gap:12px; max-width:920px; margin:16px auto 0; grid-template-columns:1fr 1fr;
       background: rgba(0,0,0,0.35); padding:16px; border-radius:12px; }
     form#surfForm label{ display:flex; flex-direction:column; gap:6px; font-weight:600; }
@@ -33,6 +34,35 @@
     .error-box{ background:rgba(255,60,60,0.15); border:1px solid rgba(255,60,60,0.35);
       padding:12px; border-radius:10px; margin-top:8px; white-space:pre-wrap; }
     .chip{ display:inline-block; padding:4px 8px; border-radius:9999px; background:rgba(255,255,255,0.12); margin:2px; font-size:.85rem; }
+
+    /* ===== 診断ページ用ヒーロー（半透明オーバーレイ） ===== */
+    .hero-diagnosis {
+      position: relative;
+      min-height: 60vh;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      color: #fff;
+      background: url('images/diagnosis-hero.jpg') center/cover no-repeat;
+    }
+    .hero-diagnosis .hero-overlay {
+      position: absolute; inset: 0;
+      background: rgba(0, 0, 0, 0.45); /* 半透明オーバーレイ */
+    }
+    .hero-diagnosis .hero-inner {
+      position: relative; z-index: 1;
+      max-width: 900px; padding: 0 16px;
+    }
+    .hero-diagnosis h1 {
+      font-size: clamp(28px, 5vw, 48px);
+      margin-bottom: 16px;
+      color: var(--c-accent, #6ee7ff);
+      text-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    }
+    .hero-diagnosis p {
+      line-height: 1.7; font-size: 1.1rem; opacity: .95;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+    }
   </style>
 </head>
 <body>
@@ -54,6 +84,7 @@
   </header>
   <div class="header-spacer"></div>
 
+  <!-- モバイルメニュー -->
   <div class="mobile-nav-backdrop" id="backdrop"></div>
   <nav class="mobile-nav" id="mobileNav" aria-label="Mobile">
     <div class="mobile-title">🌊 SEA LIFE HUB</div>
@@ -64,32 +95,25 @@
     <a href="index.html#about">このサイトについて</a>
   </nav>
 
-  <section class="overlay">
-<!-- Hero Section -->
-<section class="hero-diagnosis">
-  <div class="hero-overlay"></div>
-  <div class="hero-inner">
-    <h1>あなたに最適なサーフボードを、ここから。</h1>
-    <p>
-      サーフィンはただ技を決めるためのものではありません。<br>
-      波に乗り、風を感じ、心地よくクルーズすることもまたサーフィン。<br>
-      自分らしいスタイルを見つけ、その一歩を踏み出すためのボード選びをサポートします。
-    </p>
-  </div>
-</section>
-    <main class="container">
-<section class="intro" style="text-align:center; max-width:800px; margin:0 auto 32px;">
-  <h1 style="font-size:2rem; margin-bottom:12px; color:var(--c-accent);">
-    あなたに最適なサーフボードを、ここから。
-  </h1>
-  <p style="line-height:1.7; font-size:1.05rem; opacity:.95;">
-    サーフィンはただ技を決めるためのものではありません。<br>
-    波に乗り、風を感じ、心地よくクルーズすることもまたサーフィン。<br>
-    自分らしいスタイルを見つけ、その一歩を踏み出すためのボード選びをサポートします。
-  </p>
-</section>
+  <!-- ===== ヒーロー（ここにだけコピーを表示） ===== -->
+  <section class="hero-diagnosis">
+    <div class="hero-overlay"></div>
+    <div class="hero-inner">
+      <h1>あなたに最適なサーフボードを、ここから。</h1>
+      <p>
+        サーフィンはただ技を決めるためのものではありません。<br>
+        波に乗り、風を感じ、心地よくクルーズすることもまたサーフィン。<br>
+        自分らしいスタイルを見つけ、その一歩を踏み出すためのボード選びをサポートします。
+      </p>
+    </div>
+  </section>
 
-      <h1 class="section-title">サーフボード診断 + 楽天アイテム（超ゆるめフォールバック）</h1>
+  <!-- ===== 本文：診断フォーム/結果など ===== -->
+  <section class="overlay">
+    <main class="container">
+      <!-- ※ 重複を避けるため、intro セクションは削除済み -->
+
+      <h2 class="section-title">サーフボード診断 + 楽天アイテム（超ゆるめフォールバック）</h2>
 
       <form id="surfForm">
         <label>体重（kg）<input id="weight" type="number" min="35" max="120" step="1" placeholder="例）68" required /></label>
@@ -181,13 +205,7 @@
         .replace('オールラウンドショート','ショート オールラウンド');
     }
 
-    /* ====== “超ゆるめ” 楽天APIフォールバック ======
-      段階ごとに (keyword, params) を変えて最大ヒットを狙います。
-      - field=0（広い検索）
-      - orFlag=1（OR検索）
-      - availability=0（売切含む）
-      - NGKeyword は厳しい段階のみで軽く使用（フィン等を除外）
-    */
+    /* ====== “超ゆるめ” 楽天APIフォールバック ====== */
     function buildRakutenCandidates(type, lenRange, liters, brandBoost){
       const base = `サーフボード`;
       const t = normalizeTypeForQuery(type);
@@ -197,21 +215,12 @@
       const brands = brandBoost
         ? " ChannelIslands JS LOST DHD Christenson Sharpeye Firewire Pukas HaydenShapes Pyzel"
         : "";
-
-      // NGKeyword は最初だけ軽く（アクセサリ除外）。後半は付けない＝ヒット最優先
       const NG = "フィン リーシュ ケース デッキパッド ステッカー ラック カバー ワックス";
 
       return [
-        // 1) かなり絞る（命中時は精度高め）
         { kw: `${base} ${t} ${len} ${liters}L${brands}`, p:{ hits: "30", field:"1", orFlag:"0", availability:"1", NGKeyword: NG } },
-
-        // 2) 長さ/Lを外して少し緩める
         { kw: `${base} ${t}${brands}`, p:{ hits: "30", field:"0", orFlag:"0", availability:"1" } },
-
-        // 3) OR検索で語彙をばらす（種別語も展開）
         { kw: `${base} ショート ミッド ロング フィッシュ${brands}`, p:{ hits:"30", field:"0", orFlag:"1", availability:"1" } },
-
-        // 4) 最ゆる（まず“ボードらしきもの”を拾う）※売切含む
         { kw: `${base}${brands}`, p:{ hits:"30", field:"0", orFlag:"1", availability:"0" } },
       ];
     }
@@ -242,7 +251,7 @@
         try{
           const data = await callRakuten(c.kw, c.p, minPrice, maxPrice);
           if(data.items && data.items.length){ found=data; used=c.kw; usedParams=c.p; break; }
-        }catch(_e){ /* スルー（次の候補へ） */ }
+        }catch(_e){ /* 次へ */ }
       }
 
       if(!found){
