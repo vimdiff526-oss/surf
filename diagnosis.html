@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <title>サーフボード診断 | SEA LIFE HUB</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="初心者向け。経験回数に応じて推奨浮力を自動調整し、タイプ・サイズ目安と候補検索を提案します。" />
+  <meta name="description" content="初心者向け。体重・波質・目指すスタイルから、ショート/ミッド/オルタナ系の目安とサイズを提案し、候補検索まで行います。" />
   <link rel="stylesheet" href="style.css" />
   <style>
     /* ===== 既存フォーム/レイアウト ===== */
@@ -31,8 +31,6 @@
     .skeleton{ background:linear-gradient(90deg, rgba(255,255,255,0.08), rgba(255,255,255,0.18), rgba(255,255,255,0.08));
       background-size:200% 100%; animation:shine 1.2s linear infinite; height:200px; border-radius:12px; }
     @keyframes shine{0%{background-position:200% 0}100%{background-position:-200% 0}}
-    .error-box{ background:rgba(255,60,60,0.15); border:1px solid rgba(255,60,60,0.35);
-      padding:12px; border-radius:10px; margin-top:8px; white-space:pre-wrap; }
     .chip{ display:inline-block; padding:4px 8px; border-radius:9999px; background:rgba(255,255,255,0.12); margin:2px; font-size:.85rem; }
 
     /* ===== 診断ページ用ヒーロー（半透明オーバーレイ） ===== */
@@ -111,19 +109,11 @@
   <!-- ===== 本文：診断フォーム/結果など ===== -->
   <section class="overlay">
     <main class="container">
-      <h2 class="section-title">サーフボード診断（初心者～向け：経験回数で調整）</h2>
+      <h2 class="section-title">サーフボード診断（初心者ベース：スタイルで提案）</h2>
 
       <form id="surfForm">
         <label>体重（kg）
           <input id="weight" type="number" min="35" max="120" step="1" placeholder="例）68" required />
-        </label>
-
-        <label>経験回数
-          <select id="experience">
-            <option value="0-10" selected>0〜10回（+5L）</option>
-            <option value="10-20">10〜20回（+3L）</option>
-            <option value="20+">20回以上（+0L）</option>
-          </select>
         </label>
 
         <label>波サイズ
@@ -134,11 +124,12 @@
           </select>
         </label>
 
-        <label>スタイル
+        <label>目指すスタイル
           <select id="style">
-            <option value="easy">本数重視</option>
-            <option value="maneuver" selected>技・機動性</option>
-            <option value="cruise">クルーズ</option>
+            <option value="cruise">ゆったりとクルーズしたい</option>
+            <option value="maneuver" selected>技を磨いていきたい</option>
+            <option value="quantity">とにかく本数を乗りたい</option>
+            <option value="smallfun">小波でも楽しみたい</option>
           </select>
         </label>
 
@@ -150,11 +141,10 @@
           </select>
         </label>
 
-        <!-- ブランドブーストは残す -->
         <label class="span2"><input id="brandBoost" type="checkbox" /> ブランドブースト（CI / JS / LOST / DHD / Christenson / Firewire など）</label>
 
         <div class="span2 mini">
-          ※経験回数に応じて推奨浮力を加算します（0〜10回:+5L / 10〜20回:+3L / 20回以上:+0L）。<br>
+          ※スタイルに応じて「ショートボード／ミッドレングス／オルタナ系」等を提案します。<br>
           ※0件時は検索条件を自動で緩めます（field=0 / orFlag=1 など）。
         </div>
 
@@ -172,47 +162,41 @@
     document.getElementById('year').textContent = new Date().getFullYear();
     const API_BASE = location.origin;
 
-    /* ===== 診断ロジック（経験回数で浮力加算） ===== */
-    function experienceBonusLiters(exp){
-      if(exp === '0-10') return 5;
-      if(exp === '10-20') return 3;
-      return 0; // 20+
-    }
-
-    function calcVolume(weight, fitness, exp){
-      // ベース係数は“中庸”の 0.45 を中心に、体力で ±0.03 調整
-      let base = 0.45;
+    /* ===== 診断ロジック（初心者ベース） ===== */
+    function calcVolume(weight, fitness){
+      // 初心者寄りの基準係数 0.47 を中心に体力で微調整
+      let base = 0.47;
       if(fitness==='low') base += 0.03;
       if(fitness==='high') base -= 0.03;
-      base = Math.max(0.35, Math.min(0.60, base));
+      base = Math.max(0.38, Math.min(0.60, base)); // 下限少し厚め
 
-      // ベースのリッター
-      let litersBase = Math.round(weight * base * 10)/10;
-
-      // 経験回数ボーナス（加算）
-      const bonus = experienceBonusLiters(exp);
-      let liters = Math.round((litersBase + bonus) * 10) / 10;
-
-      // ±10% の目安レンジ（ボーナス加算後の中心から）
+      const liters = Math.round(weight * base * 10)/10;
       const low = Math.round(liters * 0.9 * 10)/10;
       const high = Math.round(liters * 1.1 * 10)/10;
-
-      return { liters, range:[low, high], factor: base, bonus, baseLiters: litersBase };
+      return { liters, range:[low, high], factor: base };
     }
 
-    function pickBoardType(wave, style, exp){
-      // 初心者寄りユースを想定して、やや安定系を優先
-      // 経験0-10は安定寄り、10-20は汎用、20+は好みに少し振る
-      const novice = (exp === '0-10');
-      const semi   = (exp === '10-20');
-
-      if(style==='cruise') return novice ? {type:'ロング/ミッド', why:'早いテイクオフで本数を確保'} : {type:'ミッド/ロング', why:'クルーズ重視の安定感'};
-      if(style==='maneuver'){
-        if(wave==='small') return novice ? {type:'ハイボリュームショート/フィッシュ', why:'小波での推進力と安定'} : {type:'フィッシュ/ツイン寄りショート', why:'小波での加速と軽快さ'};
-        return semi ? {type:'オールラウンドショート', why:'技と走りのバランス'} : (novice ? {type:'ミッド/ショート(ややボリューム多め)', why:'取り回しと安定の両立'} : {type:'HPショート', why:'機動性・性能重視'});
+    // スタイル → カテゴリ（ショート/ミッド/オルタナ系）と代表タイプ
+    function pickBoardByStyle(style, wave){
+      // カテゴリ名（表示用）
+      // type は検索用と説明用の代表種別
+      if(style === 'cruise'){
+        return (wave==='small')
+          ? { category:'ミッドレングス', type:'ミッドレングス', why:'早いテイクオフでクルーズ重視。小波でも本数◎' }
+          : { category:'ミッドレングス / ロング', type:'ロング/ミッド', why:'ゆったり滑走。安定と余裕を重視' };
       }
-      // easy（本数重視）
-      return novice ? {type:'ソフトボード/ファン', why:'安定＆本数確保'} : {type:'ミッドレングス', why:'本数とライン取りを両立'};
+      if(style === 'quantity'){
+        return (wave==='small')
+          ? { category:'オルタナ系', type:'ソフトボード/ファン', why:'安定＆本数重視。まずは波に多く乗る' }
+          : { category:'ミッドレングス', type:'ミッドレングス', why:'立ちやすく乗れる本数を確保' };
+      }
+      if(style === 'smallfun'){
+        return { category:'オルタナ系', type:'フィッシュ/ツイン寄りショート', why:'小波でも加速しやすく楽しい' };
+      }
+      // maneuver（技を磨く）
+      return (wave==='solid')
+        ? { category:'ショートボード', type:'HPショート', why:'機動性重視。上達を見据えて' }
+        : { category:'ショートボード', type:'オールラウンドショート', why:'バランス良く基本を磨く' };
     }
 
     const sizeTable = {
@@ -221,7 +205,6 @@
       'ロング/ミッド':         { len:[9.0, 9.6],   wid:[22.5, 23.5], thick:[2.75, 3.25] },
       'フィッシュ/ツイン寄りショート': { len:[5.4, 6.0], wid:[19.5, 21.5], thick:[2.4, 2.7] },
       'オールラウンドショート': { len:[5.83, 6.33], wid:[18.5, 20.5], thick:[2.3, 2.6] },
-      'ミッド/ショート(ややボリューム多め)': { len:[6.0, 6.6], wid:[19.5, 21.5], thick:[2.5, 2.8] },
       'ハイボリュームショート/フィッシュ': { len:[5.8, 6.4], wid:[19.5, 21.5], thick:[2.5, 2.8] },
       'HPショート':            { len:[5.8, 6.2],  wid:[18.0, 19.5], thick:[2.25, 2.5] },
       'ロング':                { len:[9.0, 9.6],  wid:[22.5, 23.5], thick:[2.75, 3.25] }
@@ -344,7 +327,6 @@
 
     function diagnose(){
       const weight = Number(document.getElementById('weight').value || 0);
-      const experience = document.getElementById('experience').value;
       const wave = document.getElementById('wave').value;
       const style = document.getElementById('style').value;
       const fitness = document.getElementById('fitness').value;
@@ -352,63 +334,10 @@
 
       if(!weight || weight < 35){ alert('体重(kg)を入力してください'); return; }
 
-      const vol = calcVolume(weight, fitness, experience);
-      const board = pickBoardType(wave, style, experience);
-      const base = sizeTable[board.type] || sizeTable['ミッドレングス'];
+      const vol = calcVolume(weight, fitness);
+      const pick = pickBoardByStyle(style, wave);
+      const base = sizeTable[pick.type] || sizeTable['ミッドレングス'];
       const sized = adjustByWeightAndWave(base, weight, wave);
 
-      const img = (board.type.includes('ロング')) ? 'images/stays.jpg'
-                : (board.type.includes('ミッド')) ? 'images/diagnosis.jpg'
-                : 'images/apparel.jpg';
-
-      const links = providerLinks(board.type, sized.len, vol.liters);
-      const providersHtml = links.map(p=>`
-        <div class="prov-card">
-          <h4>${p.name}</h4>
-          <div class="prov-links">
-            ${p.urls.map(u=>`<a class="btn link" target="_blank" href="${u.url}">${u.label}</a>`).join('')}
-          </div>
-        </div>
-      `).join('');
-
-      const html = `
-        <div class="grid">
-          <article class="card">
-            <img src="${img}" alt="${board.type}">
-            <div class="card-body">
-              <h3>${board.type}</h3>
-              <p>${board.why}</p>
-              <p class="mini">経験回数による浮力加算: <strong>+${vol.bonus}L</strong>（ベース${vol.baseLiters}L → 推奨${vol.liters}L）</p>
-            </div>
-          </article>
-
-          <div>
-            <table class="table">
-              <thead><tr><th>項目</th><th>推奨値（目安）</th></tr></thead>
-              <tbody>
-                <tr><td>体重</td><td>${weight} kg</td></tr>
-                <tr><td>経験回数</td><td>${
-                  experience==='0-10'?'0〜10回':
-                  experience==='10-20'?'10〜20回':'20回以上'
-                }</td></tr>
-                <tr><td>推奨ボリューム</td><td><strong>${vol.liters}ℓ</strong>（約${vol.range[0]}〜${vol.range[1]}ℓ） <span class="mini">係数:${vol.factor.toFixed(2)}</span></td></tr>
-                <tr><td>長さ</td><td>${rangeFeetInches(sized.len)} <span class="mini">（${rangeCm(sized.len)}）</span></td></tr>
-                <tr><td>幅</td><td>${rangeInch(sized.wid)}</td></tr>
-                <tr><td>厚み</td><td>${rangeInch(sized.thk)}</td></tr>
-              </tbody>
-            </table>
-
-            <h3 style="margin:12px 0 8px;">他サイトで探す（リンク検索）</h3>
-            <div class="providers">${providersHtml}</div>
-          </div>
-        </div>
-      `;
-      document.getElementById('result').innerHTML = html;
-      window.scrollTo({ top: document.getElementById('result').offsetTop - 20, behavior: 'smooth' });
-
-      // 楽天API（超ゆるめフォールバック）
-      renderRakuten(board.type, sized.len, vol.liters, { brandBoost });
-    }
-  </script>
-</body>
-</html>
+      // 代表画像のあて方
+      const img = (pick.category.includes('ロング') ||
