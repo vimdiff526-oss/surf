@@ -2,75 +2,77 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <title>サーフボード診断 | SEA LIFE HUB</title>
+  <title>SEA LIFE HUB | 海と暮らしの小さなポータル</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="推奨サイズを計算し、ECをサーフボード限定で検索。楽天APIから実アイテムを取得してカード表示します。" />
+  <meta name="description" content="海を中心にした暮らしのミニポータル。サーフボード診断、オリジナルTシャツ、海沿い民泊などへアクセス。" />
+  <!-- 既存の style.css を利用（サイト全体の共通スタイル） -->
   <link rel="stylesheet" href="style.css" />
   <style>
-    form#surfForm{
-      display:grid; gap:12px; max-width:860px; margin:16px auto 0; grid-template-columns:1fr 1fr;
-      background: rgba(0,0,0,0.35); padding:16px; border-radius:12px;
+    /* --- TOP専用の軽い追加スタイル --- */
+    .hero {
+      position: relative;
+      min-height: 68vh;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      color: #fff;
+      background: url('images/hero.jpg') center/cover no-repeat, linear-gradient(135deg,#002a4a,#005f73);
     }
-    form#surfForm label{ display:flex; flex-direction:column; gap:6px; font-weight:600; }
-    form#surfForm select, form#surfForm input{ padding:10px; border-radius:8px; border:none; }
-    .span2{ grid-column:1/-1; }
-    .mini{ font-size:.9rem; opacity:.9; }
-    .row{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
-    .result{ margin-top:20px; display:grid; gap:16px; }
-    .result .grid{ display:grid; gap:16px; grid-template-columns: 1.2fr 1fr; }
-    @media (max-width: 900px){ .result .grid{ grid-template-columns: 1fr; } }
-    .card img{ height: 200px; }
-    .table{ width:100%; border-collapse: collapse; overflow:hidden; border-radius:12px; background: rgba(0,0,0,0.25); }
-    .table th, .table td{ padding:10px 12px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-    .table th{ text-align:left; color: var(--c-accent); }
-    .badge{ display:inline-block; padding:2px 8px; border-radius:9999px; background: rgba(255,255,255,0.15); font-size:.85rem; }
-
-    /* プロバイダ検索カード */
-    .providers{ display:grid; gap:12px; grid-template-columns: repeat(2, 1fr); }
-    @media (max-width:720px){ .providers{ grid-template-columns: 1fr; } }
-    .prov-card{ background: rgba(255,255,255,0.07); border-radius:12px; padding:12px; display:flex; flex-direction:column; gap:8px; }
-    .prov-card h4{ margin:0; font-size:1rem; color: var(--c-accent); }
-    .prov-links{ display:flex; gap:8px; flex-wrap:wrap; }
-    .prov-links a{ text-decoration:none; border-radius:10px; padding:8px 10px; background: rgba(255,255,255,0.12); }
-    .prov-links a:hover{ background: rgba(255,255,255,0.2); }
-
-    /* 楽天アイテムグリッド */
-    .items-grid{ display:grid; gap:12px; grid-template-columns: repeat(3, 1fr); }
-    @media (max-width:960px){ .items-grid{ grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width:640px){ .items-grid{ grid-template-columns: 1fr; } }
-    .item-card .card-body h3{ font-size:1rem; margin:0 0 6px; }
-    .skeleton{
-      background: linear-gradient(90deg, rgba(255,255,255,0.08), rgba(255,255,255,0.18), rgba(255,255,255,0.08));
-      background-size: 200% 100%; animation: shine 1.2s linear infinite;
-      height: 200px; border-radius: 12px;
+    .hero::after{
+      content:""; position:absolute; inset:0;
+      background: linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.55));
     }
-    @keyframes shine { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+    .hero-inner {
+      position: relative; z-index: 1; max-width: 960px; padding: 0 16px;
+    }
+    .hero h1 { font-size: clamp(28px, 5vw, 56px); margin: 0 0 .4em; letter-spacing: .02em; }
+    .hero p  { font-size: clamp(14px, 2.8vw, 18px); opacity: .95; margin: 0 auto 1.2em; max-width: 760px; }
 
-    /* 学習モード（簡易） */
-    .accordion{ margin-top:24px; }
-    .acc-item{ background: rgba(0,0,0,0.35); border-radius:12px; margin-bottom:10px; overflow:hidden; }
-    .acc-head{ width:100%; text-align:left; background: transparent; border:none; padding:14px 16px; color:#fff; display:flex; justify-content:space-between; align-items:center; cursor:pointer; }
-    .acc-body{ display:none; padding:0 16px 16px; }
-    .acc-item.open .acc-body{ display:block; }
-    .chev{ transition: transform .2s ease; }
-    .acc-item.open .chev{ transform: rotate(90deg); }
+    .cta-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+    .cta-row .btn {
+      display:inline-block; padding:12px 18px; border-radius:9999px;
+      background: rgba(255,255,255,0.16); color:#fff; text-decoration:none;
+      border:1px solid rgba(255,255,255,0.28);
+    }
+    .cta-row .btn.primary { background: var(--c-accent, #6ee7ff); color:#00223a; border:none; }
+    .cta-row .btn:hover { transform: translateY(-1px); }
+
+    .feature-grid {
+      display:grid; gap:16px;
+      grid-template-columns: repeat(3, 1fr);
+    }
+    @media (max-width: 960px){ .feature-grid{ grid-template-columns: repeat(2, 1fr);} }
+    @media (max-width: 640px){ .feature-grid{ grid-template-columns: 1fr;} }
+
+    .feature-card.card img { height: 200px; object-fit: cover; }
+    .section { padding: 48px 0; }
+    .section-title { margin-bottom: 12px; }
+    .mini { opacity: .9; }
+
+    /* 情報ブロック */
+    .info-block {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 16px;
+      padding: 16px;
+    }
   </style>
 </head>
 <body>
-  <!-- ヘッダー -->
+  <!-- ヘッダー（既存ナビと同じ構造に合わせています） -->
   <header class="site-header">
-    <a href="index.html" class="logo">🌊 SEA LIFE HUB</a>
+    <a href="index.html" class="logo" aria-label="SEA LIFE HUB ホームへ">🌊 SEA LIFE HUB</a>
     <nav class="site-nav" aria-label="Primary">
-      <a href="index.html">ホーム</a>
+      <a href="index.html" class="is-active">ホーム</a>
       <div class="dropdown">
         <button class="dropbtn" aria-haspopup="true" aria-expanded="false">メニュー ▾</button>
         <div class="dropdown-content" role="menu">
-          <a href="diagnosis.html" class="is-active" role="menuitem">サーフボード診断</a>
+          <a href="diagnosis.html" role="menuitem">サーフボード診断</a>
           <a href="apparel.html" role="menuitem">アパレル（Tシャツ）</a>
           <a href="stays.html" role="menuitem">海沿い民泊</a>
         </div>
       </div>
-      <a href="index.html#about">このサイトについて</a>
+      <a href="#about">このサイトについて</a>
     </nav>
     <button class="hamburger" aria-label="メニューを開く" aria-controls="mobileNav" aria-expanded="false"><span class="bar"></span></button>
   </header>
@@ -80,359 +82,106 @@
   <div class="mobile-nav-backdrop" id="backdrop"></div>
   <nav class="mobile-nav" id="mobileNav" aria-label="Mobile">
     <div class="mobile-title">🌊 SEA LIFE HUB</div>
-    <a href="index.html">ホーム</a>
-    <a href="diagnosis.html" class="is-active">サーフボード診断</a>
+    <a href="index.html" class="is-active">ホーム</a>
+    <a href="diagnosis.html">サーフボード診断</a>
     <a href="apparel.html">アパレル（Tシャツ）</a>
     <a href="stays.html">海沿い民泊</a>
-    <a href="index.html#about">このサイトについて</a>
+    <a href="#about">このサイトについて</a>
   </nav>
 
-  <!-- 本文 -->
-  <section class="overlay">
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-inner">
+      <h1>海と、心地よく生きる。</h1>
+      <p>
+        SEA LIFE HUB は、海を中心にした暮らしのための小さなポータル。<br />
+        はじめてのサーフボード選びに役立つ診断ツール、オリジナルアパレル、海沿いの滞在情報などを少しずつ集めています。
+      </p>
+      <div class="cta-row">
+        <a class="btn primary" href="diagnosis.html">サーフボード診断へ</a>
+        <a class="btn" href="#features">できることを見る</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 概要セクション -->
+  <section id="features" class="section overlay">
     <main class="container">
-      <h1 class="section-title">サーフボード診断 + 楽天アイテム連携（β）</h1>
+      <h2 class="section-title">今できること</h2>
+      <p class="mini" style="margin-bottom:12px;">まずは3つの入り口から。今後少しずつアップデートしていきます。</p>
 
-      <form id="surfForm">
-        <label>体重（kg）<input id="weight" type="number" min="35" max="120" step="1" placeholder="例）68" required /></label>
-        <label>レベル
-          <select id="level"><option value="beginner">初心者</option><option value="intermediate" selected>中級</option><option value="advanced">上級</option></select>
-        </label>
-        <label>波サイズ
-          <select id="wave"><option value="small">小波（膝〜腹）</option><option value="mid" selected>ミドル（腰〜胸）</option><option value="solid">肩〜頭以上</option></select>
-        </label>
-        <label>スタイル
-          <select id="style"><option value="easy">本数重視</option><option value="maneuver" selected>技・機動性</option><option value="cruise">クルーズ</option></select>
-        </label>
-        <label>体力
-          <select id="fitness"><option value="low">弱め</option><option value="mid" selected>ふつう</option><option value="high">強め</option></select>
-        </label>
-        <label>浮力の好み
-          <select id="floatPref"><option value="more">やや多め</option><option value="neutral" selected>ふつう</option><option value="less">やや少なめ</option></select>
-        </label>
-
-        <label class="span2">検索の厳しさ
-          <select id="strictness">
-            <option value="strict">厳密（条件強め・ノイズ少なめ）</option>
-            <option value="normal" selected>標準（おすすめ）</option>
-            <option value="loose">ゆるめ（ヒット重視）</option>
-          </select>
-        </label>
-
-        <div class="span2 mini">
-          ※楽天カードはAPIの結果、他サイトはリンク検索です。0件の時は「ゆるめ」を試してください。
-        </div>
-
-        <button class="btn primary span2" type="button" onclick="diagnose()">診断する</button>
-      </form>
-
-      <div id="result" class="result"></div>
-      <div id="rakuten" class="container" style="padding-top:0"></div>
-
-      <section class="accordion">
-        <h2 class="section-title">学習モード</h2>
-        <div class="acc-item">
-          <button class="acc-head"><strong>テール形状の基本</strong><span class="chev">▶</span></button>
-          <div class="acc-body">
-            <ul>
-              <li><strong>スクアッシュ</strong>：汎用性が高く切り返し軽快。</li>
-              <li><strong>スワロー</strong>：小波でのグリップとスピード。</li>
-              <li><strong>ラウンド</strong>：ターンがスムーズ。</li>
-              <li><strong>ピン</strong>：サイズある波でのホールド重視。</li>
-            </ul>
+      <div class="feature-grid">
+        <article class="card feature-card">
+          <img src="images/diagnosis.jpg" alt="サーフボード診断">
+          <div class="card-body">
+            <h3>サーフボード診断</h3>
+            <p>体重・レベル・波質などを入力すると、推奨ボリュームやサイズ感、タイプの目安を提案します。外部ECで候補検索も可能。</p>
+            <a class="btn link" href="diagnosis.html">開く</a>
           </div>
-        </div>
-      </section>
+        </article>
+
+        <article class="card feature-card">
+          <img src="images/apparel.jpg" alt="アパレル">
+          <div class="card-body">
+            <h3>アパレル（Tシャツ）</h3>
+            <p>海の空気感をモチーフにしたTシャツを少ロットで展開予定。準備中のため、デザイン案を掲載していきます。</p>
+            <a class="btn link" href="apparel.html">見る</a>
+          </div>
+        </article>
+
+        <article class="card feature-card">
+          <img src="images/stays.jpg" alt="海沿い民泊">
+          <div class="card-body">
+            <h3>海沿い民泊</h3>
+            <p>サーフトリップや週末の気分転換に。海沿いの小さな宿・民泊の紹介ページを拡充予定です。</p>
+            <a class="btn link" href="stays.html">見る</a>
+          </div>
+        </article>
+      </div>
+
+      <div class="info-block" id="about" style="margin-top:20px;">
+        <h3 style="margin:0 0 6px;">このサイトについて</h3>
+        <p class="mini" style="margin:0">
+          管理人はサーフィンが趣味。少人数でのんびり楽しむタイプです。<br />
+          サイトは個人運営のミニサービスとして、無理なく継続することを大切にしています。<br />
+          ご意見や改善のアイデアがあれば、診断ロジックや検索条件に反映していきます。
+        </p>
+      </div>
     </main>
   </section>
 
-  <footer class="site-footer"><p>© <span id="year"></span> SEA LIFE HUB</p></footer>
+  <footer class="site-footer">
+    <p>© <span id="year"></span> SEA LIFE HUB</p>
+  </footer>
 
+  <!-- 既存のナビJS（ドロップダウン/ハンバーガー） -->
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    /* ====== 診断ロジック（前回と同様） ====== */
-    function calcVolume(weight, level, fitness, floatPref){
-      let base = (level==='beginner')?0.50:(level==='advanced')?0.40:0.45;
-      if(fitness==='low') base += 0.03; if(fitness==='high') base -= 0.03;
-      if(floatPref==='more') base += 0.02; if(floatPref==='less') base -= 0.02;
-      base = Math.max(0.35, Math.min(0.60, base));
-      const liters = Math.round(weight * base * 10)/10;
-      const low = Math.round(liters * 0.9 * 10)/10;
-      const high = Math.round(liters * 1.1 * 10)/10;
-      return { liters, range:[low, high], factor: base };
-    }
-
-    function pickBoardType(level, wave, style){
-      if(level==='beginner'){
-        if(style==='maneuver' && wave!=='small') return {type:'オールラウンドショート', why:'上達を見据えつつ取り回しやすい'};
-        if(style==='cruise') return {type:'ロング/ミッド', why:'早いテイクオフでクルーズ'};
-        return {type:'ソフトボード/ファン', why:'安定＆本数確保'};
-      }
-      if(level==='intermediate'){
-        if(style==='maneuver') return (wave==='small')?{type:'フィッシュ/ツイン寄りショート', why:'小波で加速'}:{type:'オールラウンドショート', why:'技と走りのバランス'};
-        if(style==='cruise') return {type:'ミッド/ロング', why:'本数とライン取り'};
-        return {type:'ミッド/ショート(ややボリューム多め)', why:'取り回しと安定の中庸'};
-      }
-      if(style==='cruise') return {type:'ロング', why:'大きいラインでクルーズ'};
-      return (wave==='small')?{type:'ハイボリュームショート/フィッシュ', why:'小波でも推進力'}:{type:'HPショート', why:'機動性・性能重視'};
-    }
-
-    const sizeTable = {
-      'ソフトボード/ファン':   { len:[7.0, 8.0],   wid:[21.0, 23.0], thick:[2.75, 3.3] },
-      'ミッドレングス':        { len:[6.8, 7.6],   wid:[20.5, 22.5], thick:[2.6, 3.0] },
-      'ロング/ミッド':         { len:[9.0, 9.6],   wid:[22.5, 23.5], thick:[2.75, 3.25] },
-      'フィッシュ/ツイン寄りショート': { len:[5.4, 6.0], wid:[19.5, 21.5], thick:[2.4, 2.7] },
-      'オールラウンドショート': { len:[5.83, 6.33], wid:[18.5, 20.5], thick:[2.3, 2.6] },
-      'ミッド/ショート(ややボリューム多め)': { len:[6.0, 6.6], wid:[19.5, 21.5], thick:[2.5, 2.8] },
-      'ハイボリュームショート/フィッシュ': { len:[5.8, 6.4], wid:[19.5, 21.5], thick:[2.5, 2.8] },
-      'HPショート':            { len:[5.8, 6.2],  wid:[18.0, 19.5], thick:[2.25, 2.5] },
-      'ロング':                { len:[9.0, 9.6],  wid:[22.5, 23.5], thick:[2.75, 3.25] }
-    };
-
-    function adjustByWeightAndWave(base, weight, wave){
-      const bucket = (weight<55)? -1 : (weight<=75)? 0 : 1;
-      const waveAdj = (wave==='small')? +0.0 : (wave==='mid')? +0.05 : +0.1;
-      const lerpRange = ([min,max], k)=>[ +(min+(max-min)*k).toFixed(2), +(max+(max-min)*k).toFixed(2) ];
-      const k = (bucket===-1)? -0.05 : (bucket===1)? 0.05 : 0;
-      let len=lerpRange(base.len, k + waveAdj*0.3);
-      let wid=lerpRange(base.wid, k*0.8 + waveAdj*0.2);
-      let thk=lerpRange(base.thick, k + waveAdj*0.4);
-      return {len,wid,thk};
-    }
-
-    /* ===== 曖昧検索リンク（モード別） ===== */
-    const toFeetInches = (val)=>{ const f=Math.floor(val); const i=Math.round((val-f)*12); return {feet:f, inches:i}; };
-    const fmtFeetInches = ({feet,inches}) => `${feet}'${inches}"`;
-    const rangeFeetInches = ([a,b])=>{ const A=toFeetInches(a), B=toFeetInches(b); return `${fmtFeetInches(A)} 〜 ${fmtFeetInches(B)}`; };
-    const rangeCm = ([a,b])=>`${Math.round(a*30.48)}〜${Math.round(b*30.48)}cm`;
-    const rangeInch = ([a,b])=>`${a.toFixed(2)}〜${b.toFixed(2)}"`;
-
-    function lengthPatterns(lenRange, mode){
-      const mid = (lenRange[0] + lenRange[1]) / 2;
-      const {feet,inches} = toFeetInches(mid);
-      const prime = `${feet}'${inches}"`, dot = `${feet}.${String(inches).padStart(2,'0')}`, dash = `${feet}-${inches}`;
-      if(mode==='strict') return [prime, dot, dash];
-      if(mode==='normal') return [prime, dot]; // 少し緩める
-      return []; // loose: 長さを使わない
-    }
-    function literTokens(liters, mode){
-      if(mode==='strict') return [`${liters}L`, `${Math.round(liters-1)}L`, `${Math.round(liters+1)}L`];
-      if(mode==='normal'){ const lo=Math.round(liters*0.85), hi=Math.round(liters*1.15); return [`${liters}L`, `${lo}L`, `${hi}L`]; }
-      return [];
-    }
-    function exclusions(mode){
-      if(mode==='strict') return ' -"フィン" -"リーシュ" -"ケース" -"デッキパッド" -"ワックス"';
-      if(mode==='normal') return ' -"リーシュ" -"ケース"';
-      return '';
-    }
-    function normalizeTypeForQuery(type){
-      return type
-        .replace('ミッド/ショート(ややボリューム多め)','ショート')
-        .replace('ハイボリュームショート/フィッシュ','ショート フィッシュ')
-        .replace('フィッシュ/ツイン寄りショート','ショート フィッシュ ツイン')
-        .replace('ロング/ミッド','ロング ミッド')
-        .replace('オールラウンドショート','ショート オールラウンド');
-    }
-    function buildQuery(type, lenRange, liters, mode){
-      const head = 'サーフボード';
-      const t = normalizeTypeForQuery(type);
-      const lens = lengthPatterns(lenRange, mode);
-      const Ls = literTokens(liters, mode);
-      const excl = exclusions(mode);
-
-      if(mode==='strict'){
-        return [
-          `${head} ${t} ${lens[0]} ${Ls[0]}${excl}`,
-          `${head} ${t} ${lens[1]} ${Ls[0]}${excl}`,
-          `${head} ${t} ${lens[0]} ${Ls[1]}${excl}`,
-        ].filter(Boolean);
-      }
-      if(mode==='normal'){
-        const qs = [];
-        if(lens.length) qs.push(`${head} ${t} ${lens[0]} ${Ls[0]||''} ${excl}`.trim());
-        if(Ls.length)   qs.push(`${head} ${t} ${Ls[0]} ${excl}`.trim());
-        qs.push(`${head} ${t} ${excl}`.trim());
-        return qs;
-      }
-      return [`${head} ${t}`, `${head} ${t} 中古`];
-    }
-    function providerLinksForMode(mode, type, lenRange, liters){
-      const enc = encodeURIComponent, qs=buildQuery(type, lenRange, liters, mode);
-      const qMain=qs[0]||'', qAlt=qs[1]||qs[0]||'';
-      return [
-        { name:'Amazon', urls:[
-          { label:'検索', url:`https://www.amazon.co.jp/s?k=${enc(qMain)}` },
-          { label:'代替', url:`https://www.amazon.co.jp/s?k=${enc(qAlt)}` }
-        ]},
-        { name:'楽天', urls:[
-          { label:'検索', url:`https://search.rakuten.co.jp/search/mall/${enc(qMain)}/?st=t&f=0` },
-          { label:'代替', url:`https://search.rakuten.co.jp/search/mall/${enc(qAlt)}/?st=t&f=0` }
-        ]},
-        { name:'メルカリ（中古）', urls:[
-          { label:'検索', url:`https://www.mercari.com/jp/search/?keyword=${enc(qMain)}` },
-          { label:'代替', url:`https://www.mercari.com/jp/search/?keyword=${enc(qAlt)}` }
-        ]},
-        { name:'ヤフオク（中古）', urls:[
-          { label:'検索', url:`https://auctions.yahoo.co.jp/search/search?p=${enc(qMain)}&n=50&exflg=1` },
-          { label:'代替', url:`https://auctions.yahoo.co.jp/search/search?p=${enc(qAlt)}&n=50&exflg=1` }
-        ]},
-        { name:'Google（広域）', urls:[
-          { label:'検索', url:`https://www.google.com/search?q=${enc(qMain)}` },
-          { label:'代替', url:`https://www.google.com/search?q=${enc(qAlt)}` }
-        ]},
-      ];
-    }
-    function buildAllProviders(type, lenRange, liters){
-      const modes=['strict','normal','loose'], label={strict:'厳密',normal:'標準',loose:'ゆるめ'};
-      return modes.map(m=>({ mode:m, label:label[m], links:providerLinksForMode(m, type, lenRange, liters) }));
-    }
-
-    /* ===== 楽天API を叩いてカードを表示 ===== */
-    function buildRakutenKeyword(type, lenRange, liters, strictness){
-      // ゆるめほどキーワードをシンプルに（ヒット重視）
-      const base = `サーフボード ${normalizeTypeForQuery(type)}`;
-      if(strictness==='loose') return base;
-      if(strictness==='normal') return `${base} ${liters}L`;
-      // strict: 長さ（代表表記）＋ L
-      const mid = (lenRange[0]+lenRange[1])/2;
-      const {feet,inches} = toFeetInches(mid);
-      const len = `${feet}'${inches}"`;
-      return `${base} ${len} ${liters}L`;
-    }
-
-    async function renderRakuten(type, lenRange, liters, strictness){
-      const mount = document.getElementById('rakuten');
-      const keyword = buildRakutenKeyword(type, lenRange, liters, strictness);
-      mount.innerHTML = `
-        <h2 class="section-title">楽天の候補（API経由・β）</h2>
-        <div class="mini" style="margin:-6px 0 10px;">検索語：<code>${keyword}</code></div>
-        <div class="items-grid">
-          ${Array.from({length:6}).map(()=>`<div class="skeleton"></div>`).join('')}
-        </div>
-      `;
-      try{
-        const r = await fetch(`/api/rakuten?keyword=${encodeURIComponent(keyword)}&hits=12`);
-        const { items, count, error } = await r.json();
-        if(error) throw new Error(error);
-        if(!items || !items.length){
-          mount.innerHTML = `
-            <h2 class="section-title">楽天の候補（API経由・β）</h2>
-            <p class="mini">該当アイテムが見つかりませんでした。検索の厳しさを「ゆるめ」にするか、キーワードを調整して再検索してください。</p>
-          `;
-          return;
-        }
-        mount.innerHTML = `
-          <h2 class="section-title">楽天の候補（${count}件）</h2>
-          <div class="items-grid">
-            ${items.map(x=>`
-              <article class="card item-card">
-                <img src="${x.image || 'images/diagnosis.jpg'}" alt="${x.name}">
-                <div class="card-body">
-                  <h3>${x.name}</h3>
-                  <p class="mini">${x.shop}</p>
-                  <p><strong>¥${Number(x.price).toLocaleString()}</strong></p>
-                  <a class="btn link" target="_blank" href="${x.url}">商品ページへ</a>
-                </div>
-              </article>
-            `).join('')}
-          </div>
-        `;
-      }catch(e){
-        mount.innerHTML = `
-          <h2 class="section-title">楽天の候補（API経由・β）</h2>
-          <p class="mini">エラーが発生しました：${String(e)}</p>
-        `;
-      }
-    }
-
-    /* ===== メイン：診断 → リンク + 楽天API ===== */
-    function diagnose(){
-      const weight = Number(document.getElementById('weight').value || 0);
-      const level = document.getElementById('level').value;
-      const wave = document.getElementById('wave').value;
-      const style = document.getElementById('style').value;
-      const fitness = document.getElementById('fitness').value;
-      const floatPref = document.getElementById('floatPref').value;
-      const strictness = document.getElementById('strictness').value;
-
-      if(!weight || weight < 35){ alert('体重(kg)を入力してください'); return; }
-
-      const vol = calcVolume(weight, level, fitness, floatPref);
-      const board = pickBoardType(level, wave, style);
-      const base = sizeTable[board.type] || sizeTable['ミッドレングス'];
-      const sized = adjustByWeightAndWave(base, weight, wave);
-
-      const img = (board.type.includes('ロング')) ? 'images/stays.jpg'
-                : (board.type.includes('ミッド')) ? 'images/diagnosis.jpg'
-                : 'images/apparel.jpg';
-
-      // 3段階リンクセット
-      const bundles = buildAllProviders(board.type, sized.len, vol.liters);
-      const sorted = bundles.sort(b => (b.mode===strictness? -1 : 0));
-      const providersHtml = sorted.map(b => `
-        <div class="prov-card">
-          <h4>${b.label} 検索</h4>
-          <div class="prov-links">
-            ${b.links.map(p => p.urls.map(u => `<a class="btn link" target="_blank" href="${u.url}">${p.name}・${u.label}</a>`).join('')).join('')}
-          </div>
-        </div>
-      `).join('');
-
-      const html = `
-        <div class="grid">
-          <article class="card">
-            <img src="${img}" alt="${board.type}">
-            <div class="card-body">
-              <h3>${board.type}</h3>
-              <p>${board.why}</p>
-              <p class="mini">0件のときは「標準」→「ゆるめ」の順でリンクを試し、下の楽天カードも確認してください。</p>
-            </div>
-          </article>
-
-          <div>
-            <table class="table">
-              <thead><tr><th>項目</th><th>推奨値（目安）</th></tr></thead>
-              <tbody>
-                <tr><td>体重</td><td>${weight} kg</td></tr>
-                <tr><td>推奨ボリューム</td><td><strong>${vol.liters}ℓ</strong>（約${vol.range[0]}〜${vol.range[1]}ℓ） <span class="mini">係数:${vol.factor.toFixed(2)}</span></td></tr>
-                <tr><td>長さ</td><td>${rangeFeetInches(sized.len)} <span class="mini">（${rangeCm(sized.len)}）</span></td></tr>
-                <tr><td>幅</td><td>${rangeInch(sized.wid)}</td></tr>
-                <tr><td>厚み</td><td>${rangeInch(sized.thk)}</td></tr>
-              </tbody>
-            </table>
-
-            <h3 style="margin:12px 0 8px;">候補を探す（曖昧検索リンク）</h3>
-            <div class="providers">${providersHtml}</div>
-          </div>
-        </div>
-      `;
-
-      document.getElementById('result').innerHTML = html;
-      window.scrollTo({ top: document.getElementById('result').offsetTop - 20, behavior: 'smooth' });
-
-      // 楽天API呼び出し（非同期）
-      renderRakuten(board.type, sized.len, vol.liters, strictness);
-    }
-
-    // アコーディオン
-    document.addEventListener('click', (e)=>{
-      const head = e.target.closest('.acc-head'); if(!head) return;
-      head.parentElement.classList.toggle('open');
-    });
-
-    // モバイルメニュー（既存）
     (function(){
       const body=document.body, burger=document.querySelector('.hamburger');
       const mobileNav=document.getElementById('mobileNav'), backdrop=document.getElementById('backdrop');
       const deskDropdown=document.querySelector('.dropdown'), deskBtn=deskDropdown?.querySelector('.dropbtn');
+
       const closeMobile=()=>{ body.classList.remove('nav-open'); burger?.setAttribute('aria-expanded','false'); };
-      burger?.addEventListener('click', (e)=>{ e.stopPropagation(); const willOpen=!body.classList.contains('nav-open'); document.querySelectorAll('.dropdown.open').forEach(d=>d.classList.remove('open')); if(willOpen){ body.classList.add('nav-open'); burger.setAttribute('aria-expanded','true'); } else { closeMobile(); }});
+      burger?.addEventListener('click', (e)=>{ 
+        e.stopPropagation();
+        const willOpen=!body.classList.contains('nav-open');
+        document.querySelectorAll('.dropdown.open').forEach(d=>d.classList.remove('open'));
+        if(willOpen){ body.classList.add('nav-open'); burger.setAttribute('aria-expanded','true'); } else { closeMobile(); }
+      });
       backdrop?.addEventListener('click', closeMobile);
       mobileNav?.addEventListener('click', (e)=>{ if(e.target.tagName==='A') closeMobile(); });
       document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeMobile(); });
+
       if(deskDropdown && deskBtn){
         const closeAll=()=>deskDropdown.classList.remove('open');
-        deskBtn.addEventListener('click', (e)=>{ e.stopPropagation(); const willOpen=!deskDropdown.classList.contains('open'); document.querySelectorAll('.dropdown.open').forEach(d=>d.classList.remove('open')); if(willOpen) deskDropdown.classList.add('open'); else closeAll(); });
+        deskBtn.addEventListener('click', (e)=>{
+          e.stopPropagation();
+          const willOpen=!deskDropdown.classList.contains('open');
+          document.querySelectorAll('.dropdown.open').forEach(d=>d.classList.remove('open'));
+          if(willOpen) deskDropdown.classList.add('open'); else closeAll();
+        });
         document.addEventListener('click', (e)=>{ if(!deskDropdown.contains(e.target)) deskDropdown.classList.remove('open'); });
         document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') deskDropdown.classList.remove('open'); });
       }
