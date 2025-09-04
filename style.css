@@ -156,3 +156,41 @@ body.nav-open .mobile-nav-backdrop{ opacity:1; pointer-events:auto; }
   text-align:center; padding: 26px 18px; background: rgba(0,0,0,0.6);
   border-top: 1px solid rgba(255,255,255,0.12);
 }
+/* Hero for Diagnosis Page */
+.hero-diagnosis {
+  position: relative;
+  min-height: 60vh;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  color: #fff;
+  background: url('images/diagnosis-hero.jpg') center/cover no-repeat;
+}
+
+.hero-diagnosis .hero-overlay {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45); /* 半透明の黒オーバーレイ */
+}
+
+.hero-diagnosis .hero-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
+  padding: 0 16px;
+}
+
+.hero-diagnosis h1 {
+  font-size: clamp(28px, 5vw, 48px);
+  margin-bottom: 16px;
+  color: var(--c-accent, #6ee7ff);
+  text-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+
+.hero-diagnosis p {
+  line-height: 1.7;
+  font-size: 1.1rem;
+  opacity: 0.95;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
