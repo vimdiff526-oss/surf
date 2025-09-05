@@ -2,63 +2,106 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <title>SEA LIFE HUB | 海と暮らしの小さなポータル</title>
+  <title>SEA LIFE HUB | 海を中心とした暮らしの提案</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="海を中心にした暮らしのミニポータル。サーフボード診断、オリジナルTシャツ、海沿い民泊などへアクセス。" />
+  <meta name="description" content="サーフボード診断、アパレル、海沿い民泊の紹介など、海のある暮らしをもっと楽しく。" />
   <link rel="stylesheet" href="style.css" />
   <style>
-    .hero {
-      position: relative;
-      min-height: 68vh;
-      display: grid;
-      place-items: center;
-      text-align: center;
-      background: url('images/hero.jpg') center/cover no-repeat, linear-gradient(135deg,#002a4a,#005f73);
+    /* ====== このページ専用の上書き（白背景・シンプル） ====== */
+    :root{
+      --page-max: 1100px;
     }
-    .hero::after {
-      content:""; position:absolute; inset:0;
-      background: linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.55));
+    body{
+      background:#fff;           /* 白背景 */
+      color:#111;                /* 文字はダーク */
     }
-    .hero-inner {
-      position: relative; 
-      z-index: 1; 
-      max-width: 960px; 
-      padding: 24px;
-      border-radius: 16px;
-      background: rgba(0,0,0,0.45); /* 半透明の黒パネル */
-      color: #fff;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    /* サイトヘッダーは既存style.cssのまま。白背景に馴染むよう影を少し抑える */
+    .site-header{
+      backdrop-filter:none;
+      background:#ffffffcc;
+      border-bottom:1px solid rgba(0,0,0,.06);
     }
-    .hero h1 { 
-      font-size: clamp(28px, 5vw, 56px); 
-      margin: 0 0 .4em; 
-      letter-spacing: .02em; 
-      color: var(--c-accent, #6ee7ff);
+    .header-spacer{ height:72px; }
+
+    /* ヒーロー（シンプル） */
+    .hero-top{
+      background:#f7fafc;
+      padding:56px 16px;
+      border-bottom:1px solid rgba(0,0,0,.06);
     }
-    .hero p  { 
-      font-size: clamp(14px, 2.8vw, 18px); 
-      margin: 0 auto 1.2em; 
-      max-width: 760px; 
-      line-height: 1.6; 
+    .hero-inner{
+      max-width:var(--page-max);
+      margin:0 auto;
+      text-align:center;
     }
-    .cta-row { 
-      display: flex; 
-      gap: 12px; 
-      flex-wrap: wrap; 
-      justify-content: center; 
+    .hero-inner h1{
+      font-size:clamp(24px, 4.5vw, 42px);
+      margin-bottom:10px;
+      color:#0f172a; /* slate-900 */
+      letter-spacing:.02em;
     }
-    .cta-row .btn {
-      display:inline-block; padding:12px 18px; border-radius:9999px;
-      background: rgba(255,255,255,0.16); color:#fff; text-decoration:none;
-      border:1px solid rgba(255,255,255,0.28);
+    .hero-inner p{
+      font-size:clamp(14px, 2.2vw, 18px);
+      color:#334155; /* slate-700 */
+      line-height:1.8;
+      margin:0 auto 16px;
+      max-width:820px;
     }
-    .cta-row .btn.primary { background: var(--c-accent, #6ee7ff); color:#00223a; border:none; }
-    .cta-row .btn:hover { transform: translateY(-1px); }
+    .hero-actions{
+      display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:8px;
+    }
+    .btn.primary{ background:#0ea5e9; color:#fff; }
+    .btn.outline{ border:1px solid #0ea5e9; color:#0ea5e9; background:#fff; }
+
+    /* セクション共通 */
+    .container{ max-width:var(--page-max); margin:0 auto; padding:28px 16px; }
+    .section-title{
+      font-size:clamp(18px, 2.8vw, 24px);
+      color:#0f172a; margin:0 0 12px;
+    }
+    .section-desc{ color:#475569; margin:0 0 16px; }
+
+    /* 関連記事カード */
+    .articles{
+      display:grid; gap:16px; grid-template-columns:repeat(2, 1fr);
+    }
+    @media (max-width:720px){ .articles{ grid-template-columns:1fr; } }
+    .article-card{
+      border:1px solid rgba(0,0,0,.08);
+      border-radius:14px; padding:16px; background:#fff;
+      transition:transform .18s ease, box-shadow .18s ease;
+    }
+    .article-card:hover{
+      transform:translateY(-2px);
+      box-shadow:0 8px 24px rgba(0,0,0,.06);
+    }
+    .article-meta{
+      display:flex; gap:8px; align-items:center; margin-bottom:6px; color:#64748b; font-size:.9rem;
+    }
+    .article-title{
+      font-weight:700; color:#0f172a; line-height:1.5; margin:6px 0 8px;
+      font-size:clamp(16px, 2.5vw, 18px);
+    }
+    .article-link{
+      display:inline-flex; align-items:center; gap:6px;
+      padding:8px 12px; border-radius:10px;
+      background:#0ea5e9; color:#fff; text-decoration:none; font-weight:600;
+    }
+    .article-link:hover{ opacity:.92; }
+    .badge{
+      display:inline-block; padding:2px 8px; border-radius:9999px; font-size:.8rem; background:#e2e8f0; color:#0f172a;
+    }
+
+    /* フッターを白背景用に微調整 */
+    .site-footer{
+      background:#f8fafc; color:#475569; border-top:1px solid rgba(0,0,0,.06);
+    }
   </style>
 </head>
 <body>
+  <!-- ヘッダー（既存ナビと統一） -->
   <header class="site-header">
-    <a href="index.html" class="logo" aria-label="SEA LIFE HUB ホームへ">🌊 SEA LIFE HUB</a>
+    <a href="index.html" class="logo">🌊 SEA LIFE HUB</a>
     <nav class="site-nav" aria-label="Primary">
       <a href="index.html" class="is-active">ホーム</a>
       <div class="dropdown">
@@ -75,27 +118,102 @@
   </header>
   <div class="header-spacer"></div>
 
-  <!-- HERO -->
-  <section class="hero">
+  <!-- モバイルナビ -->
+  <div class="mobile-nav-backdrop" id="backdrop"></div>
+  <nav class="mobile-nav" id="mobileNav" aria-label="Mobile">
+    <div class="mobile-title">🌊 SEA LIFE HUB</div>
+    <a href="index.html" class="is-active">ホーム</a>
+    <a href="diagnosis.html">サーフボード診断</a>
+    <a href="apparel.html">アパレル（Tシャツ）</a>
+    <a href="stays.html">海沿い民泊</a>
+    <a href="#about">このサイトについて</a>
+  </nav>
+
+  <!-- シンプル・ヒーロー -->
+  <section class="hero-top">
     <div class="hero-inner">
-      <h1>海と、心地よく生きる。</h1>
+      <h1>海のある暮らしを、もっと自由に。</h1>
       <p>
-        SEA LIFE HUB は、海を中心にした暮らしのための小さなポータル。<br />
-        はじめてのサーフボード選びに役立つ診断ツール、オリジナルアパレル、海沿いの滞在情報などを少しずつ集めています。
+        SEA LIFE HUB は、サーフボード診断やアパレル、海沿い民泊の紹介など、<br>
+        ちょうどいい海ライフの入口をまとめたミニポータルです。
       </p>
-      <div class="cta-row">
-        <a class="btn primary" href="diagnosis.html">サーフボード診断へ</a>
-        <a class="btn" href="#features">できることを見る</a>
+      <div class="hero-actions">
+        <a class="btn primary" href="diagnosis.html">サーフボードを診断する</a>
+        <a class="btn outline" href="#related">関連記事を読む</a>
       </div>
     </div>
   </section>
 
-  <!-- ここから下は既存のコンテンツをそのまま -->
-  <section id="features" class="section overlay">
-    <main class="container">
-      <!-- ... 既存の内容 ... -->
-    </main>
-  </section>
+  <!-- コンテンツ -->
+  <main class="container">
+    <section id="about">
+      <h2 class="section-title">このサイトについて</h2>
+      <p class="section-desc">
+        初心者〜中級者の方向けに、自然な言葉で選べる「診断」を中心に、<br>
+        Tシャツなどのアパレルや、海沿いの民泊などの情報も拡張予定です。
+      </p>
+    </section>
+
+    <!-- 関連記事 4件（THE SURF NEWSへの外部リンク） -->
+    <section id="related" aria-labelledby="related-title">
+      <h2 id="related-title" class="section-title">関連記事（THE SURF NEWS）</h2>
+      <p class="section-desc">参考になる最新記事のリンク集です。タイトルを押すと記事元（外部サイト）へ移動します。</p>
+
+      <div class="articles">
+        <!-- 1 -->
+        <article class="article-card">
+          <div class="article-meta">
+            <span class="badge">News</span>
+            <time datetime="2025-02-26">2025/02/26</time>
+          </div>
+          <h3 class="article-title">
+            五十嵐カノアがゴルフ用品のテーラーメイドと契約
+          </h3>
+          <a class="article-link" href="https://www.surfnews.jp/news_topics/news/85107/" target="_blank" rel="noopener">記事を読む</a>
+          <div class="mini" style="margin-top:8px;">出典：THE SURF NEWS</div>
+        </article>
+
+        <!-- 2 -->
+        <article class="article-card">
+          <div class="article-meta">
+            <span class="badge">Wave Info</span>
+            <time datetime="2025-02-21">2025/02/21</time>
+          </div>
+          <h3 class="article-title">
+            週末はどこに波がある？TSN週間波予想（2月21日)
+          </h3>
+          <a class="article-link" href="https://www.surfnews.jp/more/wave_info/85055/" target="_blank" rel="noopener">記事を読む</a>
+          <div class="mini" style="margin-top:8px;">出典：THE SURF NEWS</div>
+        </article>
+
+        <!-- 3 -->
+        <article class="article-card">
+          <div class="article-meta">
+            <span class="badge">News</span>
+            <time datetime="2025-02-14">2025/02/14</time>
+          </div>
+          <h3 class="article-title">
+            日本語字幕付き！デイブ・ラストヴィッチ『The Electric Acid Surfboard Test』全国上映
+          </h3>
+          <a class="article-link" href="https://www.surfnews.jp/news_topics/news/84684/" target="_blank" rel="noopener">記事を読む</a>
+          <div class="mini" style="margin-top:8px;">出典：THE SURF NEWS</div>
+        </article>
+
+        <!-- 4 -->
+        <article class="article-card">
+          <div class="article-meta">
+            <span class="badge">Press</span>
+            <time datetime="2025-02-07">2025/02/07</time>
+          </div>
+          <h3 class="article-title">
+            『SURFIN’LIFE』3月号 真冬のサーフスキル強化計画2025
+          </h3>
+          <a class="article-link" href="https://www.surfnews.jp/more/press_release/84462/" target="_blank" rel="noopener">記事を読む</a>
+          <div class="mini" style="margin-top:8px;">出典：THE SURF NEWS</div>
+        </article>
+      </div>
+    </section>
+  </main>
 
   <footer class="site-footer">
     <p>© <span id="year"></span> SEA LIFE HUB</p>
