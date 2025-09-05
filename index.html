@@ -27,21 +27,39 @@
     .section-title{ font-size:clamp(18px, 2.8vw, 24px); color:#0f172a; margin:0 0 12px; }
     .section-desc{ color:#475569; margin:0 0 16px; }
 
-    /* 関連記事カード（画像つき） */
-    .articles{ display:grid; gap:16px; grid-template-columns:repeat(2, 1fr); }
-    @media (max-width:720px){ .articles{ grid-template-columns:1fr; } }
-    .article-card{ border:1px solid rgba(0,0,0,.08); border-radius:14px; overflow:hidden; background:#fff;
-      transition:transform .18s ease, box-shadow .18s ease; display:flex; flex-direction:column; }
-    .article-card:hover{ transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,0,0,.06); }
+    /* 関連記事カード（4カラム小さめ） */
+    .articles{ display:grid; gap:14px; grid-template-columns:repeat(4, 1fr); }
+    @media (max-width:1024px){ .articles{ grid-template-columns:repeat(3, 1fr);} }
+    @media (max-width:768px){ .articles{ grid-template-columns:repeat(2, 1fr);} }
+    @media (max-width:520px){ .articles{ grid-template-columns:1fr;} }
+
+    .article-card{
+      border:1px solid rgba(0,0,0,.08); border-radius:12px; overflow:hidden; background:#fff;
+      transition:transform .18s ease, box-shadow .18s ease; display:flex; flex-direction:column;
+    }
+    .article-card:hover{ transform:translateY(-2px); box-shadow:0 8px 22px rgba(0,0,0,.06); }
+
     .article-img-wrap{ aspect-ratio: 16/9; background:#e2e8f0; overflow:hidden; }
     .article-img{ width:100%; height:100%; object-fit:cover; display:block; }
-    .article-body{ padding:14px; display:flex; flex-direction:column; gap:8px; }
-    .article-meta{ display:flex; gap:8px; align-items:center; color:#64748b; font-size:.9rem; }
-    .badge{ display:inline-block; padding:2px 8px; border-radius:9999px; font-size:.8rem; background:#e2e8f0; color:#0f172a; }
-    .article-title{ font-weight:700; color:#0f172a; line-height:1.5; font-size:clamp(16px, 2.5vw, 18px); }
+
+    .article-body{ padding:10px 12px; display:flex; flex-direction:column; gap:6px; }
+    .article-meta{ display:flex; gap:8px; align-items:center; color:#64748b; font-size:.82rem; }
+    .badge{ display:inline-block; padding:2px 8px; border-radius:9999px; font-size:.72rem; background:#e2e8f0; color:#0f172a; }
+    .article-title{ font-weight:700; color:#0f172a; line-height:1.45; font-size:clamp(14px, 2.2vw, 16px); min-height:2.8em; }
     .article-actions{ margin-top:auto; }
-    .article-link{ display:inline-flex; align-items:center; gap:6px; padding:8px 12px; border-radius:10px; background:#0ea5e9; color:#fff; text-decoration:none; font-weight:600; }
+    .article-link{ display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:10px; background:#0ea5e9; color:#fff; text-decoration:none; font-weight:600; font-size:.9rem; }
     .article-link:hover{ opacity:.92; }
+
+    /* スケルトン */
+    .skeleton{
+      background:linear-gradient(90deg, #eceff3, #f5f7fa, #eceff3);
+      background-size:200% 100%; animation:shine 1.1s linear infinite;
+    }
+    @keyframes shine{0%{background-position:200% 0}100%{background-position:-200% 0}}
+    .sk-card{ border:1px solid rgba(0,0,0,.08); border-radius:12px; overflow:hidden; }
+    .sk-img{ aspect-ratio:16/9; }
+    .sk-body{ padding:10px 12px; display:grid; gap:8px; }
+    .sk-line{ height:12px; border-radius:6px; }
 
     /* フッター（白背景用） */
     .site-footer{ background:#f8fafc; color:#475569; border-top:1px solid rgba(0,0,0,.06); }
@@ -61,7 +79,7 @@
           <a href="stays.html" role="menuitem">海沿い民泊</a>
         </div>
       </div>
-      <a href="#about">このサイトについて</a>
+      <a href="#related">関連記事</a>
     </nav>
     <button class="hamburger" aria-label="メニューを開く" aria-controls="mobileNav" aria-expanded="false"><span class="bar"></span></button>
   </header>
@@ -75,7 +93,7 @@
     <a href="diagnosis.html">サーフボード診断</a>
     <a href="apparel.html">アパレル（Tシャツ）</a>
     <a href="stays.html">海沿い民泊</a>
-    <a href="#about">このサイトについて</a>
+    <a href="#related">関連記事</a>
   </nav>
 
   <!-- シンプル・ヒーロー -->
@@ -95,91 +113,47 @@
 
   <!-- コンテンツ -->
   <main class="container">
-    <section id="about">
-      <h2 class="section-title">このサイトについて</h2>
-      <p class="section-desc">
-        初心者〜中級者の方向けに、自然な言葉で選べる「診断」を中心に、<br>
-        Tシャツなどのアパレルや、海沿いの民泊などの情報も拡張予定です。
-      </p>
-    </section>
 
-    <!-- 関連記事 4件（THE SURF NEWS・画像つき） -->
+    <!-- 関連記事（THE SURF NEWS） -->
     <section id="related" aria-labelledby="related-title">
       <h2 id="related-title" class="section-title">関連記事（THE SURF NEWS）</h2>
-      <p class="section-desc">参考になる最新記事のリンク集です。カードを押すと記事元（外部サイト）へ移動します。</p>
+      <p class="section-desc">最新の公開記事から4件を自動取得して表示します（サムネ・タイトル・リンクのみ）。</p>
 
-      <div class="articles">
-        <!-- 1: 五十嵐カノア × テーラーメイド -->
-        <article class="article-card">
-          <a class="article-img-wrap" href="https://www.surfnews.jp/news_topics/news/85107/" target="_blank" rel="noopener">
-            <img class="article-img" src="https://www.surfnews.jp/wp-content/uploads/2025/02/25SS100579-683x1024.jpg" alt="五十嵐カノアがテーラーメイドと契約" />
-          </a>
-          <div class="article-body">
-            <div class="article-meta">
-              <span class="badge">News</span>
-              <time datetime="2025-02-26">2025/02/26</time>
-            </div>
-            <h3 class="article-title">五十嵐カノアがゴルフ用品のテーラーメイドと契約</h3>
-            <div class="article-actions">
-              <a class="article-link" href="https://www.surfnews.jp/news_topics/news/85107/" target="_blank" rel="noopener">記事を読む</a>
-            </div>
-            <div class="mini" style="margin-top:6px;">出典：THE SURF NEWS</div>
+      <!-- スケルトン（初期表示） -->
+      <div id="articles" class="articles" aria-live="polite">
+        <div class="sk-card">
+          <div class="sk-img skeleton"></div>
+          <div class="sk-body">
+            <div class="sk-line skeleton"></div>
+            <div class="sk-line skeleton"></div>
           </div>
-        </article>
+        </div>
+        <div class="sk-card">
+          <div class="sk-img skeleton"></div>
+          <div class="sk-body">
+            <div class="sk-line skeleton"></div>
+            <div class="sk-line skeleton"></div>
+          </div>
+        </div>
+        <div class="sk-card">
+          <div class="sk-img skeleton"></div>
+          <div class="sk-body">
+            <div class="sk-line skeleton"></div>
+            <div class="sk-line skeleton"></div>
+          </div>
+        </div>
+        <div class="sk-card">
+          <div class="sk-img skeleton"></div>
+          <div class="sk-body">
+            <div class="sk-line skeleton"></div>
+            <div class="sk-line skeleton"></div>
+          </div>
+        </div>
+      </div>
 
-        <!-- 2: 週間波予想（2月21日） -->
-        <article class="article-card">
-          <a class="article-img-wrap" href="https://www.surfnews.jp/more/wave_info/85055/" target="_blank" rel="noopener">
-            <img class="article-img" src="https://www.surfnews.jp/wp-content/uploads/2025/02/fsas48_2020250220190101_0_Z__C_010000_20250220120000_MET_CHT_JCIfsas48_Rjp_JCP600x581_JRcolor_Tjmahp_image-e1740103260362.png" alt="TSN週間波予想（2月21日)" />
-          </a>
-          <div class="article-body">
-            <div class="article-meta">
-              <span class="badge">Wave Info</span>
-              <time datetime="2025-02-21">2025/02/21</time>
-            </div>
-            <h3 class="article-title">週末はどこに波がある？TSN週間波予想（2月21日)</h3>
-            <div class="article-actions">
-              <a class="article-link" href="https://www.surfnews.jp/more/wave_info/85055/" target="_blank" rel="noopener">記事を読む</a>
-            </div>
-            <div class="mini" style="margin-top:6px;">出典：THE SURF NEWS</div>
-          </div>
-        </article>
-
-        <!-- 3: EAST（デイブ・ラストヴィッチ）上映 -->
-        <article class="article-card">
-          <a class="article-img-wrap" href="https://www.surfnews.jp/news_topics/news/84684/" target="_blank" rel="noopener">
-            <img class="article-img" src="https://www.surfnews.jp/wp-content/uploads/2025/02/9b694a4f8db63430a73a31c65bfbe374-819x1024.jpg" alt="デイブ・ラストヴィッチ『The Electric Acid Surfboard Test』上映" />
-          </a>
-          <div class="article-body">
-            <div class="article-meta">
-              <span class="badge">News</span>
-              <time datetime="2025-02-14">2025/02/14</time>
-            </div>
-            <h3 class="article-title">日本語字幕付き！デイブ・ラストヴィッチ『The Electric Acid Surfboard Test』全国上映</h3>
-            <div class="article-actions">
-              <a class="article-link" href="https://www.surfnews.jp/news_topics/news/84684/" target="_blank" rel="noopener">記事を読む</a>
-            </div>
-            <div class="mini" style="margin-top:6px;">出典：THE SURF NEWS</div>
-          </div>
-        </article>
-
-        <!-- 4: SURFIN’LIFE 3月号 -->
-        <article class="article-card">
-          <a class="article-img-wrap" href="https://www.surfnews.jp/more/press_release/84462/" target="_blank" rel="noopener">
-            <img class="article-img" src="https://www.surfnews.jp/wp-content/uploads/2025/02/202527life8.jpg" alt="SURFIN’LIFE 3月号 真冬のサーフスキル強化計画2025" />
-          </a>
-          <div class="article-body">
-            <div class="article-meta">
-              <span class="badge">Press</span>
-              <time datetime="2025-02-07">2025/02/07</time>
-            </div>
-            <h3 class="article-title">『SURFIN’LIFE』3月号 真冬のサーフスキル強化計画2025</h3>
-            <div class="article-actions">
-              <a class="article-link" href="https://www.surfnews.jp/more/press_release/84462/" target="_blank" rel="noopener">記事を読む</a>
-            </div>
-            <div class="mini" style="margin-top:6px;">出典：THE SURF NEWS</div>
-          </div>
-        </article>
+      <div style="margin-top:12px; display:flex; gap:10px; align-items:center;">
+        <button id="refresh" class="btn outline" type="button">最新を再取得</button>
+        <small style="color:#64748b;">※サーバー側で最大30分キャッシュします。</small>
       </div>
     </section>
   </main>
@@ -190,6 +164,56 @@
 
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
+
+    // ===== 記事の取得＆描画 =====
+    const API = `${location.origin}/api/surfnews?limit=4`;
+
+    function articleCard(item){
+      const date = new Date(item.date);
+      const y = date.getFullYear();
+      const m = String(date.getMonth()+1).padStart(2,'0');
+      const d = String(date.getDate()).padStart(2,'0');
+      const badge = item.category || 'News';
+      const img = item.image || 'images/diagnosis.jpg';
+      return `
+        <article class="article-card">
+          <a class="article-img-wrap" href="${item.link}" target="_blank" rel="noopener">
+            <img class="article-img" src="${img}" alt="${item.title.replace(/"/g,'&quot;')}" loading="lazy" />
+          </a>
+          <div class="article-body">
+            <div class="article-meta">
+              <span class="badge">${badge}</span>
+              <time datetime="${item.date}">${y}/${m}/${d}</time>
+            </div>
+            <h3 class="article-title">${item.title}</h3>
+            <div class="article-actions">
+              <a class="article-link" href="${item.link}" target="_blank" rel="noopener">記事を読む</a>
+            </div>
+            <div class="mini" style="margin-top:4px;color:#64748b;">出典：THE SURF NEWS</div>
+          </div>
+        </article>
+      `;
+    }
+
+    async function loadArticles(){
+      const mount = document.getElementById('articles');
+      try{
+        const res = await fetch(API, { cache: 'no-store' });
+        if(!res.ok) throw new Error('HTTP '+res.status);
+        const data = await res.json();
+        if(!data.ok || !data.items?.length) throw new Error(data.error || 'no items');
+        mount.innerHTML = data.items.map(articleCard).join('');
+      }catch(e){
+        mount.innerHTML = `
+          <div style="grid-column:1/-1; padding:12px; border:1px solid rgba(255,0,0,.25); border-radius:12px; background:rgba(255,0,0,.06);">
+            最新記事の取得に失敗しました。時間をおいて再読み込みしてください。<br>
+            <code style="font-size:.85rem; opacity:.8;">${String(e)}</code>
+          </div>`;
+      }
+    }
+
+    document.getElementById('refresh').addEventListener('click', loadArticles);
+    window.addEventListener('load', loadArticles);
   </script>
 </body>
 </html>
