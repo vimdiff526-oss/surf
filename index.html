@@ -5,10 +5,9 @@
   <title>SEA LIFE HUB | 海と暮らしの小さなポータル</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="海を中心にした暮らしのミニポータル。サーフボード診断、オリジナルTシャツ、海沿い民泊などへアクセス。" />
-  <!-- 既存の style.css を利用（サイト全体の共通スタイル） -->
   <link rel="stylesheet" href="style.css" />
   <style>
-    /* --- TOP専用の軽い追加スタイル --- */
+    /* --- HERO（背景画像 + 全体の薄い暗幕） --- */
     .hero {
       position: relative;
       min-height: 68vh;
@@ -20,13 +19,24 @@
     }
     .hero::after{
       content:""; position:absolute; inset:0;
-      background: linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.55));
+      background: linear-gradient(180deg, rgba(0,0,0,.32), rgba(0,0,0,.55)); /* 全体の透明黒 */
     }
-    .hero-inner {
-      position: relative; z-index: 1; max-width: 960px; padding: 0 16px;
+    .hero-inner { position: relative; z-index: 1; max-width: 960px; padding: 0 16px; }
+
+    /* --- 半透明のパネル（ここで“海と、心地よく生きる。”を囲う） --- */
+    .hero-panel{
+      display: inline-block;
+      background: rgba(0,0,0,0.36);        /* 半透明 */
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 18px;
+      padding: clamp(16px, 4vw, 28px) clamp(16px, 4vw, 32px);
+      backdrop-filter: blur(6px);          /* 背景ぼかし */
+      -webkit-backdrop-filter: blur(6px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
     }
+
     .hero h1 { font-size: clamp(28px, 5vw, 56px); margin: 0 0 .4em; letter-spacing: .02em; }
-    .hero p  { font-size: clamp(14px, 2.8vw, 18px); opacity: .95; margin: 0 auto 1.2em; max-width: 760px; }
+    .hero p  { font-size: clamp(14px, 2.8vw, 18px); opacity: .96; margin: 0 auto 1.1em; max-width: 760px; }
 
     .cta-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
     .cta-row .btn {
@@ -37,10 +47,8 @@
     .cta-row .btn.primary { background: var(--c-accent, #6ee7ff); color:#00223a; border:none; }
     .cta-row .btn:hover { transform: translateY(-1px); }
 
-    .feature-grid {
-      display:grid; gap:16px;
-      grid-template-columns: repeat(3, 1fr);
-    }
+    /* --- 下層カードやセクション --- */
+    .feature-grid { display:grid; gap:16px; grid-template-columns: repeat(3, 1fr); }
     @media (max-width: 960px){ .feature-grid{ grid-template-columns: repeat(2, 1fr);} }
     @media (max-width: 640px){ .feature-grid{ grid-template-columns: 1fr;} }
 
@@ -49,7 +57,6 @@
     .section-title { margin-bottom: 12px; }
     .mini { opacity: .9; }
 
-    /* 情報ブロック */
     .info-block {
       background: rgba(255,255,255,0.06);
       border: 1px solid rgba(255,255,255,0.12);
@@ -59,7 +66,7 @@
   </style>
 </head>
 <body>
-  <!-- ヘッダー（既存ナビと同じ構造に合わせています） -->
+  <!-- ヘッダー -->
   <header class="site-header">
     <a href="index.html" class="logo" aria-label="SEA LIFE HUB ホームへ">🌊 SEA LIFE HUB</a>
     <nav class="site-nav" aria-label="Primary">
@@ -89,17 +96,19 @@
     <a href="#about">このサイトについて</a>
   </nav>
 
-  <!-- HERO -->
+  <!-- HERO（半透明パネル化） -->
   <section class="hero">
     <div class="hero-inner">
-      <h1>海と、心地よく生きる。</h1>
-      <p>
-        SEA LIFE HUB は、海を中心にした暮らしのための小さなポータル。<br />
-        はじめてのサーフボード選びに役立つ診断ツール、オリジナルアパレル、海沿いの滞在情報などを少しずつ集めています。
-      </p>
-      <div class="cta-row">
-        <a class="btn primary" href="diagnosis.html">サーフボード診断へ</a>
-        <a class="btn" href="#features">できることを見る</a>
+      <div class="hero-panel">
+        <h1>海と、心地よく生きる。</h1>
+        <p>
+          SEA LIFE HUB は、海を中心にした暮らしのための小さなポータル。<br />
+          はじめてのサーフボード選びに役立つ診断ツール、オリジナルアパレル、海沿いの滞在情報などを少しずつ集めています。
+        </p>
+        <div class="cta-row">
+          <a class="btn primary" href="diagnosis.html">サーフボード診断へ</a>
+          <a class="btn" href="#features">できることを見る</a>
+        </div>
       </div>
     </div>
   </section>
@@ -115,7 +124,7 @@
           <img src="images/diagnosis.jpg" alt="サーフボード診断">
           <div class="card-body">
             <h3>サーフボード診断</h3>
-            <p>体重・レベル・波質などを入力すると、推奨ボリュームやサイズ感、タイプの目安を提案します。外部ECで候補検索も可能。</p>
+            <p>体重・波の傾向・スタイルから推奨ボリュームとサイズ感を提案。外部ECで候補検索も可能。</p>
             <a class="btn link" href="diagnosis.html">開く</a>
           </div>
         </article>
@@ -124,7 +133,7 @@
           <img src="images/apparel.jpg" alt="アパレル">
           <div class="card-body">
             <h3>アパレル（Tシャツ）</h3>
-            <p>海の空気感をモチーフにしたTシャツを少ロットで展開予定。準備中のため、デザイン案を掲載していきます。</p>
+            <p>海の空気感をモチーフにしたTシャツを少ロットで展開予定。準備中のため、デザイン案を掲載。</p>
             <a class="btn link" href="apparel.html">見る</a>
           </div>
         </article>
@@ -144,7 +153,7 @@
         <p class="mini" style="margin:0">
           管理人はサーフィンが趣味。少人数でのんびり楽しむタイプです。<br />
           サイトは個人運営のミニサービスとして、無理なく継続することを大切にしています。<br />
-          ご意見や改善のアイデアがあれば、診断ロジックや検索条件に反映していきます。
+          改善アイデアは随時歓迎。診断ロジックや検索条件に反映していきます。
         </p>
       </div>
     </main>
@@ -154,7 +163,7 @@
     <p>© <span id="year"></span> SEA LIFE HUB</p>
   </footer>
 
-  <!-- 既存のナビJS（ドロップダウン/ハンバーガー） -->
+  <!-- ナビの挙動（ドロップダウン/ハンバーガー） -->
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
 
