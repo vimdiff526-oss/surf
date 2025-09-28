@@ -32,13 +32,13 @@
     .toc li{margin:6px 0}
 
     /* comparison table */
-    .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:14px}
-    table{width:100%;border-collapse:collapse;min-width:880px}
-    th,td{padding:12px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+    .table-wrap{overflow-x:auto; overflow-y:visible; border:1px solid var(--line); border-radius:14px}
+    table{width:100%;border-collapse:collapse;min-width:760px}
+    th,td{padding:12px 10px;border-bottom:1px solid var(--line);vertical-align:top; word-break:break-word; overflow-wrap:anywhere}
     th{background:#f8fafc;text-align:left;white-space:nowrap;position:sticky;top:56px;z-index:1}
     tbody tr:hover{background:#fafafa}
     .chip{display:inline-block;background:var(--chip);border:1px solid var(--line);padding:2px 8px;border-radius:999px;font-size:12px;margin-right:6px}
-    .btns{display:flex;gap:8px;flex-wrap:wrap}
+    .btns{display:flex;gap:8px;flex-wrap:wrap; min-width:200px}
     .btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#fff;padding:8px 10px;border-radius:10px;font-weight:600}
     .btn[data-a]{border-color:#ffd000;background:#fff8dd}
     .btn[data-r]{border-color:#e11d48;background:#fff1f2}
@@ -59,6 +59,8 @@
     footer{border-top:1px solid var(--line);margin-top:32px}
     .foot{display:flex;justify-content:space-between;gap:12px;padding:24px 0;color:var(--muted);font-size:14px}
     .breadcrumbs{font-size:13px;color:var(--muted);margin:8px 0 16px}
+    .meta{font-size:12px}
+    code{white-space:normal}
   </style>
   
   <!-- JSON-LD: パンくず / 記事 / FAQ -->
