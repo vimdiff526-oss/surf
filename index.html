@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Surf Nav｜サーフコンテンツのポータル</title>
+  <meta name="description" content="サーフボード診断、ミニゲーム、ステッカー配布など、サーファー向けの楽しい・役立つコンテンツをひとまとめ。初心者にもやさしい入口です。" />
+  <link rel="canonical" href="https://example.com/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Surf Nav｜サーフコンテンツのポータル" />
+  <meta property="og:description" content="サーフボード診断、ミニゲーム、ステッカー配布など、サーファー向けの楽しい・役立つコンテンツをひとまとめ。" />
+  <meta property="og:url" content="https://example.com/" />
+  <meta property="og:image" content="https://example.com/og/surf-home.jpg" />
+  <meta name="theme-color" content="#0ea5e9" />
+  <style>
+    :root{
+      --bg:#ffffff; --fg:#0f172a; --muted:#475569; --line:#e2e8f0; --brand:#0ea5e9; --sea1:#0ea5e9; --sea2:#22d3ee; --sea3:#a7f3d0;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0; color:var(--fg); background:linear-gradient(180deg, #f8ffff 0%, #ffffff 40%); font-family:system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", sans-serif; line-height:1.7}
+    a{color:var(--brand); text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    /* Header (Glass) */
+    header{position:sticky; top:0; z-index:50; backdrop-filter:saturate(140%) blur(8px); background:#ffffffb3; border-bottom:1px solid var(--line)}
+    .wrap{max-width:1100px; margin:0 auto; padding:0 16px}
+    .nav{height:60px; display:flex; align-items:center; justify-content:space-between}
+    .logo{display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:0.2px}
+    .logo .wave{width:28px; height:28px}
+
+    /* Hero */
+    .hero{position:relative; padding:48px 0 24px}
+    .hero .inner{display:grid; grid-template-columns:1.2fr 0.8fr; align-items:center; gap:24px}
+    .hero h1{font-size:clamp(28px,4vw,44px); line-height:1.15; margin:8px 0}
+    .hero p{color:var(--muted); margin:8px 0 0}
+    .cta{margin-top:16px; display:flex; flex-wrap:wrap; gap:10px}
+    .btn{display:inline-flex; align-items:center; gap:8px; background:#fff; border:1px solid var(--line); border-radius:999px; padding:10px 14px; font-weight:700}
+    .btn--primary{background:linear-gradient(135deg, var(--sea1), var(--sea2)); color:#003; border-color:transparent}
+    .btn svg{width:18px; height:18px}
+
+    /* Decorative waves */
+    .ocean{position:absolute; inset:auto 0 -1px 0; height:120px; pointer-events:none}
+    .ocean svg{width:100%; height:100%}
+
+    /* Grid cards */
+    .section{padding:28px 0}
+    .section h2{font-size:clamp(20px,2.4vw,28px); margin:0 0 12px}
+    .grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px}
+    .card{border:1px solid var(--line); border-radius:16px; background:#fff; overflow:hidden; display:flex; flex-direction:column}
+    .card .thumb{height:140px; background:linear-gradient(135deg, var(--sea2), var(--sea3))}
+    .card:nth-child(2) .thumb{background:linear-gradient(135deg, #60a5fa, #93c5fd)}
+    .card:nth-child(3) .thumb{background:linear-gradient(135deg, #34d399, #a7f3d0)}
+    .card .body{padding:14px}
+    .card h3{margin:0 0 6px; font-size:18px}
+    .card p{margin:0; color:var(--muted); font-size:14px}
+    .card .actions{display:flex; gap:8px; padding:12px 14px; margin-top:auto}
+    .chip{display:inline-flex; align-items:center; gap:6px; border:1px solid var(--line); background:#fff; border-radius:999px; padding:6px 10px; font-weight:700}
+
+    /* Footer */
+    footer{border-top:1px solid var(--line); margin-top:24px}
+    .foot{display:flex; justify-content:space-between; align-items:center; gap:12px; color:var(--muted); font-size:14px; padding:18px 0}
+
+    /* Responsive */
+    @media (max-width:900px){
+      .hero .inner{grid-template-columns:1fr}
+    }
+    @media (max-width:760px){
+      .grid{grid-template-columns:1fr}
+      .hero{padding-top:28px}
+    }
+  </style>
+
+  <!-- JSON-LD: Site + Search -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"WebSite",
+    "name":"Surf Nav",
+    "url":"https://example.com/",
+    "potentialAction":{
+      "@type":"SearchAction",
+      "target":"https://example.com/search?q={q}",
+      "query-input":"required name=q"
+    }
+  }
+  </script>
+</head>
+<body>
+  <header>
+    <div class="wrap nav">
+      <div class="logo" aria-label="Surf Nav ホーム">
+        <svg class="wave" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 16c4 0 4-8 8-8s4 8 8 8 4-8 8-8"/></svg>
+        <span>Surf Nav</span>
+      </div>
+      <nav>
+        <a href="#apps">コンテンツ</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero -->
+    <section class="hero">
+      <div class="wrap inner">
+        <div>
+          <h1>海を感じる、シンプルなサーフポータル</h1>
+          <p>サーフボード選びの指針、遊べるミニゲーム、ボードを“盛る”ステッカー配布。<br>初心者にもわかりやすく、必要なものへすぐ届く。</p>
+          <div class="cta">
+            <a class="btn btn--primary" href="./サーフボード選び.html" aria-label="サーフボード選びへ">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              サーフボード選び
+            </a>
+            <a class="btn" href="#apps" aria-label="コンテンツ一覧へ">
+              一覧を見る
+            </a>
+          </div>
+        </div>
+        <div aria-hidden="true">
+          <!-- Decorative sea panel -->
+          <div style="aspect-ratio:4/3; border-radius:18px; border:1px solid var(--line); overflow:hidden; background:radial-gradient(120% 100% at 50% 0%, #e0fbff 0%, #c7f7ff 35%, #baf4ff 50%, #aaf2ff 60%, #97f0ff 70%, #7ee7ff 85%, #5ad6f7 100%), linear-gradient(180deg, var(--sea1), var(--sea2)); position:relative">
+            <svg viewBox="0 0 1440 320" style="position:absolute; left:0; bottom:-1px; width:100%; height:44%" preserveAspectRatio="none" aria-hidden="true">
+              <path fill="#7dd3fc" fill-opacity="1" d="M0,192L60,176C120,160,240,128,360,112C480,96,600,96,720,106.7C840,117,960,139,1080,165.3C1200,192,1320,224,1380,240L1440,256L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"></path>
+              <path fill="#22d3ee" fill-opacity="0.8" d="M0,224L60,213.3C120,203,240,181,360,165.3C480,149,600,139,720,138.7C840,139,960,149,1080,165.3C1200,181,1320,203,1380,213.3L1440,224L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"></path>
+              <path fill="#a7f3d0" fill-opacity="0.7" d="M0,256L60,256C120,256,240,256,360,245.3C480,235,600,213,720,186.7C840,160,960,128,1080,144C1200,160,1320,224,1380,256L1440,288L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="ocean" aria-hidden="true">
+        <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+          <path fill="#e0fbff" d="M0,64L48,58.7C96,53,192,43,288,58.7C384,75,480,117,576,122.7C672,128,768,96,864,80C960,64,1056,64,1152,64C1248,64,1344,64,1392,64L1440,64L1440,120L1392,120C1344,120,1248,120,1152,120C1056,120,960,120,864,120C768,120,672,120,576,120C480,120,384,120,288,120C192,120,96,120,48,120L0,120Z"/>
+        </svg>
+      </div>
+    </section>
+
+    <!-- Apps / Links -->
+    <section id="apps" class="section">
+      <div class="wrap">
+        <h2>コンテンツ</h2>
+        <div class="grid" role="list">
+          <!-- 1: サーフボード選び（記事＋比較表） -->
+          <article class="card" role="listitem">
+            <div class="thumb" aria-hidden="true"></div>
+            <div class="body">
+              <h3>サーフボード選び【保存版】</h3>
+              <p>初心者の失敗を避けるためのサイズ・タイプの基礎と比較表。Amazon/Rakutenの検索リンクつき。</p>
+            </div>
+            <div class="actions">
+              <a class="chip" href="./サーフボード選び.html" aria-label="サーフボード選び 記事を開く">開く</a>
+            </div>
+          </article>
+
+          <!-- 2: Surf Mini Game -->
+          <article class="card" role="listitem">
+            <div class="thumb" aria-hidden="true"></div>
+            <div class="body">
+              <h3>Surf Mini Game</h3>
+              <p>左右移動でコインを集めるシンプルゲーム。PC/スマホ対応、スコア保存に対応。</p>
+            </div>
+            <div class="actions">
+              <a class="chip" href="./game.html" aria-label="Surf Mini Game を開く">プレイ</a>
+            </div>
+          </article>
+
+          <!-- 3: スポンサー風ステッカー配布 -->
+          <article class="card" role="listitem">
+            <div class="thumb" aria-hidden="true"></div>
+            <div class="body">
+              <h3>スポンサー風ステッカー配布</h3>
+              <p>ジョーク系ロゴ素材をSVG/PNGで配布。入稿のコツも掲載、印刷サービスへの導線つき。</p>
+            </div>
+            <div class="actions">
+              <a class="chip" href="./stickers.html" aria-label="ステッカー配布ページを開く">ダウンロード</a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- About / Policy -->
+    <section class="section" aria-labelledby="about-title">
+      <div class="wrap">
+        <h2 id="about-title">このサイトについて</h2>
+        <p class="wrap" style="color:var(--muted)">Surf Nav は、軽快でシンプルな静的サイトとして構築しています。コンテンツは初心者向けに厳選し、更新が少なくても価値が維持されるよう設計しています。アフィリエイトリンクを含む場合があります。</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap foot">
+      <div>© <span id="year"></span> Surf Nav</div>
+      <div><a href="/policy.html">アフィリエイトポリシー</a></div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
