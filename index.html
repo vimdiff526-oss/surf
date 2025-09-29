@@ -32,20 +32,29 @@
     .toc li{margin:6px 0}
 
     /* comparison table */
-    .table-wrap{overflow-x:auto; overflow-y:visible; border:1px solid var(--line); border-radius:14px}
-    table{width:100%;border-collapse:collapse;min-width:760px}
-    th,td{padding:12px 10px;border-bottom:1px solid var(--line);vertical-align:top; word-break:break-word; overflow-wrap:anywhere}
-    th{background:#f8fafc;text-align:left;white-space:nowrap;position:sticky;top:56px;z-index:1}
+    .table-wrap{overflow-x:auto; -webkit-overflow-scrolling:touch; border:1px solid var(--line); border-radius:14px}
+    table{width:100%;border-collapse:collapse;min-width:680px;table-layout:fixed}
+    colgroup col:nth-child(1){width:22%}
+    colgroup col:nth-child(2){width:14%}
+    colgroup col:nth-child(3){width:18%}
+    colgroup col:nth-child(4){width:10%}
+    colgroup col:nth-child(5){width:18%}
+    colgroup col:nth-child(6){width:10%}
+    colgroup col:nth-child(7){width:8%}
+    th,td{padding:12px 10px;border-bottom:1px solid var(--line);vertical-align:top;word-break:break-word;overflow-wrap:anywhere}
+    /* 見切れ対策：ヘッダーは固定しない＋改行可 */
+    th{background:#f8fafc;text-align:left;white-space:normal}
     tbody tr:hover{background:#fafafa}
     .chip{display:inline-block;background:var(--chip);border:1px solid var(--line);padding:2px 8px;border-radius:999px;font-size:12px;margin-right:6px}
-    .btns{display:flex;gap:8px;flex-wrap:wrap; min-width:200px}
+    .btns{display:flex;gap:8px;flex-wrap:wrap}
     .btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#fff;padding:8px 10px;border-radius:10px;font-weight:600}
     .btn[data-a]{border-color:#ffd000;background:#fff8dd}
     .btn[data-r]{border-color:#e11d48;background:#fff1f2}
     .btn svg{width:16px;height:16px}
+    .btn span{font-size:14px}
 
-    /* cards on narrow screens */
-    @media (max-width:720px){
+    /* カード表示（モバイル/タブレット域を拡大） */
+    @media (max-width:960px){
       table{display:none}
       .card-list{display:grid;grid-template-columns:1fr;gap:12px}
       .card{border:1px solid var(--line);border-radius:12px;padding:12px}
@@ -169,6 +178,9 @@
 
         <div class="table-wrap" role="region" aria-label="サーフボード比較表">
           <table>
+            <colgroup>
+              <col /><col /><col /><col /><col /><col /><col />
+            </colgroup>
             <thead>
               <tr>
                 <th scope="col">ボード名 / キーワード</th>
@@ -268,7 +280,7 @@
       },
       rakuten: {
         base: 'https://search.rakuten.co.jp/search/mall/',
-        affId: 'your-rakuten-affid' // 楽天アフィリエイトID（rooms ではなく通常のRMS/Linkshare等なら該当ID）
+        affId: 'your-rakuten-affid' // 楽天アフィリエイトID
       }
     };
 
@@ -297,14 +309,14 @@
         a1.rel = 'sponsored nofollow noopener'; a1.target = '_blank';
         a1.innerHTML = `
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M5 8l7-7 7 7"/></svg>
-          <span>Amazonで探す</span>`;
+          <span>Amazon</span>`;
         const a2 = document.createElement('a');
         a2.className = 'btn'; a2.setAttribute('data-r','');
         a2.href = buildRakutenUrl(kw);
         a2.rel = 'sponsored nofollow noopener'; a2.target = '_blank';
         a2.innerHTML = `
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M16 8H8l8 8H8"/></svg>
-          <span>楽天で探す</span>`;
+          <span>楽天</span>`;
         cell.append(a1,a2);
       });
     }
@@ -334,11 +346,11 @@
         const a1 = document.createElement('a');
         a1.className='btn'; a1.setAttribute('data-a','');
         a1.href = buildAmazonUrl(kw); a1.rel='sponsored nofollow noopener'; a1.target='_blank';
-        a1.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M5 8l7-7 7 7"/></svg><span>Amazonで探す</span>`;
+        a1.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M5 8l7-7 7 7"/></svg><span>Amazon</span>`;
         const a2 = document.createElement('a');
         a2.className='btn'; a2.setAttribute('data-r','');
         a2.href = buildRakutenUrl(kw); a2.rel='sponsored nofollow noopener'; a2.target='_blank';
-        a2.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M16 8H8l8 8H8"/></svg><span>楽天で探す</span>`;
+        a2.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M16 8H8l8 8H8"/></svg><span>楽天</span>`;
         btnArea.append(a1,a2);
         wrap.append(card);
       });
