@@ -1,0 +1,102 @@
+* { box-sizing: border-box; }
+
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  background: #0b1220;
+  color: #e9eef7;
+  padding: 20px;
+  margin: 0;
+}
+
+.card {
+  background: #121a2b;
+  padding: 20px;
+  border-radius: 12px;
+  max-width: 960px;
+  margin: 0 auto 20px auto;
+  box-shadow: 0 10px 30px rgba(0,0,0,.25);
+  border: 1px solid rgba(255,255,255,.08);
+}
+
+.btn {
+  display: inline-block;
+  padding: 10px 16px;
+  margin-top: 12px;
+  border-radius: 8px;
+  background: #2dd4bf;
+  color: #042f2a;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+}
+
+.hidden { display: none; }
+.question { margin-bottom: 16px; }
+
+.result {
+  font-size: 20px;
+  font-weight: 800;
+  margin-top: 12px;
+}
+
+/* --- 記事カード用 --- */
+.articles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.article {
+  background: #1a2438;
+  padding: 12px;
+  border-radius: 10px;
+  text-decoration: none;
+  color: #e9eef7;
+  display: block;
+  transition: transform 0.2s ease, box-shadow .2s ease;
+  border: 1px solid rgba(255,255,255,.08);
+}
+
+.article:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0,0,0,.25);
+}
+
+.article img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.article h3 {
+  font-size: 16px;
+  margin: 6px 0;
+}
+
+.article p {
+  font-size: 12px;
+  color: #9fb2d3;
+  margin: 0;
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+  margin: 12px 0 4px 0;
+}
+
+.select, .input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.05);
+  color: #e9eef7;
+}
+
+.muted { color: #9fb2d3; font-size: 12px; }

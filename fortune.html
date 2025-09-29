@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>波乗り占い｜海に入る前のワンチェック</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="./fortune.css" />
+</head>
+<body>
+  <header class="site-header">
+    <h1>🌊 波乗り占い</h1>
+    <p class="lead">海に入る前の“今日の波運”をチェック。結果はその日ごとに安定します。</p>
+  </header>
+
+  <main class="container">
+    <section class="controls" aria-label="入力フォーム">
+      <div class="field">
+        <label for="name">ニックネーム（任意）</label>
+        <input id="name" type="text" placeholder="例: Taro / Yui" />
+      </div>
+      <div class="field">
+        <label for="dob">生年月日（任意）</label>
+        <input id="dob" type="date" />
+      </div>
+      <div class="field">
+        <label for="level">経験レベル</label>
+        <select id="level">
+          <option value="beginner">ビギナー</option>
+          <option value="intermediate" selected>中級</option>
+          <option value="advanced">上級</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="goal">今日の目的</label>
+        <select id="goal">
+          <option value="cruise">クルーズ</option>
+          <option value="practice" selected>練習</option>
+          <option value="challenge">チャレンジ</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="range">占う範囲</label>
+        <select id="range">
+          <option value="today" selected>今日</option>
+          <option value="week">今週</option>
+        </select>
+      </div>
+      <div class="actions">
+        <button id="btnFortune" class="btn btn-primary">占う（G）</button>
+        <button id="btnCopy" class="btn">コピー</button>
+        <button id="btnShare" class="btn">Xで共有</button>
+      </div>
+    </section>
+
+    <section class="result" aria-live="polite">
+      <article class="card" id="fortuneCard">
+        <div class="gauge">
+          <svg id="gaugeSvg" viewBox="0 0 120 120" role="img" aria-label="波運ゲージ">
+            <circle cx="60" cy="60" r="50" class="g-bg" />
+            <circle cx="60" cy="60" r="50" class="g-fg" stroke-dasharray="0 314" />
+            <text x="60" y="60" class="g-score">--</text>
+            <text x="60" y="84" class="g-label">WAVE LUCK</text>
+          </svg>
+        </div>
+        <div class="meta">
+          <h2 id="title">結果がここに表示されます</h2>
+          <p id="subtitle" class="muted"></p>
+          <div class="chips" id="chips"></div>
+        </div>
+        <div class="grid">
+          <div class="kv">
+            <div class="k">ラッキーウェーブ</div>
+            <div class="v" id="luckyWave">-</div>
+          </div>
+          <div class="kv">
+            <div class="k">ラッキーカラー</div>
+            <div class="v" id="luckyColor">-</div>
+          </div>
+          <div class="kv">
+            <div class="k">ラッキーアイテム</div>
+            <div class="v" id="luckyItem">-</div>
+          </div>
+          <div class="kv">
+            <div class="k">避けるべきこと</div>
+            <div class="v" id="avoid">-</div>
+          </div>
+          <div class="kv kv-span">
+            <div class="k">今日のひと言</div>
+            <div class="v" id="advice">-</div>
+          </div>
+        </div>
+        <div class="plan">
+          <h3>おすすめメニュー</h3>
+          <ul id="planList"></ul>
+        </div>
+        <footer class="foot">
+          <span id="seedInfo" class="seed"></span>
+        </footer>
+      </article>
+    </section>
+
+    <section class="history">
+      <div class="hist-head">
+        <h2>履歴</h2>
+        <div class="hist-actions">
+          <button id="btnExport" class="btn">CSV出力</button>
+          <button id="btnClear" class="btn btn-danger">履歴クリア</button>
+        </div>
+      </div>
+      <ul id="histList" class="list"></ul>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    © <span id="year"></span> Surf Nav Fortune
+  </footer>
+
+  <script src="./fortune.js" defer></script>
+</body>
+</html>

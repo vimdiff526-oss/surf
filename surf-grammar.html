@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>サーフィン構文ジェネレーター｜“それっぽい”例文メーカー</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="./surf-grammar.css" />
+</head>
+<body>
+  <header class="site-header">
+    <h1>🏄‍♀️ サーフィン構文ジェネレーター</h1>
+    <p class="lead">
+      ビギナーでも“それっぽく”話せるサーフ用語入りの例文を自動生成。<br>
+      正しい用語の短い注釈つきで、会話にもSNSにも即投入できます。
+    </p>
+  </header>
+
+  <main class="container">
+    <section class="controls" aria-label="生成オプション">
+      <div class="field">
+        <label for="level">レベル</label>
+        <select id="level">
+          <option value="beginner" selected>初心者</option>
+          <option value="intermediate">中級</option>
+          <option value="advanced">上級</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="topic">話題</label>
+        <select id="topic">
+          <option value="any" selected>おまかせ（混在）</option>
+          <option value="takeoff">テイクオフ</option>
+          <option value="turn">ターン（ボトム/カービング/カットバック等）</option>
+          <option value="wait">波待ち・ポジショニング</option>
+          <option value="conditions">コンディション（風/潮/ブレイク）</option>
+          <option value="crowd">混雑・優先権</option>
+          <option value="gear">ギア・サイズ感</option>
+          <option value="safety">安全・マナー</option>
+          <option value="fail">失敗（ワイプアウト/パーリング等）</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="style">文体</label>
+        <select id="style">
+          <option value="explain" selected>解説口調</option>
+          <option value="diary">日記風</option>
+          <option value="sns">SNS風（短め）</option>
+          <option value="coach">インストラクター風</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="tone">語尾と装飾</label>
+        <select id="tone">
+          <option value="desu" selected>です/ます調</option>
+          <option value="casual">カジュアル</option>
+          <option value="emoji">カジュアル＋絵文字</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="sentences">文数</label>
+        <select id="sentences">
+          <option value="1">1文</option>
+          <option value="2" selected>2文</option>
+          <option value="3">3文</option>
+        </select>
+      </div>
+
+      <div class="actions">
+        <button id="btnGen" class="btn btn-primary">構文をつくる（G）</button>
+        <button id="btnCopy" class="btn">コピー</button>
+        <button id="btnShare" class="btn">Xで共有</button>
+      </div>
+    </section>
+
+    <section class="output" aria-live="polite">
+      <article class="card">
+        <div id="text" class="excuse">ここに“それっぽい”例文が出ます。</div>
+        <div class="meta">
+          <span id="tags" class="tags"></span>
+          <span id="seed" class="seed"></span>
+        </div>
+      </article>
+    </section>
+
+    <section class="glossary card">
+      <h2>🗂 用語メモ（自動抽出）</h2>
+      <ul id="glossList" class="gloss-list"></ul>
+      <p class="muted small">
+        ※用語の要約定義は国内外の用語集を参考に簡潔化しています
+      </p>
+    </section>
+
+    <section class="history">
+      <div class="hist-head">
+        <h2>履歴</h2>
+        <div class="hist-actions">
+          <button id="btnExport" class="btn">CSV出力</button>
+          <button id="btnClear" class="btn btn-danger">履歴クリア</button>
+        </div>
+      </div>
+      <ul id="histList" class="list"></ul>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    © <span id="year"></span> Surf Nav — サーフ構文
+  </footer>
+
+  <script src="./surf-grammar.js" defer></script>
+</body>
+</html>
