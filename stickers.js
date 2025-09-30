@@ -558,8 +558,8 @@
             <path d="M ${x+W*0.10} ${y+H*0.26} q ${W*0.24} ${-H*0.10} ${W*0.48} 0" />
           </g>
           <g font-family="system-ui, sans-serif" fill="#e2e8f0" font-weight="900">
-            ${fitTextTag({x:x+W*0.72}, y:${y}+${H}*0.48, text:(fields.main||"PARKING LOT"), weight:900, sizePx:H*0.18, boxW:W*0.50)}
-            ${fitTextTag({x:x+W*0.72}, y:${y}+${H}*0.72, text:(fields.sub ||"PRO"),         weight:800, sizePx:H*0.16, boxW:W*0.50, fill:"#22c55e"})}
+            ${fitTextTag({x:x+W*0.72, y:y+H*0.48, text:(fields.main||"PARKING LOT"), weight:900, sizePx:H*0.18, boxW:W*0.50})}
+            ${fitTextTag({x:x+W*0.72, y:y+H*0.72, text:(fields.sub ||"PRO"),         weight:800, sizePx:H*0.16, boxW:W*0.50, fill:"#22c55e"})}
           </g>
         `
       })
