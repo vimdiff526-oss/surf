@@ -50,10 +50,32 @@ html, body {
 .badge{ font-size: 11px; color: var(--muted); background: #0f1a2e; border: 1px solid var(--line); padding: 2px 8px; border-radius: 999px; }
 
 /* actions */
-.actions{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-.btn{ padding: 10px 8px; text-align: center; cursor: pointer; border-radius: 10px;
+.actions{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.btn, .icon-btn{ padding: 10px 8px; text-align: center; cursor: pointer; border-radius: 10px;
   border: 1px solid var(--line); background: #0f1729; color: var(--text); }
-.btn:hover{ border-color: var(--accent2); }
+.btn:hover, .icon-btn:hover{ border-color: var(--accent2); }
+
+/* modal */
+.modal { width: min(980px, 96vw); border: none; padding: 0; background: transparent; }
+.modal::backdrop { background: rgba(0,0,0,.5); }
+.modal__card{ background: var(--card); border: 1px solid var(--line);
+  border-radius: 14px; overflow: hidden; display: grid; grid-template-rows: auto 1fr auto; max-height: 90vh; }
+.modal__head{ display:flex; align-items:center; gap:10px; padding:12px; border-bottom:1px solid var(--line); }
+.modal__head h3{ margin:0; font-size:16px; }
+.modal__body{ display:grid; grid-template-columns: 1fr 1fr; gap:12px; padding:12px; }
+.modal__foot{ display:flex; gap:8px; align-items:center; padding:12px; border-top:1px solid var(--line); }
+.modal-preview{ aspect-ratio: 3/2; }
+.icon-btn{ width:40px; }
+
+.fields{ display:grid; gap:10px; align-content:start; }
+.field label{ display:block; font-size:12px; color:var(--muted); margin-bottom:4px; }
+.field input, .field textarea, .field select{
+  width:100%; padding:10px 12px; border-radius:10px; border:1px solid var(--line);
+  background:#0f1729; color:var(--text);
+}
+.field small{ color:var(--muted); }
+
+.spacer{ flex:1; }
 
 /* print hint */
 .print{ margin-top: 24px; padding: 12px; border-radius: 12px; border: 1px dashed var(--line); background: #0c1426; }
@@ -63,3 +85,8 @@ html, body {
 
 /* footer */
 .site-footer{ max-width: var(--max); margin: 12px auto 28px; padding: 0 16px; color: var(--muted); text-align: center; font-size: 12px; }
+
+/* responsive */
+@media (max-width: 920px){
+  .modal__body{ grid-template-columns: 1fr; }
+}

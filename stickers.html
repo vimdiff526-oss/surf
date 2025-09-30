@@ -9,37 +9,38 @@
 <body>
   <header class="site-header">
     <h1>🏄 丘サーファーアイテム｜スポンサー風・丘サーファー風ステッカー</h1>
-    <p class="lead">プロみたいにボードを“盛る”ジョーク系ステッカー＋<b>丘サーファー風イラスト</b>。<br />SVG/PNGでダウンロードして、印刷サービスへ入稿してください。</p>
+    <p class="lead">プロみたいにボードを“盛る”ジョーク系ステッカーに、<b>丘サーファー風イラスト</b>を追加。<br />SVG/PNGでダウンロードして、印刷サービスへ入稿してください。</p>
   </header>
 
   <main class="container">
-    <!-- Controls: 検索/タグ -->
+    <!-- Controls -->
     <section class="controls">
-      <input id="q" type="search" placeholder="キーワードで検索（例: oka / desk / flip / van / palm / wifi / sponsor / local ）" />
+      <input id="q" type="search" placeholder="キーワードで検索（例: oka / desk / flip / van / palm / wifi / sponsor / local ）" aria-label="検索" />
       <div class="tags" id="tags"></div>
-    </section>
-
-    <!-- Editor: 入力で差し替え -->
-    <section class="editor" aria-labelledby="editor-title">
-      <h2 id="editor-title">✏️ テキスト差し替え</h2>
-      <div class="editor-grid">
-        <label>
-          <span>メイン（title / text1 / name）</span>
-          <input id="inp-main" type="text" placeholder="例）OKA SURFER / 湘南 SURF / WAVE など" />
-        </label>
-        <label>
-          <span>サブ（sub / text2）</span>
-          <input id="inp-sub" type="text" placeholder="例）CERTIFIED / OFFICIAL / ++ など（任意）" />
-        </label>
-        <div class="editor-actions">
-          <button id="btn-apply" class="btn">選択中のデザインに適用</button>
-          <span id="sel-info" class="muted">※ 先にカードの「編集」ボタンで対象を選択</span>
-        </div>
-      </div>
     </section>
 
     <!-- Grid -->
     <section id="grid" class="grid" aria-live="polite"></section>
+
+    <!-- Customize Modal -->
+    <dialog id="customize" class="modal">
+      <form method="dialog" class="modal__card" id="customize-form">
+        <header class="modal__head">
+          <h3 id="customize-title">カスタマイズ</h3>
+          <button type="submit" class="icon-btn" aria-label="閉じる">✕</button>
+        </header>
+        <div class="modal__body">
+          <div class="fields" id="field-area"><!-- 動的にフィールド挿入 --></div>
+          <div class="preview modal-preview" id="modal-preview" aria-label="プレビュー領域"></div>
+        </div>
+        <footer class="modal__foot">
+          <button type="button" class="btn" id="apply">プレビュー更新</button>
+          <div class="spacer"></div>
+          <button type="button" class="btn" id="save-svg">SVG保存</button>
+          <button type="button" class="btn" id="save-png-1024">PNG 1024px</button>
+        </footer>
+      </form>
+    </dialog>
 
     <!-- Print services -->
     <section class="print">
@@ -53,7 +54,7 @@
         <summary>入稿のコツ（簡単）</summary>
         <ul>
           <li>背景は透過のままがおすすめ（白フチあり/なしは業者側で指定）</li>
-          <li>PNGは目的サイズ（px）でダウンロード（512px/1024pxボタンあり）</li>
+          <li>PNGは目的サイズ（px）でダウンロード（512px/1024px推奨）</li>
           <li>色はsRGB、フォントは標準系（環境差を減らす）</li>
         </ul>
       </details>
