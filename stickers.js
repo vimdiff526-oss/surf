@@ -42,6 +42,7 @@
       a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove();
       setTimeout(()=> URL.revokeObjectURL(url), 1000);
     } else {
+      // iOS 等は新規タブで開いて長押し保存
       openInNewTabFromBlob(blob);
       toast('長押しで「写真を保存」してください（モバイル）');
     }
@@ -56,8 +57,17 @@
       toast('長押しで「リンク先を保存」してください（モバイル）');
     }
   }
+
   async function svgToPngBlob(svgString, px){
-    // 画像としてエンコード → キャンバス → PNG Blob
+    const {canvas, destW, destH} = await drawSvgToCanvas(svgString, px);
+    return await new Promise(res => canvas.toBlob(res, 'image/png'));
+  }
+  async function svgToPngDataURL(svgString, px){
+    const {canvas} = await drawSvgToCanvas(svgString, px);
+    // iOS向け：Blob化ではなく dataURL で開くほうが安定
+    return canvas.toDataURL('image/png');
+  }
+  async function drawSvgToCanvas(svgString, px){
     const svg64 = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgString);
     const img = new Image();
     const [w,h] = readViewbox(svgString) || [1024, 512];
@@ -66,13 +76,12 @@
     const ctx = canvas.getContext('2d');
     await new Promise(res => { img.onload = res; img.src = svg64; });
     ctx.clearRect(0,0,destW,destH); ctx.drawImage(img, 0, 0, destW, destH);
-    return await new Promise(res => canvas.toBlob(res, 'image/png'));
+    return {canvas, destW, destH};
   }
 
   // ========= 文字フィット支援（枠内に収める） =========
-  // SVGの<text>に textLength と lengthAdjust を与えて伸縮。安全マージンを確保。
   function fitTextTag({x, y, text, weight=900, sizePx, boxW, anchor='start', fill='#fff', opacity=1}){
-    const safeW = Math.max(1, boxW - 8); // 4px×2の安全マージン
+    const safeW = Math.max(1, boxW - 8); // マージン
     const escText = esc(text);
     return `<text x="${x}" y="${y}" font-weight="${weight}" font-size="${sizePx}"
       fill="${fill}" opacity="${opacity}" textLength="${safeW}" lengthAdjust="spacingAndGlyphs"
@@ -80,8 +89,6 @@
   }
 
   // ========= デザイン定義 =========
-  // editable: 各デザインで編集可能なフィールド定義（ラベル/キー/デフォルト）
-  // svg() は options.fields を受け取り、可変テキストを反映してSVG文字を textLength でフィット。
   const designs = buildDesigns();
 
   // ========= 一覧UI・検索・タグ =========
@@ -155,8 +162,14 @@
     if (act === 'svg'){
       downloadTextSmart(svg, `${d.id}.svg`, 'image/svg+xml');
     } else if (act === 'png'){
-      const blob = await svgToPngBlob(svg, size || 1024);
-      downloadBlobSmart(blob, `${d.id}-${size||1024}.png`);
+      if (isIOS || !supportsDownloadAttr){
+        const dataUrl = await svgToPngDataURL(svg, size || 1024);
+        openDataUrl(dataUrl);
+        toast('長押しで「写真を保存」してください（モバイル）');
+      } else {
+        const blob = await svgToPngBlob(svg, size || 1024);
+        downloadBlobSmart(blob, `${d.id}-${size||1024}.png`);
+      }
     }
   }
 
@@ -198,8 +211,14 @@
   });
   $("#save-png-1024").addEventListener("click", async () => {
     const svg = currentDesign.svg({fields:collectFieldsFromForm()});
-    const blob = await svgToPngBlob(svg, 1024);
-    downloadBlobSmart(blob, `${currentDesign.id}-1024.png`);
+    if (isIOS || !supportsDownloadAttr){
+      const dataUrl = await svgToPngDataURL(svg, 1024);
+      openDataUrl(dataUrl);
+      toast('長押しで「写真を保存」してください（モバイル）');
+    } else {
+      const blob = await svgToPngBlob(svg, 1024);
+      downloadBlobSmart(blob, `${currentDesign.id}-1024.png`);
+    }
   });
 
   // ========= デザイン（編集可能フィールド対応） =========
@@ -281,7 +300,6 @@
         <g font-family="system-ui, sans-serif" fill="#ffffff">${t1}${t2}</g>`;
     }
 
-    // withFrame：角丸枠＋clipで安全マージン
     function withFrame({w,h,rx=Math.round(Math.min(w,h)*0.06), inner=8, body, stroke="#ffffff", strokeW=0, bg=null}){
       const id = 'clip'+hash(String(Math.random()));
       const innerX = inner, innerY = inner, innerW = w - inner*2, innerH = h - inner*2;
@@ -436,8 +454,8 @@
       })
     }));
 
-    // ご当地
-    ["湘南","鵠沼","辻堂","鎌倉","千葉一宮","九十九里","新島","種子島","宮崎日向","高知生見","福岡糸島","石垣島","小倉ヶ浜","平砂浦"]
+    // ご当地：湘南のみ残す（他は削除）
+    ["湘南"]
       .forEach(name => list.push({
         id: `local-${slug(name)}`,
         title: `ご当地版｜${name} SURF`,
@@ -451,14 +469,7 @@
         })
       }));
 
-    // 丘サーファー風イラスト（メインテキストを一部編集可能）
-    function illustText(x,y,W,H,main,sub,mainFill="#e2e8f0",subFill="#60a5fa"){
-      const t1 = fitTextTag({x:x+W*0.66, y:y+H*0.46, text:main, weight:900, sizePx:H*0.18, boxW:W*0.56, fill:mainFill});
-      const t2 = sub ? fitTextTag({x:x+W*0.66, y:y+H*0.70, text:sub, weight:800, sizePx:H*0.16, boxW:W*0.56, fill:subFill}) : "";
-      return t1 + t2;
-    }
-
-    // ※ イラスト自体は前回同様（簡略）。テキスト部は fitTextTag で収める
+    // 丘サーファー風イラスト（可変テキストは fitTextTag で収める）
     list.push({
       id:"oka-coffee-board", title:"OKA SURFER｜COFFEE & BOARD",
       tags:["oka","illust","coffee","board"], badge:["イラスト","矩形","やさしい色"],
@@ -509,7 +520,6 @@
       })
     });
 
-    // 以降のイラスト系も同様に text を fitTextTag で収める（割愛しない）
     list.push({
       id:"flipflop-life", title:"FLIP-FLOP LIFE",
       tags:["oka","illust","flipflop","slogan"], badge:["サンダル","角丸","カジュアル"],
@@ -548,8 +558,8 @@
             <path d="M ${x+W*0.10} ${y+H*0.26} q ${W*0.24} ${-H*0.10} ${W*0.48} 0" />
           </g>
           <g font-family="system-ui, sans-serif" fill="#e2e8f0" font-weight="900">
-            ${fitTextTag({x:x+W*0.72, y:y+H*0.48, text:(fields.main||"PARKING LOT"), weight:900, sizePx:H*0.18, boxW:W*0.50})}
-            ${fitTextTag({x:x+W*0.72, y:y+H*0.72, text:(fields.sub ||"PRO"),         weight:800, sizePx:H*0.16, boxW:W*0.50, fill:"#22c55e"})}
+            ${fitTextTag({x:x+W*0.72}, y:${y}+${H}*0.48, text:(fields.main||"PARKING LOT"), weight:900, sizePx:H*0.18, boxW:W*0.50)}
+            ${fitTextTag({x:x+W*0.72}, y:${y}+${H}*0.72, text:(fields.sub ||"PRO"),         weight:800, sizePx:H*0.16, boxW:W*0.50, fill:"#22c55e"})}
           </g>
         `
       })
