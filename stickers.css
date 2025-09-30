@@ -15,7 +15,11 @@ html, body {
 
 /* header */
 .site-header { max-width: var(--max); margin: 24px auto 8px; padding: 0 16px; }
+.site-header__top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 .site-header h1 { font-size: clamp(20px, 3.5vw, 28px); margin: 0 0 6px; }
+.top-link { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 999px; border: 1px solid rgba(96, 165, 250, .5); background: rgba(96, 165, 250, .16); color: var(--text); font-weight: 600; text-decoration: none; }
+.top-link::before { content: "↑"; font-size: 12px; }
+.top-link:hover { border-color: var(--accent2); background: rgba(96, 165, 250, .28); }
 .lead { color: var(--muted); margin: 0; line-height: 1.6; }
 
 /* container */
