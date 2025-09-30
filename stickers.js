@@ -513,8 +513,8 @@
                      c ${W*0.10} -${H*0.08}, ${W*0.10} -${H*0.20}, 0 -${H*0.28} z" fill="#0f172a" stroke="#22c55e"/>
           </g>
           <g font-family="system-ui, sans-serif" fill="#e2e8f0" font-weight="900">
-            ${fitTextTag({x:x+W*0.66, y:y+H*0.30, text:(fields.main||"DESK"), weight:900, sizePx:H*0.20, boxW:W*0.50})}
-            ${fitTextTag({x:x+W*0.66, y:y+H*0.54, text:(fields.sub||"SURF DEPT."), weight:800, sizePx:H*0.18, boxW:W*0.50, fill:"#22d3ee"})}
+            ${fitTextTag({x:x+W*0.66, y:y+H*0.30, text:(fields.main||"DESK"), weight:900, sizePx:H*0.20, boxW:W*0.32})}
+            ${fitTextTag({x:x+W*0.66, y:y+H*0.54, text:(fields.sub||"SURF DEPT."), weight:800, sizePx:H*0.18, boxW:W*0.32, fill:"#22d3ee"})}
           </g>
         `
       })
@@ -534,8 +534,8 @@
             <path d="M ${x+W*0.30} ${y+H*0.44} q ${W*0.02} ${H*0.08} 0 ${H*0.16} M ${x+W*0.50} ${y+H*0.48} q ${W*0.02} ${H*0.08} 0 ${H*0.16}"/>
           </g>
           <g font-family="system-ui, sans-serif" fill="#e2e8f0" font-weight="900">
-            ${fitTextTag({x:x+W*0.66, y:y+H*0.46, text:(fields.main||"FLIP-FLOP"), weight:900, sizePx:H*0.18, boxW:W*0.50})}
-            ${fitTextTag({x:x+W*0.66, y:y+H*0.70, text:(fields.sub||"LIFE"),      weight:800, sizePx:H*0.16, boxW:W*0.50, fill:"#a7f3d0"})}
+            ${fitTextTag({x:x+W*0.66, y:y+H*0.46, text:(fields.main||"FLIP-FLOP"), weight:900, sizePx:H*0.18, boxW:W*0.32})}
+            ${fitTextTag({x:x+W*0.66, y:y+H*0.70, text:(fields.sub||"LIFE"),      weight:800, sizePx:H*0.16, boxW:W*0.32, fill:"#a7f3d0"})}
           </g>
         `
       })
@@ -558,8 +558,8 @@
             <path d="M ${x+W*0.10} ${y+H*0.26} q ${W*0.24} ${-H*0.10} ${W*0.48} 0" />
           </g>
           <g font-family="system-ui, sans-serif" fill="#e2e8f0" font-weight="900">
-            ${fitTextTag({x:x+W*0.72, y:y+H*0.48, text:(fields.main||"PARKING LOT"), weight:900, sizePx:H*0.18, boxW:W*0.50})}
-            ${fitTextTag({x:x+W*0.72, y:y+H*0.72, text:(fields.sub ||"PRO"),         weight:800, sizePx:H*0.16, boxW:W*0.50, fill:"#22c55e"})}
+            ${fitTextTag({x:x+W*0.72, y:y+H*0.48, text:(fields.main||"PARKING LOT"), weight:900, sizePx:H*0.18, boxW:W*0.26})}
+            ${fitTextTag({x:x+W*0.72, y:y+H*0.72, text:(fields.sub ||"PRO"),         weight:800, sizePx:H*0.16, boxW:W*0.26, fill:"#22c55e"})}
           </g>
         `
       })
@@ -580,8 +580,8 @@
             <path d="M ${x+W*0.36} ${y+H*0.64} q ${W*0.10} ${-H*0.16} ${W*0.22} 0 q ${W*0.06} ${H*0.08} ${W*0.14} 0" />
           </g>
           <g font-family="system-ui, sans-serif" fill="#e2e8f0" font-weight="900">
-            ${fitTextTag({x:x+W*0.70, y:y+H*0.50, text:(fields.main||"PALM &"), weight:900, sizePx:H*0.18, boxW:W*0.48})}
-            ${fitTextTag({x:x+W*0.70, y:y+H*0.74, text:(fields.sub||"WAVE"),     weight:800, sizePx:H*0.16, boxW:W*0.48, fill:"#60a5fa"})}
+            ${fitTextTag({x:x+W*0.70, y:y+H*0.50, text:(fields.main||"PALM &"), weight:900, sizePx:H*0.18, boxW:W*0.28})}
+            ${fitTextTag({x:x+W*0.70, y:y+H*0.74, text:(fields.sub||"WAVE"),     weight:800, sizePx:H*0.16, boxW:W*0.28, fill:"#60a5fa"})}
           </g>
         `
       })
@@ -624,8 +624,8 @@
             <path d="M ${x+W*0.60} ${y+H*0.30} l 0 ${H*0.05} M ${x+W*0.60} ${y+H*0.30} l ${W*0.04} 0" />
           </g>
           <g font-family="system-ui, sans-serif" fill="#e2e8f0" font-weight="900">
-            ${fitTextTag({x:x+W*0.64, y:y+H*0.62, text:(fields.main||"LUNCH BREAK"), weight:900, sizePx:H*0.20, boxW:W*0.54})}
-            ${fitTextTag({x:x+W*0.64, y:y+H*0.82, text:(fields.sub ||"SURF"),        weight:800, sizePx:H*0.16, boxW:W*0.50, fill:"#f59e0b"})}
+            ${fitTextTag({x:x+W*0.64, y:y+H*0.62, text:(fields.main||"LUNCH BREAK"), weight:900, sizePx:H*0.20, boxW:W*0.34})}
+            ${fitTextTag({x:x+W*0.64, y:y+H*0.82, text:(fields.sub ||"SURF"),        weight:800, sizePx:H*0.16, boxW:W*0.34, fill:"#f59e0b"})}
           </g>
         `
       })
@@ -667,8 +667,8 @@
             <path d="M ${x+W*0.52} ${y+H*0.70} q ${W*0.08} ${-H*0.10} ${W*0.16} 0 q ${W*0.06} ${H*0.08} ${W*0.12} 0" />
           </g>
           <g font-family="system-ui, sans-serif" fill="#e2e8f0" font-weight="900">
-            ${fitTextTag({x:x+W*0.70, y:y+H*0.46, text:(fields.main||"HOME BREAK"), weight:900, sizePx:H*0.16, boxW:W*0.50})}
-            ${fitTextTag({x:x+W*0.70, y:y+H*0.70, text:(fields.sub ||"ONLY"),       weight:800, sizePx:H*0.14, boxW:W*0.46, fill:"#60a5fa"})}
+            ${fitTextTag({x:x+W*0.70, y:y+H*0.46, text:(fields.main||"HOME BREAK"), weight:900, sizePx:H*0.16, boxW:W*0.28})}
+            ${fitTextTag({x:x+W*0.70, y:y+H*0.70, text:(fields.sub ||"ONLY"),       weight:800, sizePx:H*0.14, boxW:W*0.28, fill:"#60a5fa"})}
           </g>
         `
       })
@@ -711,8 +711,8 @@
             <rect x="${x+W*0.46}" y="${y+H*0.32}" width="${W*0.08}" height="${H*0.28}" rx="${W*0.01}" />
           </g>
           <g font-family="system-ui, sans-serif" fill="#e2e8f0" font-weight="900">
-            ${fitTextTag({x:x+W*0.64, y:y+H*0.48, text:(fields.main||"WAX TO"), weight:900, sizePx:H*0.20, boxW:W*0.52})}
-            ${fitTextTag({x:x+W*0.64, y:y+H*0.72, text:(fields.sub ||"WORK"),   weight:900, sizePx:H*0.18, boxW:W*0.52, fill:"#ffffff"})}
+            ${fitTextTag({x:x+W*0.64, y:y+H*0.48, text:(fields.main||"WAX TO"), weight:900, sizePx:H*0.20, boxW:W*0.34})}
+            ${fitTextTag({x:x+W*0.64, y:y+H*0.72, text:(fields.sub ||"WORK"),   weight:900, sizePx:H*0.18, boxW:W*0.34, fill:"#ffffff"})}
           </g>
         `
       })
