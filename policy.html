@@ -8,6 +8,7 @@
   <link rel="canonical" href="https://example.com/policy.html" />
   <meta name="theme-color" content="#0ea5e9" />
   <link rel="stylesheet" href="./nav.css" />
+  <script src="./nav.js" defer></script>
   <style>
     body {
       margin:0; padding:0;
@@ -42,14 +43,79 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 16c4 0 4-8 8-8s4 8 8 8 4-8 8-8"/></svg>
         <span>Surf Nav</span>
       </a>
-      <nav class="global-bar__nav" aria-label="主要コンテンツ">
-        <a href="./index.html#apps">ホーム</a>
-        <a href="./サーフボード選び.html">サーフボード選び</a>
-        <a href="./game.html">ミニゲーム</a>
-        <a href="./stickers.html">ステッカー</a>
-        <a href="./about.html">運営者情報</a>
-      </nav>
+      <div class="global-bar__menu-container">
+        <button class="global-bar__menu" type="button" aria-label="コンテンツメニューを開く">
+          <svg class="global-bar__menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+            <path d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+        <div class="global-bar__panel">
+          <nav aria-label="コンテンツメニュー">
+            <ul class="global-bar__panel-list">
+              <li>
+                <a href="./index.html#apps">
+                  <span>01</span>
+                  <span class="global-bar__panel-text">
+                    <strong>トップ</strong>
+                    <small>おすすめコンテンツ一覧</small>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="./サーフボード選び.html">
+                  <span>02</span>
+                  <span class="global-bar__panel-text">
+                    <strong>記事</strong>
+                    <small>サーフボード選びガイド</small>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="./game.html">
+                  <span>03</span>
+                  <span class="global-bar__panel-text">
+                    <strong>ミニゲーム</strong>
+                    <small>Surf Mini Game を遊ぶ</small>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="./stickers.html">
+                  <span>04</span>
+                  <span class="global-bar__panel-text">
+                    <strong>ステッカー</strong>
+                    <small>スポンサー風素材ダウンロード</small>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="./about.html">
+                  <span>05</span>
+                  <span class="global-bar__panel-text">
+                    <strong>運営者情報</strong>
+                    <small>Surf Nav について</small>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="./policy.html">
+                  <span>06</span>
+                  <span class="global-bar__panel-text">
+                    <strong>ポリシー</strong>
+                    <small>アフィリエイト方針</small>
+                  </span>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
     </div>
+    <nav class="global-bar__meta" aria-label="パンくずリスト">
+      <ol class="global-bar__crumbs">
+        <li aria-current="page">運営ポリシー</li>
+      </ol>
+    </nav>
   </header>
 
   <main>
@@ -70,12 +136,8 @@
   </main>
 
   <footer>
-    <div>© <span id="year"></span> Surf Nav</div>
+    <div>© <span data-current-year></span> Surf Nav</div>
     <div style="margin-top:8px"><a href="./about.html">運営者情報</a>・<a href="./policy.html">アフィリエイトポリシー</a></div>
   </footer>
-
-  <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
-  </script>
 </body>
 </html>
