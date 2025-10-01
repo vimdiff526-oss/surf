@@ -110,6 +110,28 @@
   });
   $("#q").addEventListener("input", render);
 
+  function applyPreviewAspect(previewEl){
+    if (!previewEl) return;
+    const svgEl = previewEl.querySelector('svg');
+    if (!svgEl) return;
+    const vbAttr = svgEl.getAttribute('viewBox');
+    if (vbAttr){
+      const parts = vbAttr.trim().split(/\s+/);
+      if (parts.length >= 4){
+        const w = parseFloat(parts[parts.length - 2]);
+        const h = parseFloat(parts[parts.length - 1]);
+        if (w > 0 && h > 0){
+          previewEl.style.aspectRatio = `${w} / ${h}`;
+          return;
+        }
+      }
+    }
+    const vb = svgEl.viewBox?.baseVal;
+    if (vb?.width && vb?.height){
+      previewEl.style.aspectRatio = `${vb.width} / ${vb.height}`;
+    }
+  }
+
   function render(){
     grid.innerHTML = "";
     const q = $("#q").value.trim().toLowerCase();
@@ -138,6 +160,7 @@
           </div>
         `;
         grid.appendChild(card);
+        applyPreviewAspect(card.querySelector('.preview'));
       });
     $$(".actions .btn", grid).forEach(btn => btn.addEventListener("click", onAction));
   }
@@ -209,6 +232,7 @@
     currentFields = collectFieldsFromForm();
     const svg = currentDesign.svg({fields:currentFields});
     modalPreview.innerHTML = svg;
+    applyPreviewAspect(modalPreview);
   }
 
   $("#apply").addEventListener("click", updateModalPreview);
