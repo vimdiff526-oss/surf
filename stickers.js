@@ -90,6 +90,9 @@
 
   // ========= デザイン定義 =========
   const designs = buildDesigns();
+  designs.forEach((d, idx) => {
+    d.no = idx + 1;
+  });
 
   // ========= 一覧UI・検索・タグ =========
   const grid = $("#grid");
@@ -116,11 +119,15 @@
       .forEach(d => {
         const card = document.createElement("article");
         card.className = "card";
+        const numLabel = String(d.no ?? 0).padStart(2, "0");
         const svgSmall = d.svg({w:900, h:Math.round(900*0.6), fields:d.defaultFields});
         card.innerHTML = `
           <div class="preview" aria-label="${escapeHtml(d.title)} のプレビュー">${svgSmall}</div>
           <div class="meta">
-            <h3>${escapeHtml(d.title)}</h3>
+            <div class="card__heading">
+              <span class="card__index" aria-label="ステッカー番号 ${numLabel}">No.${numLabel}</span>
+              <h3>${escapeHtml(d.title)}</h3>
+            </div>
             <div class="badges">${d.badge.map(b => `<span class="badge">${escapeHtml(b)}</span>`).join("")}</div>
             <div class="actions">
               <button class="btn" data-act="customize" data-id="${d.id}">カスタマイズ</button>
