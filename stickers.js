@@ -773,6 +773,129 @@
       })
     });
 
+    list.push({
+      id:"city-surf-club", title:"CITY SURF CLUB",
+      tags:["oka","illust","city","club"], badge:["夜景","クラブ","横長"],
+      editable:[{key:"main",label:"メイン",default:"CITY SURF"},{key:"sub",label:"サブ",default:"CLUB"}],
+      defaultFields:{main:"CITY SURF", sub:"CLUB"},
+      svg: ({w=900,h=360,fields={}}={}) => withFrame({
+        w,h, stroke:"#38bdf8", strokeW:10, bg:"#0b1220",
+        body:(x,y,W,H)=> `
+          <defs><linearGradient id="sky${hash('city-night')}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1e3a8a"/><stop offset="1" stop-color="#0b1220"/></linearGradient></defs>
+          <rect x="${x+W*0.10}" y="${y+H*0.18}" width="${W*0.52}" height="${H*0.44}" rx="${W*0.02}" fill="url(#sky${hash('city-night')})" stroke="#38bdf8" stroke-width="6"/>
+          <g fill="#38bdf8" opacity="0.85">
+            <rect x="${x+W*0.14}" y="${y+H*0.46}" width="${W*0.04}" height="${H*0.12}" rx="${W*0.005}" />
+            <rect x="${x+W*0.20}" y="${y+H*0.34}" width="${W*0.05}" height="${H*0.24}" rx="${W*0.005}" />
+            <rect x="${x+W*0.28}" y="${y+H*0.28}" width="${W*0.06}" height="${H*0.30}" rx="${W*0.005}" />
+            <rect x="${x+W*0.38}" y="${y+H*0.38}" width="${W*0.05}" height="${H*0.20}" rx="${W*0.005}" />
+            <rect x="${x+W*0.46}" y="${y+H*0.32}" width="${W*0.05}" height="${H*0.26}" rx="${W*0.005}" />
+          </g>
+          <g stroke="#38bdf8" stroke-width="6" fill="none" stroke-linecap="round">
+            <path d="M ${x+W*0.62} ${y+H*0.62} q ${W*0.18} ${-H*0.28} ${W*0.28} 0" />
+            <path d="M ${x+W*0.64} ${y+H*0.52} q ${W*0.08} ${-H*0.12} ${W*0.16} 0" />
+          </g>
+          <g font-family="system-ui, sans-serif" fill="#e0f2fe" font-weight="900">
+            ${fitTextTag({x:x+W*0.68, y:y+H*0.36, text:(fields.main||"CITY SURF"), weight:900, sizePx:H*0.18, boxW:W*0.26})}
+            ${fitTextTag({x:x+W*0.68, y:y+H*0.62, text:(fields.sub ||"CLUB"),      weight:800, sizePx:H*0.16, boxW:W*0.26, fill:"#38bdf8"})}
+          </g>
+        `
+      })
+    });
+
+    list.push({
+      id:"midnight-swell", title:"MIDNIGHT SWELL",
+      tags:["oka","illust","night","wave"], badge:["三日月","波","グラデ"],
+      editable:[{key:"main",label:"メイン",default:"MIDNIGHT"},{key:"sub",label:"サブ",default:"SWELL"}],
+      defaultFields:{main:"MIDNIGHT", sub:"SWELL"},
+      svg: ({w=820,h=360,fields={}}={}) => withFrame({
+        w,h, stroke:"#6366f1", strokeW:10, bg:"#0b1220",
+        body:(x,y,W,H)=> `
+          <defs>
+            <linearGradient id="moon${hash('swell-moon')}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#818cf8"/><stop offset="1" stop-color="#22d3ee"/></linearGradient>
+            <linearGradient id="wave${hash('swell-wave')}" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#1d4ed8"/><stop offset="1" stop-color="#38bdf8"/></linearGradient>
+          </defs>
+          <path d="M ${x+W*0.18} ${y+H*0.26} a ${W*0.12} ${H*0.18} 0 1 0 ${W*0.06} ${H*0.28} a ${W*0.09} ${H*0.14} 0 1 1 -${W*0.06} -${H*0.28}" fill="url(#moon${hash('swell-moon')})" />
+          <path d="M ${x+W*0.12} ${y+H*0.66} q ${W*0.10} ${-H*0.22} ${W*0.20} 0 t ${W*0.20} 0 t ${W*0.20} 0" stroke="url(#wave${hash('swell-wave')})" stroke-width="10" fill="none" stroke-linecap="round"/>
+          <path d="M ${x+W*0.12} ${y+H*0.70} q ${W*0.10} ${-H*0.18} ${W*0.20} 0 t ${W*0.20} 0 t ${W*0.20} 0" stroke="#0ea5e9" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <g font-family="system-ui, sans-serif" fill="#e0e7ff" font-weight="900" text-anchor="middle">
+            ${fitTextTag({x:x+W*0.60, y:y+H*0.44, text:(fields.main||"MIDNIGHT"), weight:900, sizePx:H*0.20, boxW:W*0.48, anchor:'middle'})}
+            ${fitTextTag({x:x+W*0.60, y:y+H*0.66, text:(fields.sub ||"SWELL"),      weight:800, sizePx:H*0.16, boxW:W*0.40, anchor:'middle', fill:"#22d3ee"})}
+          </g>
+        `
+      })
+    });
+
+    list.push({
+      id:"urban-paddle-pass", title:"URBAN PADDLE PASS",
+      tags:["oka","illust","ticket","paddle"], badge:["チケット","バーコード","白地"],
+      editable:[{key:"main",label:"メイン",default:"URBAN PADDLE"},{key:"sub",label:"サブ",default:"PASS"}],
+      defaultFields:{main:"URBAN PADDLE", sub:"PASS"},
+      svg: ({w=840,h=320,fields={}}={}) => withFrame({
+        w,h, stroke:"#0f172a", strokeW:10, bg:"#f1f5f9",
+        body:(x,y,W,H)=> `
+          <rect x="${x+W*0.08}" y="${y+H*0.18}" width="${W*0.36}" height="${H*0.48}" rx="${W*0.02}" fill="#0b1220" stroke="#0f172a" stroke-width="6"/>
+          <g stroke="#38bdf8" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M ${x+W*0.16} ${y+H*0.44} q ${W*0.06} ${-H*0.20} ${W*0.12} 0" />
+            <path d="M ${x+W*0.18} ${y+H*0.40} h ${W*0.12}" />
+          </g>
+          <g fill="#0f172a" opacity="0.85">
+            ${Array.from({length:9}).map((_,i)=>`<rect x="${x+W*0.48 + i*W*0.036}" y="${y+H*0.20}" width="${W*0.02}" height="${H*0.32}" rx="${W*0.002}"/>`).join("")}
+          </g>
+          <g font-family="system-ui, sans-serif" fill="#0f172a" font-weight="900">
+            ${fitTextTag({x:x+W*0.48, y:y+H*0.64, text:(fields.main||"URBAN PADDLE"), weight:900, sizePx:H*0.18, boxW:W*0.44})}
+            ${fitTextTag({x:x+W*0.48, y:y+H*0.84, text:(fields.sub ||"PASS"),         weight:800, sizePx:H*0.16, boxW:W*0.44, fill:"#38bdf8"})}
+          </g>
+        `
+      })
+    });
+
+    list.push({
+      id:"couch-surf-camp", title:"COUCH SURF CAMP",
+      tags:["oka","illust","couch","camp"], badge:["ソファ","ジョーク","丸角"],
+      editable:[{key:"main",label:"メイン",default:"COUCH SURF"},{key:"sub",label:"サブ",default:"CAMP"}],
+      defaultFields:{main:"COUCH SURF", sub:"CAMP"},
+      svg: ({w=860,h=360,fields={}}={}) => withFrame({
+        w,h, stroke:"#f97316", strokeW:10, bg:"#0b1220",
+        body:(x,y,W,H)=> `
+          <g stroke="#f97316" stroke-width="7" fill="#111827" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="${x+W*0.12}" y="${y+H*0.40}" width="${W*0.36}" height="${H*0.14}" rx="${W*0.02}" />
+            <rect x="${x+W*0.12}" y="${y+H*0.28}" width="${W*0.36}" height="${H*0.16}" rx="${W*0.02}" />
+            <rect x="${x+W*0.48}" y="${y+H*0.30}" width="${W*0.06}" height="${H*0.26}" rx="${W*0.01}" fill="#0b1220" />
+            <path d="M ${x+W*0.54} ${y+H*0.32} q ${W*0.04} ${-H*0.12} ${W*0.08} 0 v ${H*0.32} h -${W*0.08} z" fill="#111827" />
+          </g>
+          <g font-family="system-ui, sans-serif" fill="#fde68a" font-weight="900">
+            ${fitTextTag({x:x+W*0.68, y:y+H*0.46, text:(fields.main||"COUCH SURF"), weight:900, sizePx:H*0.18, boxW:W*0.32})}
+            ${fitTextTag({x:x+W*0.68, y:y+H*0.70, text:(fields.sub ||"CAMP"),        weight:800, sizePx:H*0.16, boxW:W*0.32, fill:"#f97316"})}
+          </g>
+        `
+      })
+    });
+
+    list.push({
+      id:"commute-wave-rider", title:"COMMUTE WAVE RIDER",
+      tags:["oka","illust","train","commute"], badge:["電車","平日","ジョーク"],
+      editable:[{key:"main",label:"メイン",default:"COMMUTE WAVE"},{key:"sub",label:"サブ",default:"RIDER"}],
+      defaultFields:{main:"COMMUTE WAVE", sub:"RIDER"},
+      svg: ({w=900,h=360,fields={}}={}) => withFrame({
+        w,h, stroke:"#34d399", strokeW:10, bg:"#0b1220",
+        body:(x,y,W,H)=> `
+          <g stroke="#34d399" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="${x+W*0.14}" y="${y+H*0.30}" width="${W*0.52}" height="${H*0.22}" rx="${W*0.02}" fill="#0b1727" />
+            <rect x="${x+W*0.18}" y="${y+H*0.34}" width="${W*0.10}" height="${H*0.12}" rx="${W*0.01}" fill="#0f172a" />
+            <rect x="${x+W*0.32}" y="${y+H*0.34}" width="${W*0.10}" height="${H*0.12}" rx="${W*0.01}" fill="#0f172a" />
+            <rect x="${x+W*0.46}" y="${y+H*0.34}" width="${W*0.10}" height="${H*0.12}" rx="${W*0.01}" fill="#0f172a" />
+            <circle cx="${x+W*0.26}" cy="${y+H*0.60}" r="${H*0.06}" />
+            <circle cx="${x+W*0.54}" cy="${y+H*0.60}" r="${H*0.06}" />
+            <path d="M ${x+W*0.14} ${y+H*0.64} q ${W*0.14} ${H*0.10} ${W*0.28} 0 q ${W*0.14} ${-H*0.10} ${W*0.28} 0" />
+          </g>
+          <g font-family="system-ui, sans-serif" fill="#d1fae5" font-weight="900">
+            ${fitTextTag({x:x+W*0.72, y:y+H*0.48, text:(fields.main||"COMMUTE WAVE"), weight:900, sizePx:H*0.18, boxW:W*0.30})}
+            ${fitTextTag({x:x+W*0.72, y:y+H*0.72, text:(fields.sub ||"RIDER"),        weight:800, sizePx:H*0.16, boxW:W*0.30, fill:"#34d399"})}
+          </g>
+        `
+      })
+    });
+
     return list;
   }
 
