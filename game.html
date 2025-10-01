@@ -4,14 +4,30 @@
   <meta charset="UTF-8" />
   <title>Surf Mini Game</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="./nav.css" />
   <link rel="stylesheet" href="./game.css" />
 </head>
 <body>
+  <header class="global-bar">
+    <div class="global-bar__inner">
+      <a class="global-bar__brand" href="./index.html#top" aria-label="Surf Nav のトップへ戻る">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 16c4 0 4-8 8-8s4 8 8 8 4-8 8-8"/></svg>
+        <span>Surf Nav</span>
+      </a>
+      <nav class="global-bar__nav" aria-label="主要コンテンツ">
+        <a href="./index.html#apps">ホーム</a>
+        <a href="./サーフボード選び.html">サーフボード選び</a>
+        <a href="./game.html">ミニゲーム</a>
+        <a href="./stickers.html">ステッカー</a>
+        <a href="./about.html">運営者情報</a>
+      </nav>
+    </div>
+  </header>
+
   <div class="wrap">
     <header class="topbar">
       <h1>🏄 Surf Mini Game</h1>
       <div class="topbar-right">
-        <a class="top-link" href="./index.html" aria-label="Surf Navのトップへ戻る">TOPに戻る</a>
         <div class="hud">
           <span id="score">Score: 0</span>
           <span id="best">Best: 0</span>

@@ -38,7 +38,7 @@ html, body {
 /* ===== レイアウト全体 =====
    1画面にピッタリ収めるため、縦フレックス＋キャンバスを 1fr で伸縮 */
 .wrap {
-  height: calc(100svh - var(--safe-top) - var(--safe-bottom));
+  height: calc(100svh - var(--safe-top) - var(--safe-bottom) - var(--global-bar-height));
   padding: calc(var(--pad) + var(--safe-top)) var(--pad) calc(var(--pad) + var(--safe-bottom));
   margin: 0 auto;
 
@@ -67,26 +67,6 @@ html, body {
   gap: 10px;
   flex-wrap: wrap;
   justify-content: flex-end;
-}
-.top-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,.16);
-  background: rgba(45, 212, 191, 0.16);
-  color: var(--text);
-  font-weight: 600;
-  text-decoration: none;
-}
-.top-link::before {
-  content: "↑";
-  font-size: 12px;
-}
-.top-link:hover {
-  border-color: var(--accent);
-  background: rgba(45, 212, 191, 0.28);
 }
 .hud { display: flex; gap: 10px; font-weight: 700; color: var(--accent); }
 
