@@ -70,6 +70,124 @@
   height: 24px;
 }
 
+.global-menu {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 24px 16px;
+  background: transparent;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 200;
+  overflow-y: auto;
+}
+
+.global-menu[aria-hidden="true"] {
+  visibility: hidden;
+}
+
+.global-menu.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.global-menu__panel {
+  width: min(420px, 100%);
+  margin-top: clamp(20px, 6vh, 60px);
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: 0 30px 70px rgba(15, 23, 42, 0.25);
+  padding: 24px 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  position: relative;
+  z-index: 1;
+}
+
+.global-menu__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.25);
+  backdrop-filter: blur(6px);
+}
+
+.global-menu__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.global-menu__title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.global-menu__close {
+  border: none;
+  background: none;
+  padding: 8px;
+  border-radius: 10px;
+  color: #0f172a;
+  cursor: pointer;
+}
+
+.global-menu__close:focus-visible {
+  outline: 3px solid rgba(14, 165, 233, 0.35);
+  outline-offset: 2px;
+}
+
+.global-menu__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.global-menu__item {
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 16px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: linear-gradient(135deg, rgba(241, 245, 249, 0.6), rgba(248, 250, 252, 0.9));
+}
+
+.global-menu__item a {
+  color: #0f172a;
+  font-weight: 700;
+  font-size: 17px;
+}
+
+.global-menu__item a:focus-visible {
+  outline: 3px solid rgba(14, 165, 233, 0.35);
+  outline-offset: 3px;
+}
+
+.global-menu__item p {
+  margin: 0;
+  color: #475569;
+  font-size: 14px;
+}
+
+.global-menu__footer {
+  font-size: 13px;
+  color: #64748b;
+}
+
+body.is-menu-open {
+  overflow: hidden;
+}
+
 .global-bar__meta {
   max-width: 1100px;
   margin: 0 auto;
