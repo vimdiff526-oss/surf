@@ -12,6 +12,7 @@
   <meta property="og:url" content="https://example.com/" />
   <meta property="og:image" content="https://example.com/og/surf-home.jpg" />
   <meta name="theme-color" content="#0ea5e9" />
+  <link rel="stylesheet" href="./nav.css" />
   <style>
     :root{
       --bg:#ffffff; --fg:#0f172a; --muted:#475569; --line:#e2e8f0; --brand:#0ea5e9; --sea1:#0ea5e9; --sea2:#22d3ee; --sea3:#a7f3d0;
@@ -22,12 +23,7 @@
     a{color:var(--brand); text-decoration:none}
     a:hover{text-decoration:underline}
 
-    /* Header (Glass) */
-    header{position:sticky; top:0; z-index:50; backdrop-filter:saturate(140%) blur(8px); background:#ffffffb3; border-bottom:1px solid var(--line)}
     .wrap{max-width:1100px; margin:0 auto; padding:0 16px}
-    .nav{height:60px; display:flex; align-items:center; justify-content:space-between}
-    .logo{display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:0.2px}
-    .logo .wave{width:28px; height:28px}
 
     /* Hero */
     .hero{position:relative; padding:48px 0 24px}
@@ -89,15 +85,19 @@
   }
   </script>
 </head>
-<body>
-  <header>
-    <div class="wrap nav">
-      <div class="logo" aria-label="Surf Nav ホーム">
-        <svg class="wave" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 16c4 0 4-8 8-8s4 8 8 8 4-8 8-8"/></svg>
+<body id="top">
+  <header class="global-bar">
+    <div class="global-bar__inner">
+      <a class="global-bar__brand" href="./index.html#top" aria-label="Surf Nav のトップへ戻る">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 16c4 0 4-8 8-8s4 8 8 8 4-8 8-8"/></svg>
         <span>Surf Nav</span>
-      </div>
-      <nav>
-        <a href="#apps">コンテンツ</a>
+      </a>
+      <nav class="global-bar__nav" aria-label="主要コンテンツ">
+        <a href="./index.html#apps">ホーム</a>
+        <a href="./サーフボード選び.html">サーフボード選び</a>
+        <a href="./game.html">ミニゲーム</a>
+        <a href="./stickers.html">ステッカー</a>
+        <a href="./about.html">運営者情報</a>
       </nav>
     </div>
   </header>
