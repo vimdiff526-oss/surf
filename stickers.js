@@ -1039,6 +1039,883 @@
       });
     });
 
+    // 2025年追加：多彩な新作ステッカー30種
+    list.push({
+      id: "neon-night-market",
+      title: "NEON NIGHT MARKET｜ネオンサイン風",
+      tags: ["neon","night","logo"],
+      badge: ["ネオン","暗色","横長"],
+      editable: [
+        {key:"main", label:"メイン", default:"NEON NIGHT"},
+        {key:"sub",  label:"サブ",  default:"MARKET"}
+      ],
+      defaultFields: {main:"NEON NIGHT", sub:"MARKET"},
+      svg: ({w=860,h=380,fields={}}={}) => withFrame({
+        w,h, stroke:"#38bdf8", strokeW:12, bg:"#050718",
+        body:(x,y,W,H)=>{
+          const grad = `neon${hash('night-market')}`;
+          const glow = `neonGlow${hash('night-market')}`;
+          return `
+            <defs>
+              <linearGradient id="${grad}" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#22d3ee"/>
+                <stop offset="1" stop-color="#a855f7"/>
+              </linearGradient>
+              <filter id="${glow}" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="8" result="blur"/>
+                <feMerge>
+                  <feMergeNode in="blur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+            </defs>
+            <rect x="${x+W*0.10}" y="${y+H*0.18}" width="${W*0.80}" height="${H*0.52}" rx="${W*0.10}" fill="#0b1120" stroke="#1e293b" stroke-width="8"/>
+            <g font-family="'Segoe UI', system-ui, sans-serif" font-weight="900" fill="url(#${grad})" filter="url(#${glow})" text-anchor="middle">
+              ${fitTextTag({x:x+W*0.50, y:y+H*0.44, text:(fields.main||"NEON NIGHT"), weight:900, sizePx:H*0.22, boxW:W*0.70, anchor:'middle', fill:`url(#${grad})`})}
+              ${fitTextTag({x:x+W*0.50, y:y+H*0.70, text:(fields.sub ||"MARKET"),     weight:800, sizePx:H*0.16, boxW:W*0.60, anchor:'middle', fill:`url(#${grad})`})}
+            </g>
+            <g stroke="#22d3ee" stroke-width="6" stroke-linecap="round">
+              <line x1="${x+W*0.22}" y1="${y+H*0.28}" x2="${x+W*0.22}" y2="${y+H*0.60}"/>
+              <line x1="${x+W*0.78}" y1="${y+H*0.28}" x2="${x+W*0.78}" y2="${y+H*0.60}"/>
+            </g>
+          `;
+        }
+      })
+    });
+
+    list.push({
+      id: "retro-tv-club",
+      title: "RETRO TV CLUB｜ブラウン管風",
+      tags: ["retro","club","illust"],
+      badge: ["ブラウン管","アンテナ","横長"],
+      editable: [
+        {key:"main", label:"メイン", default:"RETRO TV"},
+        {key:"sub",  label:"サブ",  default:"SURF CLUB"}
+      ],
+      defaultFields: {main:"RETRO TV", sub:"SURF CLUB"},
+      svg: ({w=880,h=420,fields={}}={}) => withFrame({
+        w,h, stroke:"#f97316", strokeW:10, bg:"#0f172a",
+        body:(x,y,W,H)=>`
+          <g stroke="#f97316" stroke-width="8" fill="#111827" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="${x+W*0.12}" y="${y+H*0.18}" width="${W*0.44}" height="${H*0.48}" rx="${W*0.04}"/>
+            <rect x="${x+W*0.16}" y="${y+H*0.22}" width="${W*0.36}" height="${H*0.36}" rx="${W*0.03}" fill="#0b1220"/>
+            <circle cx="${x+W*0.58}" cy="${y+H*0.30}" r="${H*0.04}" fill="#f97316"/>
+            <circle cx="${x+W*0.58}" cy="${y+H*0.40}" r="${H*0.04}" fill="#fb923c"/>
+            <path d="M ${x+W*0.24} ${y+H*0.18} l ${W*0.08} ${-H*0.10}"/>
+            <path d="M ${x+W*0.32} ${y+H*0.18} l ${W*0.08} ${-H*0.10}"/>
+          </g>
+          <g font-family="system-ui, sans-serif" fill="#fde68a" font-weight="900">
+            ${fitTextTag({x:x+W*0.74, y:y+H*0.44, text:(fields.main||"RETRO TV"), weight:900, sizePx:H*0.20, boxW:W*0.34})}
+            ${fitTextTag({x:x+W*0.74, y:y+H*0.70, text:(fields.sub ||"SURF CLUB"), weight:800, sizePx:H*0.16, boxW:W*0.34, fill:"#f97316"})}
+          </g>
+        `
+      })
+    });
+
+    list.push({
+      id: "tide-calendar",
+      title: "TIDE CALENDAR｜潮見カレンダー",
+      tags: ["calendar","tide","info"],
+      badge: ["カレンダー","グリッド","情報系"],
+      editable: [
+        {key:"month", label:"月", default:"TIDE"},
+        {key:"label", label:"ラベル", default:"CALENDAR"}
+      ],
+      defaultFields: {month:"TIDE", label:"CALENDAR"},
+      svg: ({w=840,h=420,fields={}}={}) => withFrame({
+        w,h, stroke:"#38bdf8", strokeW:10, bg:"#0b1220",
+        body:(x,y,W,H)=>{
+          const grid = Array.from({length:5}).map((_,row)=>
+            Array.from({length:7}).map((__,col)=>`<rect x="${x+W*0.08 + col*W*0.11}" y="${y+H*0.26 + row*H*0.11}" width="${W*0.10}" height="${H*0.08}" rx="${W*0.01}" fill="${(row+col)%2?"#0f172a":"#1e293b"}" opacity="0.9"/>`).join("")
+          ).join("");
+          const marks = Array.from({length:6}).map((_,i)=>`<circle cx="${x+W*0.13 + (i%3)*W*0.11}" cy="${y+H*0.30 + Math.floor(i/3)*H*0.11}" r="${H*0.02}" fill="#38bdf8"/>`).join("");
+          return `
+            <rect x="${x+W*0.06}" y="${y+H*0.18}" width="${W*0.88}" height="${H*0.62}" rx="${W*0.04}" fill="#111827" stroke="#1f2937" stroke-width="6"/>
+            <g font-family="system-ui, sans-serif" fill="#e0f2fe" font-weight="800">
+              ${fitTextTag({x:x+W*0.24, y:y+H*0.32, text:(fields.month||"TIDE"), weight:800, sizePx:H*0.16, boxW:W*0.32})}
+              ${fitTextTag({x:x+W*0.56, y:y+H*0.32, text:(fields.label||"CALENDAR"), weight:900, sizePx:H*0.16, boxW:W*0.36})}
+            </g>
+            ${grid}
+            ${marks}
+            <g stroke="#38bdf8" stroke-width="5" opacity="0.6">
+              <path d="M ${x+W*0.08} ${y+H*0.60} q ${W*0.10} ${-H*0.12} ${W*0.20} 0 t ${W*0.20} 0 t ${W*0.20} 0" fill="none"/>
+            </g>
+          `;
+        }
+      })
+    });
+
+    list.push({
+      id: "board-rack-studio",
+      title: "BOARD RACK STUDIO｜ラック図案",
+      tags: ["rack","studio","illust"],
+      badge: ["ラック","サーフボード","イラスト"],
+      editable: [
+        {key:"main", label:"メイン", default:"BOARD RACK"},
+        {key:"sub",  label:"サブ",  default:"STUDIO"}
+      ],
+      defaultFields: {main:"BOARD RACK", sub:"STUDIO"},
+      svg: ({w=860,h=380,fields={}}={}) => withFrame({
+        w,h, stroke:"#22d3ee", strokeW:10, bg:"#0b1220",
+        body:(x,y,W,H)=>`
+          <g stroke="#38bdf8" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="${x+W*0.12}" y="${y+H*0.24}" width="${W*0.10}" height="${H*0.40}"/>
+            <rect x="${x+W*0.32}" y="${y+H*0.24}" width="${W*0.10}" height="${H*0.40}"/>
+            <rect x="${x+W*0.52}" y="${y+H*0.24}" width="${W*0.10}" height="${H*0.40}"/>
+            <path d="M ${x+W*0.22} ${y+H*0.24} q ${W*0.06} ${-H*0.10} ${W*0.12} 0" />
+            <path d="M ${x+W*0.42} ${y+H*0.24} q ${W*0.06} ${-H*0.10} ${W*0.12} 0" />
+            <path d="M ${x+W*0.62} ${y+H*0.24} q ${W*0.06} ${-H*0.10} ${W*0.12} 0" />
+            <path d="M ${x+W*0.22} ${y+H*0.64} q ${W*0.06} ${H*0.10} ${W*0.12} 0" />
+            <path d="M ${x+W*0.42} ${y+H*0.64} q ${W*0.06} ${H*0.10} ${W*0.12} 0" />
+            <path d="M ${x+W*0.62} ${y+H*0.64} q ${W*0.06} ${H*0.10} ${W*0.12} 0" />
+          </g>
+          <g font-family="system-ui, sans-serif" fill="#bae6fd" font-weight="900">
+            ${fitTextTag({x:x+W*0.74, y:y+H*0.46, text:(fields.main||"BOARD RACK"), weight:900, sizePx:H*0.20, boxW:W*0.34})}
+            ${fitTextTag({x:x+W*0.74, y:y+H*0.70, text:(fields.sub ||"STUDIO"),     weight:800, sizePx:H*0.16, boxW:W*0.34, fill:"#38bdf8"})}
+          </g>
+        `
+      })
+    });
+
+    list.push({
+      id: "blueprint-lab",
+      title: "BLUEPRINT LAB｜設計図スタイル",
+      tags: ["blueprint","lab","technical"],
+      badge: ["設計図","グリッド","技術系"],
+      editable: [
+        {key:"main", label:"メイン", default:"BLUEPRINT"},
+        {key:"sub",  label:"サブ",  default:"LAB"}
+      ],
+      defaultFields: {main:"BLUEPRINT", sub:"LAB"},
+      svg: ({w=900,h=360,fields={}}={}) => withFrame({
+        w,h, stroke:"#60a5fa", strokeW:10, bg:"#0b1220",
+        body:(x,y,W,H)=>{
+          const grid = Array.from({length:9}).map((_,i)=>`<line x1="${x+W*0.08 + i*W*0.09}" y1="${y+H*0.18}" x2="${x+W*0.08 + i*W*0.09}" y2="${y+H*0.82}" stroke="#1e3a8a" stroke-width="1" opacity="0.6"/>`).join("")
+            + Array.from({length:5}).map((_,i)=>`<line x1="${x+W*0.08}" y1="${y+H*0.24 + i*H*0.12}" x2="${x+W*0.92}" y2="${y+H*0.24 + i*H*0.12}" stroke="#1e3a8a" stroke-width="1" opacity="0.6"/>`).join("");
+          return `
+            <rect x="${x+W*0.06}" y="${y+H*0.16}" width="${W*0.88}" height="${H*0.68}" rx="${W*0.04}" fill="#102347" stroke="#1d4ed8" stroke-width="6"/>
+            ${grid}
+            <g stroke="#60a5fa" stroke-width="6" fill="none" stroke-linecap="round">
+              <path d="M ${x+W*0.20} ${y+H*0.62} q ${W*0.10} ${-H*0.28} ${W*0.20} 0"/>
+              <path d="M ${x+W*0.45} ${y+H*0.60} h ${W*0.12}"/>
+              <circle cx="${x+W*0.65}" cy="${y+H*0.44}" r="${H*0.10}"/>
+            </g>
+            <g font-family="system-ui, sans-serif" fill="#dbeafe" font-weight="900">
+              ${fitTextTag({x:x+W*0.72, y:y+H*0.44, text:(fields.main||"BLUEPRINT"), weight:900, sizePx:H*0.20, boxW:W*0.36})}
+              ${fitTextTag({x:x+W*0.72, y:y+H*0.70, text:(fields.sub ||"LAB"),         weight:800, sizePx:H*0.16, boxW:W*0.32, fill:"#60a5fa"})}
+            </g>
+          `;
+        }
+      })
+    });
+
+    list.push({
+      id: "topo-lines",
+      title: "TOPO LINES｜等高線アート",
+      tags: ["topo","art","abstract"],
+      badge: ["等高線","アート","抽象"],
+      editable: [
+        {key:"main", label:"メイン", default:"TOPO LINES"},
+        {key:"sub",  label:"サブ",  default:"INNER SWELL"}
+      ],
+      defaultFields: {main:"TOPO LINES", sub:"INNER SWELL"},
+      svg: ({w=880,h=360,fields={}}={}) => withFrame({
+        w,h, stroke:"#22c55e", strokeW:10, bg:"#052e16",
+        body:(x,y,W,H)=>{
+          const curves = Array.from({length:6}).map((_,i)=>`<path d="M ${x+W*0.10} ${y+H*(0.24 + i*0.08)} q ${W*0.12} ${H*0.04} ${W*0.24} 0 t ${W*0.24} 0 t ${W*0.24} 0" stroke="#22c55e" stroke-width="${3+i}" fill="none" opacity="${0.12 + i*0.12}"/>`).join("");
+          return `
+            ${curves}
+            <g font-family="system-ui, sans-serif" fill="#bbf7d0" font-weight="900">
+              ${fitTextTag({x:x+W*0.70, y:y+H*0.48, text:(fields.main||"TOPO LINES"), weight:900, sizePx:H*0.20, boxW:W*0.36})}
+              ${fitTextTag({x:x+W*0.70, y:y+H*0.74, text:(fields.sub ||"INNER SWELL"), weight:800, sizePx:H*0.16, boxW:W*0.34, fill:"#86efac"})}
+            </g>
+          `;
+        }
+      })
+    });
+
+    list.push({
+      id: "depth-gauge-pass",
+      title: "DEPTH GAUGE PASS｜水深ゲージ",
+      tags: ["gauge","pass","technical"],
+      badge: ["メーター","情報","計測"],
+      editable: [
+        {key:"main", label:"メイン", default:"DEPTH GAUGE"},
+        {key:"sub",  label:"サブ",  default:"PASS"}
+      ],
+      defaultFields: {main:"DEPTH GAUGE", sub:"PASS"},
+      svg: ({w=860,h=360,fields={}}={}) => withFrame({
+        w,h, stroke:"#38bdf8", strokeW:10, bg:"#0f172a",
+        body:(x,y,W,H)=>{
+          const ticks = Array.from({length:9}).map((_,i)=>`<line x1="${x+W*0.16 + i*W*0.06}" y1="${y+H*0.24}" x2="${x+W*0.16 + i*W*0.06}" y2="${y+H*0.52}" stroke="#38bdf8" stroke-width="${i%2?2:4}" opacity="0.7"/>`).join("");
+          return `
+            <circle cx="${x+W*0.28}" cy="${y+H*0.48}" r="${H*0.26}" fill="#0b1220" stroke="#1f2937" stroke-width="6"/>
+            <path d="M ${x+W*0.28} ${y+H*0.26} a ${H*0.22} ${H*0.22} 0 1 1 -0.1 0" fill="none" stroke="#38bdf8" stroke-width="8" stroke-linecap="round"/>
+            <line x1="${x+W*0.28}" y1="${y+H*0.48}" x2="${x+W*0.40}" y2="${y+H*0.34}" stroke="#22d3ee" stroke-width="8" stroke-linecap="round"/>
+            ${ticks}
+            <g font-family="system-ui, sans-serif" fill="#e0f2fe" font-weight="900">
+              ${fitTextTag({x:x+W*0.70, y:y+H*0.46, text:(fields.main||"DEPTH GAUGE"), weight:900, sizePx:H*0.20, boxW:W*0.34})}
+              ${fitTextTag({x:x+W*0.70, y:y+H*0.72, text:(fields.sub ||"PASS"),         weight:800, sizePx:H*0.16, boxW:W*0.34, fill:"#38bdf8"})}
+            </g>
+          `;
+        }
+      })
+    });
+
+    list.push({
+      id: "coffee-membership",
+      title: "COFFEE MEMBERSHIP｜カフェ会員証",
+      tags: ["coffee","membership","card"],
+      badge: ["カード","カフェ","柔らか"],
+      editable: [
+        {key:"main", label:"メイン", default:"COFFEE MEMBER"},
+        {key:"sub",  label:"サブ",  default:"SURF CLUB"}
+      ],
+      defaultFields: {main:"COFFEE MEMBER", sub:"SURF CLUB"},
+      svg: ({w=820,h=360,fields={}}={}) => withFrame({
+        w,h, stroke:"#facc15", strokeW:10, bg:"#1f2937",
+        body:(x,y,W,H)=>`
+          <rect x="${x+W*0.10}" y="${y+H*0.20}" width="${W*0.80}" height="${H*0.48}" rx="${W*0.06}" fill="#fef3c7" stroke="#fde68a" stroke-width="6"/>
+          <circle cx="${x+W*0.26}" cy="${y+H*0.44}" r="${H*0.16}" fill="#78350f" opacity="0.9"/>
+          <path d="M ${x+W*0.18} ${y+H*0.52} h ${W*0.16}" stroke="#facc15" stroke-width="6" stroke-linecap="round"/>
+          <g font-family="system-ui, sans-serif" fill="#78350f" font-weight="900">
+            ${fitTextTag({x:x+W*0.62, y:y+H*0.46, text:(fields.main||"COFFEE MEMBER"), weight:900, sizePx:H*0.18, boxW:W*0.44})}
+            ${fitTextTag({x:x+W*0.62, y:y+H*0.70, text:(fields.sub ||"SURF CLUB"),     weight:800, sizePx:H*0.16, boxW:W*0.40, fill:"#d97706"})}
+          </g>
+        `
+      })
+    });
+
+    list.push({
+      id: "fabric-patch",
+      title: "FABRIC PATCH｜ワッペン風",
+      tags: ["patch","fabric","badge"],
+      badge: ["ステッチ","布","丸角"],
+      editable: [
+        {key:"main", label:"メイン", default:"FABRIC PATCH"},
+        {key:"sub",  label:"サブ",  default:"OKA CREW"}
+      ],
+      defaultFields: {main:"FABRIC PATCH", sub:"OKA CREW"},
+      svg: ({w=780,h=360,fields={}}={}) => withFrame({
+        w,h, stroke:"#fbbf24", strokeW:10, bg:"#111827",
+        body:(x,y,W,H)=>`
+          <rect x="${x+W*0.12}" y="${y+H*0.20}" width="${W*0.76}" height="${H*0.48}" rx="${W*0.10}" fill="#1f2937" stroke="#f59e0b" stroke-width="10" stroke-dasharray="14 14"/>
+          <rect x="${x+W*0.18}" y="${y+H*0.26}" width="${W*0.64}" height="${H*0.36}" rx="${W*0.08}" fill="#0f172a" stroke="#f97316" stroke-width="6" stroke-dasharray="8 10"/>
+          <g font-family="system-ui, sans-serif" fill="#fde68a" font-weight="900" text-anchor="middle">
+            ${fitTextTag({x:x+W*0.50, y:y+H*0.44, text:(fields.main||"FABRIC PATCH"), weight:900, sizePx:H*0.18, boxW:W*0.60, anchor:'middle'})}
+            ${fitTextTag({x:x+W*0.50, y:y+H*0.70, text:(fields.sub ||"OKA CREW"),     weight:800, sizePx:H*0.16, boxW:W*0.56, anchor:'middle', fill:"#f97316"})}
+          </g>
+        `
+      })
+    });
+
+    list.push({
+      id: "hologram-access",
+      title: "HOLOGRAM ACCESS｜ホログラムカード",
+      tags: ["hologram","access","card"],
+      badge: ["ホログラム","虹色","角丸"],
+      editable: [
+        {key:"main", label:"メイン", default:"HOLOGRAM"},
+        {key:"sub",  label:"サブ",  default:"ACCESS"}
+      ],
+      defaultFields: {main:"HOLOGRAM", sub:"ACCESS"},
+      svg: ({w=820,h=360,fields={}}={}) => withFrame({
+        w,h, stroke:"#a855f7", strokeW:10, bg:"#0b1220",
+        body:(x,y,W,H)=>{
+          const holo = `holo${hash('access')}`;
+          return `
+            <defs>
+              <linearGradient id="${holo}" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#38bdf8"/>
+                <stop offset="0.5" stop-color="#f472b6"/>
+                <stop offset="1" stop-color="#facc15"/>
+              </linearGradient>
+            </defs>
+            <rect x="${x+W*0.10}" y="${y+H*0.20}" width="${W*0.80}" height="${H*0.48}" rx="${W*0.08}" fill="url(#${holo})" opacity="0.85"/>
+            <rect x="${x+W*0.16}" y="${y+H*0.26}" width="${W*0.56}" height="${H*0.24}" rx="${W*0.04}" fill="#0f172a" opacity="0.85"/>
+            <g stroke="#fbcfe8" stroke-width="6" stroke-linecap="round" opacity="0.6">
+              <line x1="${x+W*0.20}" y1="${y+H*0.56}" x2="${x+W*0.36}" y2="${y+H*0.56}"/>
+              <line x1="${x+W*0.40}" y1="${y+H*0.56}" x2="${x+W*0.56}" y2="${y+H*0.56}"/>
+            </g>
+            <g font-family="system-ui, sans-serif" fill="#0f172a" font-weight="900" text-anchor="middle">
+              ${fitTextTag({x:x+W*0.50, y:y+H*0.40, text:(fields.main||"HOLOGRAM"), weight:900, sizePx:H*0.18, boxW:W*0.56, anchor:'middle', fill:"#0f172a"})}
+              ${fitTextTag({x:x+W*0.50, y:y+H*0.68, text:(fields.sub ||"ACCESS"),   weight:800, sizePx:H*0.16, boxW:W*0.56, anchor:'middle', fill:"#0f172a"})}
+            </g>
+          `;
+        }
+      })
+    });
+
+    list.push({
+      id: "rooftop-rider",
+      title: "ROOFTOP RIDER｜屋上積載ビュー",
+      tags: ["van","top","illust"],
+      badge: ["トップビュー","車","イラスト"],
+      editable: [
+        {key:"main", label:"メイン", default:"ROOFTOP"},
+        {key:"sub",  label:"サブ",  default:"RIDER"}
+      ],
+      defaultFields: {main:"ROOFTOP", sub:"RIDER"},
+      svg: ({w=860,h=380,fields={}}={}) => withFrame({
+        w,h, stroke:"#34d399", strokeW:10, bg:"#0b1220",
+        body:(x,y,W,H)=>`
+          <g stroke="#34d399" stroke-width="7" fill="#111827" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="${x+W*0.18}" y="${y+H*0.22}" width="${W*0.32}" height="${H*0.40}" rx="${W*0.08}"/>
+            <rect x="${x+W*0.24}" y="${y+H*0.28}" width="${W*0.20}" height="${H*0.12}" rx="${W*0.02}" fill="#0f172a"/>
+            <rect x="${x+W*0.24}" y="${y+H*0.46}" width="${W*0.20}" height="${H*0.12}" rx="${W*0.02}" fill="#0f172a"/>
+            <rect x="${x+W*0.34}" y="${y+H*0.18}" width="${W*0.10}" height="${H*0.08}" rx="${W*0.02}" fill="#1e2937"/>
+            <path d="M ${x+W*0.34} ${y+H*0.18} l ${W*0.10} ${H*0.08}" fill="#0b1220"/>
+            <rect x="${x+W*0.30}" y="${y+H*0.32}" width="${W*0.12}" height="${H*0.20}" rx="${W*0.04}" fill="#0f172a" stroke="#34d399" stroke-width="6"/>
+          </g>
+          <g font-family="system-ui, sans-serif" fill="#bbf7d0" font-weight="900">
+            ${fitTextTag({x:x+W*0.72, y:y+H*0.46, text:(fields.main||"ROOFTOP"), weight:900, sizePx:H*0.20, boxW:W*0.34})}
+            ${fitTextTag({x:x+W*0.72, y:y+H*0.70, text:(fields.sub ||"RIDER"),      weight:800, sizePx:H*0.16, boxW:W*0.34, fill:"#34d399"})}
+          </g>
+        `
+      })
+    });
+
+    list.push({
+      id: "tidal-clockface",
+      title: "TIDAL CLOCKFACE｜潮見時計",
+      tags: ["clock","tide","instrument"],
+      badge: ["時計","円形","情報"],
+      editable: [
+        {key:"main", label:"メイン", default:"TIDAL"},
+        {key:"sub",  label:"サブ",  default:"CLOCKFACE"}
+      ],
+      defaultFields: {main:"TIDAL", sub:"CLOCKFACE"},
+      svg: ({w=620,h=620,fields={}}={}) => withFrame({
+        w,h, stroke:"#38bdf8", strokeW:12, bg:"#0f172a",
+        body:(x,y,W,H)=>{
+          const cx = x+W/2, cy = y+H/2, r = Math.min(W,H)/2 - 16;
+          const marks = Array.from({length:12}).map((_,i)=>{
+            const angle = -Math.PI/2 + i*(Math.PI/6);
+            const x1 = cx + Math.cos(angle)* (r-16);
+            const y1 = cy + Math.sin(angle)* (r-16);
+            const x2 = cx + Math.cos(angle)* (r-40);
+            const y2 = cy + Math.sin(angle)* (r-40);
+            return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#38bdf8" stroke-width="${i%3===0?8:4}" stroke-linecap="round"/>`;
+          }).join("");
+          return `
+            <circle cx="${cx}" cy="${cy}" r="${r}" fill="#0b1120" stroke="#1f2937" stroke-width="10"/>
+            ${marks}
+            <line x1="${cx}" y1="${cy}" x2="${cx + r*0.6}" y2="${cy}" stroke="#38bdf8" stroke-width="10" stroke-linecap="round"/>
+            <line x1="${cx}" y1="${cy}" x2="${cx + r*0.28}" y2="${cy - r*0.52}" stroke="#22d3ee" stroke-width="8" stroke-linecap="round"/>
+            <g font-family="system-ui, sans-serif" fill="#e0f2fe" font-weight="900" text-anchor="middle">
+              ${fitTextTag({x:cx, y:cy - r*0.36, text:(fields.main||"TIDAL"), weight:900, sizePx:r*0.26, boxW:r*1.6, anchor:'middle'})}
+              ${fitTextTag({x:cx, y:cy + r*0.40, text:(fields.sub ||"CLOCKFACE"), weight:800, sizePx:r*0.20, boxW:r*1.6, anchor:'middle', fill:"#38bdf8"})}
+            </g>
+          `;
+        }
+      })
+    });
+
+    list.push({
+      id: "vertical-banner-drop",
+      title: "VERTICAL BANNER DROP｜縦長バナー",
+      tags: ["vertical","banner","minimal"],
+      badge: ["縦長","シンプル","タイポ"],
+      editable: [
+        {key:"main", label:"メイン", default:"VERTICAL"},
+        {key:"sub",  label:"サブ",  default:"DROP"}
+      ],
+      defaultFields: {main:"VERTICAL", sub:"DROP"},
+      svg: ({w=420,h=820,fields={}}={}) => withFrame({
+        w,h, stroke:"#6366f1", strokeW:12, bg:"#0b1220",
+        body:(x,y,W,H)=>`
+          <defs>
+            <linearGradient id="grad${hash('vertical-drop')}" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#312e81"/>
+              <stop offset="1" stop-color="#6366f1"/>
+            </linearGradient>
+          </defs>
+          <rect x="${x+W*0.18}" y="${y+H*0.10}" width="${W*0.64}" height="${H*0.80}" rx="${W*0.10}" fill="url(#grad${hash('vertical-drop')})"/>
+          <circle cx="${x+W*0.50}" cy="${y+H*0.24}" r="${W*0.14}" fill="#0b1220" stroke="#e0e7ff" stroke-width="6"/>
+          <g font-family="system-ui, sans-serif" fill="#e0e7ff" font-weight="900" text-anchor="middle">
+            ${fitTextTag({x:x+W*0.50, y:y+H*0.46, text:(fields.main||"VERTICAL"), weight:900, sizePx:H*0.10, boxW:W*0.44, anchor:'middle'})}
+            ${fitTextTag({x:x+W*0.50, y:y+H*0.70, text:(fields.sub ||"DROP"),       weight:800, sizePx:H*0.08, boxW:W*0.42, anchor:'middle', fill:"#c7d2fe"})}
+          </g>
+        `
+      })
+    });
+
+    list.push({
+      id: "polaroid-break",
+      title: "POLAROID BREAK｜ポラロイド風",
+      tags: ["photo","memory","illust"],
+      badge: ["ポラロイド","白地","イラスト"],
+      editable: [
+        {key:"main", label:"メイン", default:"POLAROID"},
+        {key:"sub",  label:"サブ",  default:"BREAK"}
+      ],
+      defaultFields: {main:"POLAROID", sub:"BREAK"},
+      svg: ({w=720,h=780,fields={}}={}) => withFrame({
+        w,h, stroke:"#d1d5db", strokeW:12, bg:"#0f172a",
+        body:(x,y,W,H)=>`
+          <rect x="${x+W*0.12}" y="${y+H*0.10}" width="${W*0.76}" height="${H*0.70}" rx="${W*0.06}" fill="#f8fafc" stroke="#e5e7eb" stroke-width="6"/>
+          <rect x="${x+W*0.20}" y="${y+H*0.18}" width="${W*0.60}" height="${H*0.42}" fill="#1f2937"/>
+          <path d="M ${x+W*0.20} ${y+H*0.48} q ${W*0.10} ${-H*0.12} ${W*0.20} 0 t ${W*0.20} 0" stroke="#38bdf8" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <circle cx="${x+W*0.32}" cy="${y+H*0.30}" r="${H*0.06}" fill="#38bdf8"/>
+          <g font-family="system-ui, sans-serif" fill="#1f2937" font-weight="800" text-anchor="middle">
+            ${fitTextTag({x:x+W*0.50, y:y+H*0.66, text:(fields.main||"POLAROID"), weight:800, sizePx:H*0.08, boxW:W*0.60, anchor:'middle'})}
+            ${fitTextTag({x:x+W*0.50, y:y+H*0.76, text:(fields.sub ||"BREAK"),     weight:700, sizePx:H*0.06, boxW:W*0.56, anchor:'middle', fill:"#0f172a"})}
+          </g>
+        `
+      })
+    });
+
+    list.push({
+      id: "wax-formula",
+      title: "WAX FORMULA｜ワックス配合",
+      tags: ["wax","formula","label"],
+      badge: ["ラベル","配合","情報"],
+      editable: [
+        {key:"main", label:"メイン", default:"WAX FORMULA"},
+        {key:"sub",  label:"サブ",  default:"CITY BLEND"}
+      ],
+      defaultFields: {main:"WAX FORMULA", sub:"CITY BLEND"},
+      svg: ({w=820,h=360,fields={}}={}) => withFrame({
+        w,h, stroke:"#f97316", strokeW:10, bg:"#0b1220",
+        body:(x,y,W,H)=>`
+          <rect x="${x+W*0.10}" y="${y+H*0.22}" width="${W*0.80}" height="${H*0.44}" rx="${W*0.08}" fill="#fef3c7" stroke="#f97316" stroke-width="8"/>
+          <g font-family="system-ui, sans-serif" fill="#78350f" font-weight="900">
+            ${fitTextTag({x:x+W*0.50, y:y+H*0.38, text:(fields.main||"WAX FORMULA"), weight:900, sizePx:H*0.18, boxW:W*0.64, anchor:'middle'})}
+          </g>
+          <g font-family="system-ui, sans-serif" fill="#b45309" font-weight="700" text-anchor="middle">
+            ${fitTextTag({x:x+W*0.50, y:y+H*0.58, text:(fields.sub||"CITY BLEND"), weight:700, sizePx:H*0.14, boxW:W*0.60, anchor:'middle'})}
+          </g>
+          <g stroke="#f97316" stroke-width="4" opacity="0.6">
+            <line x1="${x+W*0.18}" y1="${y+H*0.62}" x2="${x+W*0.82}" y2="${y+H*0.62}"/>
+            <line x1="${x+W*0.18}" y1="${y+H*0.68}" x2="${x+W*0.82}" y2="${y+H*0.68}"/>
+          </g>
+        `
+      })
+    });
+
+    list.push({
+      id: "cargo-bay",
+      title: "CARGO BAY｜コンテナ風ロゴ",
+      tags: ["cargo","industrial","logo"],
+      badge: ["コンテナ","ストライプ","無骨"],
+      editable: [
+        {key:"main", label:"メイン", default:"CARGO BAY"},
+        {key:"sub",  label:"サブ",  default:"PORT 45"}
+      ],
+      defaultFields: {main:"CARGO BAY", sub:"PORT 45"},
+      svg: ({w=880,h=360,fields={}}={}) => withFrame({
+        w,h, stroke:"#f97316", strokeW:10, bg:"#111827",
+        body:(x,y,W,H)=>{
+          const stripes = Array.from({length:12}).map((_,i)=>`<rect x="${x+W*0.10 + i*W*0.05}" y="${y+H*0.20}" width="${W*0.03}" height="${H*0.48}" fill="#7f1d1d" opacity="${0.3 + (i%3)*0.1}"/>`).join("");
+          return `
+            <rect x="${x+W*0.08}" y="${y+H*0.18}" width="${W*0.84}" height="${H*0.52}" rx="${W*0.02}" fill="#1f2937" stroke="#f97316" stroke-width="8"/>
+            ${stripes}
+            <g font-family="system-ui, sans-serif" fill="#fed7aa" font-weight="900">
+              ${fitTextTag({x:x+W*0.54, y:y+H*0.44, text:(fields.main||"CARGO BAY"), weight:900, sizePx:H*0.20, boxW:W*0.60})}
+              ${fitTextTag({x:x+W*0.54, y:y+H*0.70, text:(fields.sub ||"PORT 45"),  weight:800, sizePx:H*0.16, boxW:W*0.58, fill:"#f97316"})}
+            </g>
+          `;
+        }
+      })
+    });
+
+    list.push({
+      id: "digital-scoreboard",
+      title: "DIGITAL SCOREBOARD｜電光掲示板",
+      tags: ["digital","score","board"],
+      badge: ["ドット","電光","情報"],
+      editable: [
+        {key:"main", label:"メイン", default:"SCORE"},
+        {key:"sub",  label:"サブ",  default:"LINE"}
+      ],
+      defaultFields: {main:"SCORE", sub:"LINE"},
+      svg: ({w=880,h=360,fields={}}={}) => withFrame({
+        w,h, stroke:"#22d3ee", strokeW:10, bg:"#0b1727",
+        body:(x,y,W,H)=>{
+          const dots = Array.from({length:12}).map((_,i)=>
+            Array.from({length:4}).map((__,j)=>`<circle cx="${x+W*0.20 + i*W*0.04}" cy="${y+H*0.30 + j*H*0.08}" r="${H*0.018}" fill="#22d3ee" opacity="${0.2 + 0.08*j}"/>`).join("")
+          ).join("");
+          return `
+            <rect x="${x+W*0.14}" y="${y+H*0.20}" width="${W*0.72}" height="${H*0.40}" rx="${W*0.04}" fill="#020617" stroke="#1e293b" stroke-width="6"/>
+            ${dots}
+            <g font-family="'Orbitron', system-ui, sans-serif" fill="#22d3ee" font-weight="700" text-anchor="middle">
+              ${fitTextTag({x:x+W*0.50, y:y+H*0.44, text:(fields.main||"SCORE"), weight:700, sizePx:H*0.18, boxW:W*0.60, anchor:'middle'})}
+              ${fitTextTag({x:x+W*0.50, y:y+H*0.68, text:(fields.sub ||"LINE"),  weight:600, sizePx:H*0.16, boxW:W*0.56, anchor:'middle', fill:"#0ea5e9"})}
+            </g>
+          `;
+        }
+      })
+    });
+
+    list.push({
+      id: "porthole-view",
+      title: "PORTHOLE VIEW｜舷窓ビュー",
+      tags: ["porthole","ocean","illust"],
+      badge: ["丸窓","海","イラスト"],
+      editable: [
+        {key:"main", label:"メイン", default:"PORTHOLE"},
+        {key:"sub",  label:"サブ",  default:"VIEW"}
+      ],
+      defaultFields: {main:"PORTHOLE", sub:"VIEW"},
+      svg: ({w=720,h=720,fields={}}={}) => withFrame({
+        w,h, stroke:"#38bdf8", strokeW:12, bg:"#0f172a",
+        body:(x,y,W,H)=>{
+          const cx = x+W/2, cy = y+H/2, r = Math.min(W,H)/2 - 20;
+          const bolts = Array.from({length:8}).map((_,i)=>{
+            const angle = i*(Math.PI/4);
+            return `<circle cx="${cx + Math.cos(angle)*(r-10)}" cy="${cy + Math.sin(angle)*(r-10)}" r="6" fill="#38bdf8"/>`;
+          }).join("");
+          return `
+            <circle cx="${cx}" cy="${cy}" r="${r}" fill="#0b1120" stroke="#1f2937" stroke-width="12"/>
+            ${bolts}
+            <path d="M ${cx - r*0.7} ${cy + r*0.2} q ${r*0.3} ${-r*0.6} ${r*0.6} 0 q ${r*0.3} ${r*0.6} ${r*0.6} 0" stroke="#38bdf8" stroke-width="10" fill="none" stroke-linecap="round"/>
+            <path d="M ${cx - r*0.5} ${cy + r*0.1} q ${r*0.2} ${-r*0.3} ${r*0.4} 0" stroke="#0ea5e9" stroke-width="6" fill="none" stroke-linecap="round"/>
+            <g font-family="system-ui, sans-serif" fill="#e0f2fe" font-weight="900" text-anchor="middle">
+              ${fitTextTag({x:cx, y:cy - r*0.35, text:(fields.main||"PORTHOLE"), weight:900, sizePx:r*0.28, boxW:r*1.6, anchor:'middle'})}
+              ${fitTextTag({x:cx, y:cy + r*0.42, text:(fields.sub ||"VIEW"),      weight:800, sizePx:r*0.22, boxW:r*1.5, anchor:'middle', fill:"#38bdf8"})}
+            </g>
+          `;
+        }
+      })
+    });
+
+    list.push({
+      id: "caution-rip-current",
+      title: "CAUTION RIP CURRENT｜注意テープ",
+      tags: ["caution","warning","tape"],
+      badge: ["警告","斜め","ジョーク"],
+      editable: [
+        {key:"main", label:"メイン", default:"CAUTION"},
+        {key:"sub",  label:"サブ",  default:"RIP CURRENT"}
+      ],
+      defaultFields: {main:"CAUTION", sub:"RIP CURRENT"},
+      svg: ({w=900,h=320,fields={}}={}) => withFrame({
+        w,h, stroke:"#facc15", strokeW:10, bg:"#111827",
+        body:(x,y,W,H)=>{
+          const stripes = Array.from({length:7}).map((_,i)=>`<polygon points="${x+W*0.08 + i*W*0.12},${y+H*0.24} ${x+W*0.18 + i*W*0.12},${y+H*0.24} ${x+W*0.12 + i*W*0.12},${y+H*0.60} ${x+W*0.02 + i*W*0.12},${y+H*0.60}" fill="${i%2===0?"#facc15":"#111827"}"/>`).join("");
+          return `
+            ${stripes}
+            <g font-family="system-ui, sans-serif" fill="#111827" font-weight="900">
+              ${fitTextTag({x:x+W*0.48, y:y+H*0.40, text:(fields.main||"CAUTION"), weight:900, sizePx:H*0.20, boxW:W*0.72, anchor:'middle', fill:"#111827"})}
+              ${fitTextTag({x:x+W*0.48, y:y+H*0.64, text:(fields.sub ||"RIP CURRENT"), weight:800, sizePx:H*0.16, boxW:W*0.72, anchor:'middle', fill:"#111827"})}
+            </g>
+          `;
+        }
+      })
+    });
+
+    list.push({
+      id: "festival-wristband",
+      title: "FESTIVAL WRISTBAND｜リストバンド風",
+      tags: ["festival","band","ticket"],
+      badge: ["リストバンド","パンチ穴","カラフル"],
+      editable: [
+        {key:"main", label:"メイン", default:"FESTIVAL"},
+        {key:"sub",  label:"サブ",  default:"WRISTBAND"}
+      ],
+      defaultFields: {main:"FESTIVAL", sub:"WRISTBAND"},
+      svg: ({w=900,h=260,fields={}}={}) => withFrame({
+        w,h, stroke:"#f472b6", strokeW:10, bg:"#0f172a",
+        body:(x,y,W,H)=>`
+          <defs>
+            <linearGradient id="band${hash('festival')}" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#f472b6"/>
+              <stop offset="1" stop-color="#38bdf8"/>
+            </linearGradient>
+          </defs>
+          <rect x="${x+W*0.06}" y="${y+H*0.34}" width="${W*0.88}" height="${H*0.32}" rx="${H*0.12}" fill="url(#band${hash('festival')})"/>
+          ${Array.from({length:6}).map((_,i)=>`<circle cx="${x+W*0.12 + i*W*0.14}" cy="${y+H*0.50}" r="${H*0.05}" fill="#0f172a" opacity="0.7"/>`).join("")}
+          <g font-family="system-ui, sans-serif" fill="#0f172a" font-weight="900" text-anchor="middle">
+            ${fitTextTag({x:x+W*0.50, y:y+H*0.46, text:(fields.main||"FESTIVAL"), weight:900, sizePx:H*0.22, boxW:W*0.64, anchor:'middle'})}
+            ${fitTextTag({x:x+W*0.50, y:y+H*0.66, text:(fields.sub ||"WRISTBAND"), weight:800, sizePx:H*0.18, boxW:W*0.60, anchor:'middle'})}
+          </g>
+        `
+      })
+    });
+
+    list.push({
+      id: "dimension-spec",
+      title: "DIMENSION SPEC｜寸法スペック",
+      tags: ["dimension","spec","technical"],
+      badge: ["寸法","図面","情報"],
+      editable: [
+        {key:"main", label:"メイン", default:"DIMENSION"},
+        {key:"sub",  label:"サブ",  default:"SPEC"}
+      ],
+      defaultFields: {main:"DIMENSION", sub:"SPEC"},
+      svg: ({w=880,h=360,fields={}}={}) => withFrame({
+        w,h, stroke:"#facc15", strokeW:10, bg:"#0f172a",
+        body:(x,y,W,H)=>`
+          <rect x="${x+W*0.10}" y="${y+H*0.22}" width="${W*0.52}" height="${H*0.36}" rx="${W*0.02}" fill="#111827" stroke="#eab308" stroke-width="6"/>
+          <path d="M ${x+W*0.16} ${y+H*0.40} q ${W*0.10} ${-H*0.18} ${W*0.20} 0 q ${W*0.10} ${H*0.18} ${W*0.20} 0" stroke="#fde047" stroke-width="6" fill="none"/>
+          <line x1="${x+W*0.10}" y1="${y+H*0.24}" x2="${x+W*0.62}" y2="${y+H*0.24}" stroke="#fde047" stroke-width="4" stroke-dasharray="8 10"/>
+          <line x1="${x+W*0.10}" y1="${y+H*0.58}" x2="${x+W*0.62}" y2="${y+H*0.58}" stroke="#fde047" stroke-width="4" stroke-dasharray="8 10"/>
+          <line x1="${x+W*0.14}" y1="${y+H*0.22}" x2="${x+W*0.14}" y2="${y+H*0.58}" stroke="#fde047" stroke-width="4" stroke-dasharray="6 8"/>
+          <line x1="${x+W*0.58}" y1="${y+H*0.22}" x2="${x+W*0.58}" y2="${y+H*0.58}" stroke="#fde047" stroke-width="4" stroke-dasharray="6 8"/>
+          <g font-family="system-ui, sans-serif" fill="#fef3c7" font-weight="900">
+            ${fitTextTag({x:x+W*0.74, y:y+H*0.46, text:(fields.main||"DIMENSION"), weight:900, sizePx:H*0.18, boxW:W*0.32})}
+            ${fitTextTag({x:x+W*0.74, y:y+H*0.70, text:(fields.sub ||"SPEC"),      weight:800, sizePx:H*0.16, boxW:W*0.30, fill:"#facc15"})}
+          </g>
+        `
+      })
+    });
+
+    list.push({
+      id: "data-stream",
+      title: "DATA STREAM｜データパネル",
+      tags: ["data","panel","modern"],
+      badge: ["データ","パネル","ハイテク"],
+      editable: [
+        {key:"main", label:"メイン", default:"DATA STREAM"},
+        {key:"sub",  label:"サブ",  default:"SURF ANALYTICS"}
+      ],
+      defaultFields: {main:"DATA STREAM", sub:"SURF ANALYTICS"},
+      svg: ({w=880,h=360,fields={}}={}) => withFrame({
+        w,h, stroke:"#22d3ee", strokeW:10, bg:"#020617",
+        body:(x,y,W,H)=>{
+          const bars = Array.from({length:8}).map((_,i)=>`<rect x="${x+W*0.16 + i*W*0.06}" y="${y+H*0.40}" width="${W*0.04}" height="${H*(0.10 + (i%3)*0.05)}" fill="#22d3ee" opacity="${0.3 + i*0.08}"/>`).join("");
+          const dots = Array.from({length:10}).map((_,i)=>`<circle cx="${x+W*0.16 + i*W*0.06}" cy="${y+H*0.30}" r="${H*0.02}" fill="#0ea5e9" opacity="0.8"/>`).join("");
+          return `
+            <rect x="${x+W*0.10}" y="${y+H*0.22}" width="${W*0.56}" height="${H*0.32}" rx="${W*0.02}" fill="#0b1120" stroke="#1e293b" stroke-width="6"/>
+            <polyline points="${Array.from({length:8}).map((_,i)=>`${x+W*0.16 + i*W*0.06},${y+H*(0.36 - (i%3)*0.04)}`).join(' ')}" fill="none" stroke="#38bdf8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            ${bars}
+            ${dots}
+            <g font-family="system-ui, sans-serif" fill="#22d3ee" font-weight="900">
+              ${fitTextTag({x:x+W*0.72, y:y+H*0.46, text:(fields.main||"DATA STREAM"), weight:900, sizePx:H*0.18, boxW:W*0.32})}
+              ${fitTextTag({x:x+W*0.72, y:y+H*0.70, text:(fields.sub ||"SURF ANALYTICS"), weight:800, sizePx:H*0.16, boxW:W*0.36, fill:"#38bdf8"})}
+            </g>
+          `;
+        }
+      })
+    });
+
+    list.push({
+      id: "playlist-swell",
+      title: "PLAYLIST SWELL｜再生リスト風",
+      tags: ["playlist","music","card"],
+      badge: ["プレイリスト","再生","モダン"],
+      editable: [
+        {key:"main", label:"メイン", default:"PLAYLIST"},
+        {key:"sub",  label:"サブ",  default:"SWELL"}
+      ],
+      defaultFields: {main:"PLAYLIST", sub:"SWELL"},
+      svg: ({w=780,h=420,fields={}}={}) => withFrame({
+        w,h, stroke:"#a78bfa", strokeW:10, bg:"#0b1220",
+        body:(x,y,W,H)=>`
+          <rect x="${x+W*0.12}" y="${y+H*0.20}" width="${W*0.28}" height="${H*0.44}" rx="${W*0.04}" fill="#a855f7" opacity="0.8"/>
+          <circle cx="${x+W*0.26}" cy="${y+H*0.42}" r="${H*0.12}" fill="#4c1d95" stroke="#e9d5ff" stroke-width="6"/>
+          <path d="M ${x+W*0.24} ${y+H*0.42} l ${W*0.04} ${H*0.02} l -${W*0.04} ${H*0.02} z" fill="#e9d5ff"/>
+          <g font-family="system-ui, sans-serif" fill="#e9d5ff" font-weight="800">
+            ${fitTextTag({x:x+W*0.56, y:y+H*0.36, text:(fields.main||"PLAYLIST"), weight:800, sizePx:H*0.18, boxW:W*0.40})}
+            ${fitTextTag({x:x+W*0.56, y:y+H*0.58, text:(fields.sub ||"SWELL"),   weight:700, sizePx:H*0.16, boxW:W*0.36, fill:"#a78bfa"})}
+          </g>
+          <g fill="#a78bfa" opacity="0.7">
+            ${Array.from({length:4}).map((_,i)=>`<rect x="${x+W*0.46}" y="${y+H*(0.64 + i*0.06)}" width="${W*0.36}" height="${H*0.04}" rx="${W*0.01}"/>`).join("")}
+          </g>
+        `
+      })
+    });
+
+    list.push({
+      id: "collage-waves",
+      title: "COLLAGE WAVES｜コラージュ風",
+      tags: ["collage","art","waves"],
+      badge: ["コラージュ","グリッド","抽象"],
+      editable: [
+        {key:"main", label:"メイン", default:"COLLAGE"},
+        {key:"sub",  label:"サブ",  default:"WAVES"}
+      ],
+      defaultFields: {main:"COLLAGE", sub:"WAVES"},
+      svg: ({w=880,h=360,fields={}}={}) => withFrame({
+        w,h, stroke:"#38bdf8", strokeW:10, bg:"#0f172a",
+        body:(x,y,W,H)=>{
+          const blocks = ["#0ea5e9","#06b6d4","#1d4ed8","#22d3ee","#0f172a"].map((color,i)=>`<rect x="${x+W*0.10 + (i%3)*W*0.18}" y="${y+H*0.24 + Math.floor(i/3)*H*0.18}" width="${W*0.16}" height="${H*0.16}" fill="${color}" opacity="${0.4 + i*0.1}"/>`).join("");
+          const waves = Array.from({length:3}).map((_,i)=>`<path d="M ${x+W*(0.10+i*0.20)} ${y+H*0.60} q ${W*0.08} ${-H*0.10} ${W*0.16} 0" stroke="#22d3ee" stroke-width="6" fill="none" stroke-linecap="round" opacity="${0.6 + i*0.1}"/>`).join("");
+          return `
+            ${blocks}
+            ${waves}
+            <g font-family="system-ui, sans-serif" fill="#e0f2fe" font-weight="900">
+              ${fitTextTag({x:x+W*0.70, y:y+H*0.46, text:(fields.main||"COLLAGE"), weight:900, sizePx:H*0.20, boxW:W*0.36})}
+              ${fitTextTag({x:x+W*0.70, y:y+H*0.70, text:(fields.sub ||"WAVES"),   weight:800, sizePx:H*0.16, boxW:W*0.34, fill:"#38bdf8"})}
+            </g>
+          `;
+        }
+      })
+    });
+
+    list.push({
+      id: "gradient-ripples",
+      title: "GRADIENT RIPPLES｜リップルアート",
+      tags: ["gradient","ripples","abstract"],
+      badge: ["グラデ","円","アート"],
+      editable: [
+        {key:"main", label:"メイン", default:"GRADIENT"},
+        {key:"sub",  label:"サブ",  default:"RIPPLES"}
+      ],
+      defaultFields: {main:"GRADIENT", sub:"RIPPLES"},
+      svg: ({w=860,h=360,fields={}}={}) => withFrame({
+        w,h, stroke:"#a855f7", strokeW:10, bg:"#1e1b4b",
+        body:(x,y,W,H)=>{
+          const ripples = Array.from({length:5}).map((_,i)=>`<circle cx="${x+W*0.26}" cy="${y+H*0.48}" r="${H*(0.10 + i*0.08)}" fill="none" stroke="#c4b5fd" stroke-width="4" opacity="${0.18 + i*0.14}"/>`).join("");
+          return `
+            <defs>
+              <radialGradient id="rip${hash('gradient-ripples')}" cx="50%" cy="50%" r="70%">
+                <stop offset="0%" stop-color="#a855f7"/>
+                <stop offset="100%" stop-color="#22d3ee"/>
+              </radialGradient>
+            </defs>
+            <circle cx="${x+W*0.26}" cy="${y+H*0.48}" r="${H*0.18}" fill="url(#rip${hash('gradient-ripples')})" opacity="0.8"/>
+            ${ripples}
+            <g font-family="system-ui, sans-serif" fill="#ede9fe" font-weight="900">
+              ${fitTextTag({x:x+W*0.70, y:y+H*0.46, text:(fields.main||"GRADIENT"), weight:900, sizePx:H*0.20, boxW:W*0.34})}
+              ${fitTextTag({x:x+W*0.70, y:y+H*0.72, text:(fields.sub ||"RIPPLES"),  weight:800, sizePx:H*0.16, boxW:W*0.32, fill:"#c4b5fd"})}
+            </g>
+          `;
+        }
+      })
+    });
+
+    list.push({
+      id: "drift-postcard",
+      title: "DRIFT POSTCARD｜ポストカード風",
+      tags: ["postcard","travel","retro"],
+      badge: ["ポストカード","切手","ビンテージ"],
+      editable: [
+        {key:"main", label:"メイン", default:"DRIFT"},
+        {key:"sub",  label:"サブ",  default:"POSTCARD"}
+      ],
+      defaultFields: {main:"DRIFT", sub:"POSTCARD"},
+      svg: ({w=880,h=520,fields={}}={}) => withFrame({
+        w,h, stroke:"#fef3c7", strokeW:12, bg:"#0f172a",
+        body:(x,y,W,H)=>`
+          <rect x="${x+W*0.08}" y="${y+H*0.14}" width="${W*0.84}" height="${H*0.66}" rx="${W*0.04}" fill="#fef3c7" stroke="#facc15" stroke-width="8"/>
+          <rect x="${x+W*0.12}" y="${y+H*0.18}" width="${W*0.44}" height="${H*0.46}" fill="#0ea5e9" opacity="0.8"/>
+          <path d="M ${x+W*0.12} ${y+H*0.48} q ${W*0.10} ${-H*0.16} ${W*0.20} 0 t ${W*0.20} 0" stroke="#facc15" stroke-width="6" fill="none"/>
+          <rect x="${x+W*0.66}" y="${y+H*0.18}" width="${W*0.16}" height="${H*0.14}" fill="#facc15" stroke="#f59e0b" stroke-width="4"/>
+          <g fill="#fbbf24" opacity="0.6">
+            ${Array.from({length:4}).map((_,i)=>`<rect x="${x+W*0.60}" y="${y+H*(0.44 + i*0.08)}" width="${W*0.28}" height="${H*0.04}" rx="${W*0.01}"/>`).join("")}
+          </g>
+          <g font-family="system-ui, sans-serif" fill="#92400e" font-weight="900">
+            ${fitTextTag({x:x+W*0.72, y:y+H*0.38, text:(fields.main||"DRIFT"), weight:900, sizePx:H*0.18, boxW:W*0.28})}
+            ${fitTextTag({x:x+W*0.72, y:y+H*0.60, text:(fields.sub ||"POSTCARD"), weight:800, sizePx:H*0.16, boxW:W*0.32, fill:"#d97706"})}
+          </g>
+        `
+      })
+    });
+
+    list.push({
+      id: "campus-crew-pass",
+      title: "CAMPUS CREW PASS｜学生証風",
+      tags: ["campus","crew","pass"],
+      badge: ["学生証","ID","シンプル"],
+      editable: [
+        {key:"main", label:"メイン", default:"CAMPUS CREW"},
+        {key:"sub",  label:"サブ",  default:"PASS"}
+      ],
+      defaultFields: {main:"CAMPUS CREW", sub:"PASS"},
+      svg: ({w=820,h=360,fields={}}={}) => withFrame({
+        w,h, stroke:"#38bdf8", strokeW:10, bg:"#0f172a",
+        body:(x,y,W,H)=>`
+          <rect x="${x+W*0.10}" y="${y+H*0.20}" width="${W*0.80}" height="${H*0.44}" rx="${W*0.04}" fill="#0ea5e9" opacity="0.85"/>
+          <rect x="${x+W*0.14}" y="${y+H*0.24}" width="${W*0.20}" height="${H*0.28}" rx="${W*0.02}" fill="#1f2937"/>
+          <g fill="#1f2937" opacity="0.7">
+            ${Array.from({length:3}).map((_,i)=>`<rect x="${x+W*0.40}" y="${y+H*(0.30 + i*0.10)}" width="${W*0.42}" height="${H*0.06}" rx="${W*0.01}"/>`).join("")}
+          </g>
+          <g font-family="system-ui, sans-serif" fill="#0f172a" font-weight="900">
+            ${fitTextTag({x:x+W*0.60, y:y+H*0.40, text:(fields.main||"CAMPUS CREW"), weight:900, sizePx:H*0.18, boxW:W*0.44})}
+            ${fitTextTag({x:x+W*0.60, y:y+H*0.64, text:(fields.sub ||"PASS"),        weight:800, sizePx:H*0.16, boxW:W*0.40, fill:"#1f2937"})}
+          </g>
+        `
+      })
+    });
+
+    list.push({
+      id: "lantern-night",
+      title: "LANTERN NIGHT｜提灯グラフィック",
+      tags: ["lantern","night","festival"],
+      badge: ["提灯","夜祭","イラスト"],
+      editable: [
+        {key:"main", label:"メイン", default:"LANTERN"},
+        {key:"sub",  label:"サブ",  default:"NIGHT"}
+      ],
+      defaultFields: {main:"LANTERN", sub:"NIGHT"},
+      svg: ({w=780,h=360,fields={}}={}) => withFrame({
+        w,h, stroke:"#f97316", strokeW:10, bg:"#111827",
+        body:(x,y,W,H)=>`
+          <g stroke="#f97316" stroke-width="8" fill="#1f2937" stroke-linecap="round" stroke-linejoin="round">
+            <ellipse cx="${x+W*0.26}" cy="${y+H*0.46}" rx="${W*0.12}" ry="${H*0.20}" fill="#f97316" opacity="0.8"/>
+            <rect x="${x+W*0.22}" y="${y+H*0.24}" width="${W*0.08}" height="${H*0.04}" rx="${W*0.01}"/>
+            <rect x="${x+W*0.22}" y="${y+H*0.64}" width="${W*0.08}" height="${H*0.04}" rx="${W*0.01}"/>
+            <line x1="${x+W*0.26}" y1="${y+H*0.20}" x2="${x+W*0.26}" y2="${y+H*0.24}"/>
+            <line x1="${x+W*0.26}" y1="${y+H*0.68}" x2="${x+W*0.26}" y2="${y+H*0.72}"/>
+          </g>
+          <g font-family="system-ui, sans-serif" fill="#fde68a" font-weight="900">
+            ${fitTextTag({x:x+W*0.64, y:y+H*0.44, text:(fields.main||"LANTERN"), weight:900, sizePx:H*0.18, boxW:W*0.36})}
+            ${fitTextTag({x:x+W*0.64, y:y+H*0.70, text:(fields.sub ||"NIGHT"),     weight:800, sizePx:H*0.16, boxW:W*0.32, fill:"#f97316"})}
+          </g>
+        `
+      })
+    });
+
+    list.push({
+      id: "sticker-sheet",
+      title: "STICKER SHEET｜シート風デザイン",
+      tags: ["sheet","collection","fun"],
+      badge: ["複数","シート","楽しい"],
+      editable: [
+        {key:"main", label:"メイン", default:"STICKER"},
+        {key:"sub",  label:"サブ",  default:"SHEET"}
+      ],
+      defaultFields: {main:"STICKER", sub:"SHEET"},
+      svg: ({w=880,h=360,fields={}}={}) => withFrame({
+        w,h, stroke:"#34d399", strokeW:10, bg:"#0f172a",
+        body:(x,y,W,H)=>{
+          const mini = Array.from({length:6}).map((_,i)=>{
+            const col = i%3, row = Math.floor(i/3);
+            const colors = ["#22d3ee","#a78bfa","#f97316","#34d399","#facc15","#38bdf8"];
+            return `<rect x="${x+W*0.10 + col*W*0.18}" y="${y+H*0.26 + row*H*0.18}" width="${W*0.16}" height="${H*0.14}" rx="${W*0.03}" fill="${colors[i]}" opacity="0.8"/>`;
+          }).join("");
+          return `
+            <rect x="${x+W*0.08}" y="${y+H*0.20}" width="${W*0.52}" height="${H*0.44}" rx="${W*0.04}" fill="#0b1220" stroke="#34d399" stroke-width="6" stroke-dasharray="12 8"/>
+            ${mini}
+            <g font-family="system-ui, sans-serif" fill="#bbf7d0" font-weight="900">
+              ${fitTextTag({x:x+W*0.72, y:y+H*0.46, text:(fields.main||"STICKER"), weight:900, sizePx:H*0.18, boxW:W*0.32})}
+              ${fitTextTag({x:x+W*0.72, y:y+H*0.70, text:(fields.sub ||"SHEET"),   weight:800, sizePx:H*0.16, boxW:W*0.30, fill:"#34d399"})}
+            </g>
+          `;
+        }
+      })
+    });
+
+    list.push({
+      id: "aerial-lineup",
+      title: "AERIAL LINEUP｜航空写真風",
+      tags: ["aerial","lineup","map"],
+      badge: ["航空","俯瞰","マップ"],
+      editable: [
+        {key:"main", label:"メイン", default:"AERIAL"},
+        {key:"sub",  label:"サブ",  default:"LINEUP"}
+      ],
+      defaultFields: {main:"AERIAL", sub:"LINEUP"},
+      svg: ({w=900,h=360,fields={}}={}) => withFrame({
+        w,h, stroke:"#22d3ee", strokeW:10, bg:"#082f49",
+        body:(x,y,W,H)=>{
+          const swell = Array.from({length:4}).map((_,i)=>`<path d="M ${x+W*0.12} ${y+H*(0.32 + i*0.10)} q ${W*0.12} ${-H*0.06} ${W*0.24} 0 t ${W*0.24} 0" stroke="#38bdf8" stroke-width="6" fill="none" stroke-linecap="round" opacity="${0.5 + i*0.1}"/>`).join("");
+          const peaks = Array.from({length:5}).map((_,i)=>`<circle cx="${x+W*(0.30 + i*0.08)}" cy="${y+H*0.50}" r="${H*0.02}" fill="#facc15"/>`).join("");
+          return `
+            <rect x="${x+W*0.10}" y="${y+H*0.20}" width="${W*0.56}" height="${H*0.44}" rx="${W*0.04}" fill="#0b1727" stroke="#0ea5e9" stroke-width="6"/>
+            ${swell}
+            ${peaks}
+            <g font-family="system-ui, sans-serif" fill="#e0f2fe" font-weight="900">
+              ${fitTextTag({x:x+W*0.72, y:y+H*0.46, text:(fields.main||"AERIAL"), weight:900, sizePx:H*0.18, boxW:W*0.32})}
+              ${fitTextTag({x:x+W*0.72, y:y+H*0.70, text:(fields.sub ||"LINEUP"), weight:800, sizePx:H*0.16, boxW:W*0.30, fill:"#38bdf8"})}
+            </g>
+          `;
+        }
+      })
+    });
+
+
     return list;
   }
 
