@@ -1013,8 +1013,25 @@
               ${Array.from({length:6}).map((_,i)=>`<rect x="${x+W*0.08 + i*W*0.12}" y="${y+H*0.18}" width="${W*0.06}" height="${H*0.48}" fill="url(#${gid})" opacity="${0.15 + i*0.08}"/>`).join("")}
               <rect x="${x+W*0.08}" y="${y+H*0.24}" width="${W*0.44}" height="${H*0.36}" rx="${W*0.02}" fill="${cfg.accent}" opacity="0.18"/>
               <g font-family="system-ui, sans-serif" fill="${cfg.text}" font-weight="900">
-                ${fitTextTag({x:x+W*0.58, y:y+H*0.48, text:(fields.main||cfg.main), weight:900, sizePx:H*0.20, boxW:W*0.60})}
-                ${fitTextTag({x:x+W*0.58, y:y+H*0.74, text:(fields.sub||cfg.sub),  weight:800, sizePx:H*0.16, boxW:W*0.52, fill:cfg.stripe})}
+                ${fitTextTag({
+                  x: x+W*0.76,
+                  y: y+H*0.48,
+                  text: (fields.main||cfg.main),
+                  weight: 900,
+                  sizePx: H*0.20,
+                  boxW: W*0.48,
+                  anchor: 'middle'
+                })}
+                ${fitTextTag({
+                  x: x+W*0.76,
+                  y: y+H*0.74,
+                  text: (fields.sub||cfg.sub),
+                  weight: 800,
+                  sizePx: H*0.16,
+                  boxW: W*0.44,
+                  anchor: 'middle',
+                  fill: cfg.stripe
+                })}
               </g>
             `;
           }
