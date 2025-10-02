@@ -896,6 +896,132 @@
       })
     });
 
+    // 追加スローガン系（背景グラデーション＋太字）
+    const newSloganConfigs = [
+      { id:"sunset-seekers",   title:"SUNSET SEEKERS｜黄昏スローガン", main:"SUNSET SEEKERS",   sub:"LAST LIGHT CREW",    stroke:"#fb923c", bg:"#0b1220", fg:"#f97316", accent:"#facc15", tags:["slogan","sunset","crew"],     badge:["夕焼け","スローガン","太字"] },
+      { id:"tidal-optimist",   title:"TIDAL OPTIMIST｜ポジティブロゴ", main:"TIDAL OPTIMIST",   sub:"HOPEFUL WAVES",      stroke:"#22c55e", bg:"#052e16", fg:"#86efac", accent:"#bbf7d0", tags:["slogan","positive","logo"], badge:["グラデ","やわらか","横長"] },
+      { id:"north-dreaming",   title:"NORTH SHORE DREAMING",          main:"NORTH SHORE",       sub:"DREAMING",            stroke:"#38bdf8", bg:"#0b1220", fg:"#bae6fd", accent:"#38bdf8", tags:["slogan","north","dream"],    badge:["夜明け","太字","シンプル"] },
+      { id:"weekend-reef",     title:"WEEKEND REEF",                  main:"WEEKEND REEF",     sub:"SATURDAY CREW",      stroke:"#f59e0b", bg:"#1f2937", fg:"#facc15", accent:"#f97316", tags:["slogan","weekend","reef"], badge:["ストライプ","カジュアル","黄系"] },
+      { id:"urban-offshore",   title:"URBAN OFFSHORE",                main:"URBAN OFFSHORE",   sub:"CITY BREEZE",        stroke:"#38bdf8", bg:"#0f172a", fg:"#bae6fd", accent:"#f8fafc", tags:["slogan","city","offshore"], badge:["都会","ブルー","横長"] },
+      { id:"dawn-coffee",      title:"DAWN PATROL COFFEE",            main:"DAWN PATROL",      sub:"COFFEE FIRST",       stroke:"#f97316", bg:"#0b1220", fg:"#fed7aa", accent:"#fb923c", tags:["slogan","dawn","coffee"],   badge:["朝焼け","太字","コーヒー"] },
+      { id:"foam-happiness",   title:"FOAM HAPPINESS",                main:"FOAM HAPPINESS",   sub:"STAY BUBBLY",        stroke:"#22d3ee", bg:"#0f172a", fg:"#cffafe", accent:"#a5f3fc", tags:["slogan","foam","joy"],      badge:["水色","バブル","横長"] },
+      { id:"overcast-rider",   title:"OVERCAST RIDER",                main:"OVERCAST RIDER",   sub:"GRAY DAY FLOW",      stroke:"#94a3b8", bg:"#0f172a", fg:"#e2e8f0", accent:"#94a3b8", tags:["slogan","overcast","flow"], badge:["曇り","ニュートラル","太字"] },
+      { id:"hidden-swell",     title:"HIDDEN SWELL",                  main:"HIDDEN SWELL",     sub:"KEEP IT QUIET",      stroke:"#0ea5e9", bg:"#082f49", fg:"#bae6fd", accent:"#38bdf8", tags:["slogan","secret","swell"], badge:["ネイビー","シークレット","横長"] },
+      { id:"shoulder-high",    title:"SHOULDER HIGH CLUB",            main:"SHOULDER HIGH",    sub:"CLUB",               stroke:"#22c55e", bg:"#042f2e", fg:"#bbf7d0", accent:"#34d399", tags:["slogan","club","height"],  badge:["クラブ","グリーン","太字"] },
+    ];
+
+    newSloganConfigs.forEach(cfg => {
+      list.push({
+        id: `slogan-${cfg.id}`,
+        title: cfg.title,
+        tags: cfg.tags,
+        badge: cfg.badge,
+        editable: [
+          {key:"main", label:"メイン", default:cfg.main},
+          {key:"sub",  label:"サブ",  default:cfg.sub}
+        ],
+        defaultFields: {main:cfg.main, sub:cfg.sub},
+        svg: ({w=880,h=360,fields={}}={}) => withFrame({
+          w,h, stroke:cfg.stroke, strokeW:10, bg:cfg.bg,
+          body: (x,y,W,H) => {
+            const gid = `grad${hash(cfg.id)}`;
+            return `
+              <defs>
+                <linearGradient id="${gid}" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="${cfg.accent}"/>
+                  <stop offset="1" stop-color="${cfg.fg}"/>
+                </linearGradient>
+              </defs>
+              <rect x="${x}" y="${y}" width="${W}" height="${H}" fill="url(#${gid})" opacity="0.16"/>
+              <rect x="${x}" y="${y+H*0.72}" width="${W}" height="${H*0.16}" fill="${cfg.stroke}" opacity="0.4"/>
+              ${slogan({x,y,W,H, fg:cfg.fg, text:fields.main||cfg.main, sub:fields.sub||cfg.sub})}
+            `;
+          }
+        })
+      });
+    });
+
+    // 追加ラウンドバッジ系
+    const newBadgeConfigs = [
+      {id:"weekend-pass",  text:"WEEKEND PASS",   title:"WEEKEND PASS｜丸型バッジ",        bg:"#0b1220"},
+      {id:"rainy-surfer",  text:"RAINY SURFER",   title:"RAINY SURFER｜丸型バッジ",        bg:"#1f2937"},
+      {id:"tide-watch",    text:"TIDE WATCH",     title:"TIDE WATCH｜丸型バッジ",          bg:"#0f172a"},
+      {id:"board-meet",    text:"BOARD MEET",     title:"BOARD MEET｜丸型バッジ",          bg:"#111827"},
+      {id:"hot-sand",      text:"HOT SAND",       title:"HOT SAND｜丸型バッジ",            bg:"#7c2d12"},
+      {id:"cool-current",  text:"COOL CURRENT",   title:"COOL CURRENT｜丸型バッジ",        bg:"#082f49"},
+      {id:"city-swell",    text:"CITY SWELL",     title:"CITY SWELL｜丸型バッジ",          bg:"#0b1120"},
+      {id:"eco-foam",      text:"ECO FOAM",       title:"ECO FOAM｜丸型バッジ",            bg:"#022c22"},
+      {id:"gentle-break",  text:"GENTLE BREAK",   title:"GENTLE BREAK｜丸型バッジ",        bg:"#312e81"},
+      {id:"moonlight-pass",text:"MOONLIGHT",      title:"MOONLIGHT PASS｜丸型バッジ",      bg:"#1e1b4b"},
+    ];
+
+    newBadgeConfigs.forEach(cfg => {
+      list.push({
+        id: `badge-${cfg.id}`,
+        title: cfg.title,
+        tags: ["badge","round","logo"],
+        badge: ["丸型","グラデ","アクセント"],
+        editable: [
+          {key:"text", label:"中央テキスト", default:cfg.text}
+        ],
+        defaultFields: {text:cfg.text},
+        svg: ({w=560,h=560,fields={}}={}) => withFrame({
+          w,h, stroke:"#ffffff", strokeW:14, bg:cfg.bg,
+          body: (x,y,W,H) => `
+            ${roundBadge({x,y,W,H, text:fields.text || cfg.text})}
+          `
+        })
+      });
+    });
+
+    // 追加バナー／ストライプ系
+    const newStripeConfigs = [
+      {id:"harbor-pass",      title:"HARBOR PASS",         main:"HARBOR PASS",        sub:"GATE 07",         stroke:"#0ea5e9", bg:"#0b1727", text:"#f8fafc", accent:"#1e3a8a", stripe:"#172554"},
+      {id:"storm-alert",      title:"STORM ALERT",         main:"STORM ALERT",        sub:"WATCH 24H",       stroke:"#f97316", bg:"#111827", text:"#fee2e2", accent:"#7f1d1d", stripe:"#b91c1c"},
+      {id:"calm-channel",     title:"CALM CHANNEL",        main:"CALM CHANNEL",       sub:"SLOW DRIFT",      stroke:"#22c55e", bg:"#052e16", text:"#dcfce7", accent:"#14532d", stripe:"#15803d"},
+      {id:"lanes-only",       title:"LANES ONLY",          main:"LANES ONLY",         sub:"SOFT TOP",        stroke:"#38bdf8", bg:"#0b1220", text:"#e0f2fe", accent:"#1d4ed8", stripe:"#3b82f6"},
+      {id:"lazy-point",       title:"LAZY POINT",          main:"LAZY POINT",         sub:"REST AREA",       stroke:"#facc15", bg:"#1f2937", text:"#fef3c7", accent:"#92400e", stripe:"#fde68a"},
+      {id:"freshfoam-lab",    title:"FRESH FOAM LAB",      main:"FRESH FOAM",         sub:"LAB SERIES",      stroke:"#22d3ee", bg:"#0f172a", text:"#cffafe", accent:"#0891b2", stripe:"#155e75"},
+      {id:"night-shift",      title:"NIGHT SHIFT",         main:"NIGHT SHIFT",        sub:"AFTER HOURS",     stroke:"#6366f1", bg:"#1e1b4b", text:"#ede9fe", accent:"#3730a3", stripe:"#4c1d95"},
+      {id:"backyard-break",   title:"BACKYARD BREAK",      main:"BACKYARD BREAK",     sub:"NEIGHBOR PASS",   stroke:"#f97316", bg:"#0f172a", text:"#ffedd5", accent:"#9a3412", stripe:"#fb923c"},
+      {id:"longboard-lounge", title:"LONGBOARD LOUNGE",    main:"LONGBOARD",          sub:"LOUNGE",          stroke:"#38bdf8", bg:"#082f49", text:"#e0f2fe", accent:"#0ea5e9", stripe:"#075985"},
+      {id:"thermal-tide",     title:"THERMAL TIDE",        main:"THERMAL TIDE",       sub:"HEAT CHECK",      stroke:"#ef4444", bg:"#311b26", text:"#fee2e2", accent:"#831843", stripe:"#f472b6"},
+    ];
+
+    newStripeConfigs.forEach(cfg => {
+      list.push({
+        id: `stripe-${cfg.id}`,
+        title: `${cfg.title}｜バナーロゴ`,
+        tags: ["banner","stripe","logo"],
+        badge: ["ストライプ","横長","カスタム"],
+        editable: [
+          {key:"main", label:"メイン", default:cfg.main},
+          {key:"sub",  label:"サブ",  default:cfg.sub}
+        ],
+        defaultFields: {main:cfg.main, sub:cfg.sub},
+        svg: ({w=900,h=360,fields={}}={}) => withFrame({
+          w,h, stroke:cfg.stroke, strokeW:10, bg:cfg.bg,
+          body: (x,y,W,H) => {
+            const gid = `stripe${hash(cfg.id)}`;
+            return `
+              <defs>
+                <linearGradient id="${gid}" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0" stop-color="${cfg.accent}"/>
+                  <stop offset="1" stop-color="${cfg.stripe}"/>
+                </linearGradient>
+              </defs>
+              ${Array.from({length:6}).map((_,i)=>`<rect x="${x+W*0.08 + i*W*0.12}" y="${y+H*0.18}" width="${W*0.06}" height="${H*0.48}" fill="url(#${gid})" opacity="${0.15 + i*0.08}"/>`).join("")}
+              <rect x="${x+W*0.08}" y="${y+H*0.24}" width="${W*0.44}" height="${H*0.36}" rx="${W*0.02}" fill="${cfg.accent}" opacity="0.18"/>
+              <g font-family="system-ui, sans-serif" fill="${cfg.text}" font-weight="900">
+                ${fitTextTag({x:x+W*0.58, y:y+H*0.48, text:(fields.main||cfg.main), weight:900, sizePx:H*0.20, boxW:W*0.60})}
+                ${fitTextTag({x:x+W*0.58, y:y+H*0.74, text:(fields.sub||cfg.sub),  weight:800, sizePx:H*0.16, boxW:W*0.52, fill:cfg.stripe})}
+              </g>
+            `;
+          }
+        })
+      });
+    });
+
     return list;
   }
 
