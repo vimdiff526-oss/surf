@@ -3,74 +3,360 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>サーフボード選び｜Surf Nav</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>初心者向けサーフボードの選び方と比較表【保存版】</title>
+  <meta name="description" content="初心者向けサーフボードの選び方をわかりやすく解説。体重・身長別のサイズ目安、タイプ別の特徴、厳選ボードの比較表と購入リンク付き。" />
+  <link rel="canonical" href="https://example.com/articles/beginner-surfboard-guide.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="初心者向けサーフボードの選び方と比較表【保存版】" />
+  <meta property="og:description" content="体重・身長別のサイズ目安、タイプ別の特徴、厳選ボードの比較表と購入リンク付き。" />
+  <meta property="og:url" content="https://example.com/articles/beginner-surfboard-guide.html" />
+  <meta property="og:image" content="https://example.com/og/surfboard-guide.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="stylesheet" href="./nav.css" />
+  <script src="./nav.js" defer></script>
+  <style>
+    :root{
+      --bg:#ffffff;--fg:#0f172a;--muted:#475569;--brand:#0ea5e9;--accent:#22c55e;--line:#e2e8f0;--chip:#f1f5f9;
+    }
+    html{scroll-behavior:smooth;scroll-padding-top:72px}
+    body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic UI",sans-serif;line-height:1.75}
+    a{color:var(--brand);text-decoration:none}
+    a:hover{text-decoration:underline}
+    .wrap{max-width:1080px;margin:0 auto;padding:0 16px}
+    .page-links{display:flex;align-items:center;justify-content:flex-end;gap:12px;flex-wrap:wrap;font-size:14px;color:var(--muted);padding:12px 16px 0}
+    .page-links a{color:var(--muted);font-weight:600}
+    .page-links a:hover{color:var(--brand)}
+    main{padding:24px 0}
+    h1{font-size:clamp(24px,3vw,36px);line-height:1.3;margin:8px 0 16px}
+    h2{font-size:clamp(18px,2.2vw,24px);margin:32px 0 12px}
+    .lead{color:var(--muted);font-size:16px}
+    .toc{background:var(--chip);border:1px solid var(--line);border-radius:12px;padding:12px;margin:24px 0}
+    .toc li{margin:6px 0}
+
+    /* comparison table */
+    .table-wrap{overflow-x:auto; -webkit-overflow-scrolling:touch; border:1px solid var(--line); border-radius:14px}
+    table{width:100%;border-collapse:collapse;min-width:680px;table-layout:fixed}
+    colgroup col:nth-child(1){width:22%}
+    colgroup col:nth-child(2){width:14%}
+    colgroup col:nth-child(3){width:18%}
+    colgroup col:nth-child(4){width:10%}
+    colgroup col:nth-child(5){width:18%}
+    colgroup col:nth-child(6){width:10%}
+    colgroup col:nth-child(7){width:8%}
+    th,td{padding:12px 10px;border-bottom:1px solid var(--line);vertical-align:top;word-break:break-word;overflow-wrap:anywhere}
+    th{background:#f8fafc;text-align:left;white-space:normal}
+    tbody tr:hover{background:#fafafa}
+    .chip{display:inline-block;background:var(--chip);border:1px solid var(--line);padding:2px 8px;border-radius:999px;font-size:12px;margin-right:6px}
+    .btns{display:flex;gap:8px;flex-wrap:wrap}
+    .btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#fff;padding:8px 10px;border-radius:10px;font-weight:600}
+    .btn[data-a]{border-color:#ffd000;background:#fff8dd}
+    .btn[data-r]{border-color:#e11d48;background:#fff1f2}
+    .btn svg{width:16px;height:16px}
+    .btn span{font-size:14px}
+
+    @media (max-width:960px){
+      table{display:none}
+      .card-list{display:grid;grid-template-columns:1fr;gap:12px}
+      .card{border:1px solid var(--line);border-radius:12px;padding:12px}
+      .card h3{margin:0 0 6px;font-size:16px}
+      .card .meta{font-size:12px;color:var(--muted)}
+      .card .btns{margin-top:8px}
+    }
+
+    .aside{background:#f8fafc;border:1px solid var(--line);padding:16px;border-radius:12px}
+    footer{border-top:1px solid var(--line);margin-top:32px}
+    .foot{display:flex;justify-content:space-between;gap:12px;padding:24px 0;color:var(--muted);font-size:14px}
+    .breadcrumbs{font-size:13px;color:var(--muted);margin:8px 0 16px}
+    .meta{font-size:12px}
+    code{white-space:normal}
+  </style>
+
+  <!-- JSON-LD 省略（元のまま） -->
 </head>
 <body>
-  <header>
-    <h1>サーフボード選び</h1>
-  </header>
-  <main>
-    <p>初心者が失敗しないためのサーフボード選び。体重・身長別におすすめを比較できます。</p>
-
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>ボード名</th>
-            <th>サイズ</th>
-            <th>対象レベル</th>
-            <th>特徴</th>
-            <th>購入リンク</th>
-          </tr>
-        </thead>
-        <tbody id="board-rows">
-          <!-- JSで行を生成 -->
-        </tbody>
-      </table>
+  <header class="global-bar">
+    <div class="global-bar__inner">
+      <a class="global-bar__brand" href="./index.html#top" aria-label="Surf Nav のトップへ戻る">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 16c4 0 4-8 8-8s4 8 8 8 4-8 8-8"/></svg>
+        <span>Surf Nav</span>
+      </a>
+      <button class="global-bar__menu" type="button" aria-label="メニューを開く" aria-expanded="false" aria-controls="global-menu">
+        <svg class="global-bar__menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+          <path d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
     </div>
+    <nav class="global-bar__meta" aria-label="パンくずリスト">
+      <ol class="global-bar__crumbs">
+        <li><a href="./index.html#apps">記事</a></li>
+        <li aria-current="page">サーフボード選び【保存版】</li>
+      </ol>
+    </nav>
+  </header>
+
+  <nav class="page-links wrap" aria-label="ページ内リンク">
+    <a href="#compare">比較表</a>
+    <a href="#faq">FAQ</a>
+  </nav>
+
+  <main class="wrap">
+    <div class="breadcrumbs">ホーム › 記事 › 初心者向けサーフボードの選び方</div>
+
+    <article>
+      <h1>初心者向けサーフボードの選び方と比較表【保存版】</h1>
+      <p class="lead">最初の1本で失敗しないために、<strong>体重・身長</strong>と<strong>現実的な上達ステップ</strong>に合ったボードを選びましょう。本記事ではタイプ別の特徴を整理し、最後に<a href="#compare">厳選ボードの比較表</a>を掲載します。</p>
+
+      <div class="toc">
+        <strong>目次</strong>
+        <ol>
+          <li><a href="#type">タイプ別の特徴</a></li>
+          <li><a href="#size">体重・身長別サイズ目安</a></li>
+          <li><a href="#mistakes">よくある失敗</a></li>
+          <li><a href="#compare">厳選ボード比較表</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ol>
+      </div>
+
+      <section id="type">
+        <h2>タイプ別の特徴</h2>
+        <ul>
+          <li><span class="chip">ソフトボード</span> 柔らかい素材のため安全性が高く、混雑時も安心。浮力大でパドルが楽。</li>
+          <li><span class="chip">ファンボード</span> 長さ7'0前後。安定と取り回しのバランスが良い。</li>
+          <li><span class="chip">ロング</span> 長さ9'0〜。最も安定だが取り回しが悪い。車載や保管スペースを要確認。</li>
+          <li><span class="chip">ショート</span> 上達後に検討。最初の1本には非推奨。</li>
+        </ul>
+      </section>
+
+      <section id="size">
+        <h2>体重・身長別サイズ目安</h2>
+        <div class="aside">
+          <ul>
+            <li>〜50kg: 35〜50L / 7'0〜8'0</li>
+            <li>50〜65kg: 40〜60L / 7'6〜8'6</li>
+            <li>65〜80kg: 50〜70L / 8'0〜9'0</li>
+            <li>80kg〜: 60〜85L / 8'6〜9'6</li>
+          </ul>
+          <p style="margin:0;color:var(--muted);font-size:14px"></p>
+        </div>
+      </section>
+
+      <section id="mistakes">
+        <h2>初心者がやりがちな失敗</h2>
+        <ul>
+          <li>浮力不足を選んでしまい、波に乗れない</li>
+          <li>見た目重視でショートにする → 波に乗れない</li>
+          <li>中古で安く買っても、合わずに結局買い直す。</li>
+        </ul>
+      </section>
+
+      <section id="compare">
+        <h2>厳選ボード比較表</h2>
+        <p><br></p>
+
+        <div class="table-wrap" role="region" aria-label="サーフボード比較表">
+          <table>
+            <colgroup>
+              <col /><col /><col /><col /><col /><col /><col />
+            </colgroup>
+            <thead>
+              <tr>
+                <th scope="col">ボード名 / キーワード</th>
+                <th scope="col">推奨体重・身長</th>
+                <th scope="col">サイズ (長さ/幅/厚み/容積)</th>
+                <th scope="col">タイプ</th>
+                <th scope="col">特徴</th>
+                <th scope="col">価格帯</th>
+                <th scope="col">購入リンク</th>
+              </tr>
+            </thead>
+            <tbody id="board-rows">
+              <tr>
+                <td>
+                  <strong>ソフトボード 8'0</strong>
+                  <div class="meta" style="color:var(--muted);font-size:12px">キーワード: <code data-key="ソフトボード 8'0 初心者 セット"></code></div>
+                </td>
+                <td>〜80kg / 〜180cm</td>
+                <td>8'0 × 22" × 3" / 60L 目安</td>
+                <td>ソフト</td>
+                <td>安定・安全。初の1本に最適</td>
+                <td>¥25,000〜¥55,000</td>
+                <td class="btns" data-keyword="ソフトボード 8'0 初心者 セット"></td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>ファンボード 7'6</strong>
+                  <div class="meta" style="color:var(--muted);font-size:12px">キーワード: <code data-key="ファンボード 7'6 初心者"></code></div>
+                </td>
+                <td>〜70kg / 〜175cm</td>
+                <td>7'6 × 21 1/2" × 2 7/8" / 50L 目安</td>
+                <td>ファン</td>
+                <td>取り回し良・上達も早い</td>
+                <td>¥30,000〜¥70,000</td>
+                <td class="btns" data-keyword="ファンボード 7'6 初心者"></td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>ロングボード 9'0</strong>
+                  <div class="meta" style="color:var(--muted);font-size:12px">キーワード: <code data-key="ロングボード 9'0 ソフト"></code></div>
+                </td>
+                <td>全体重 / 〜190cm</td>
+                <td>9'0 × 23" × 3 1/8" / 75L 目安</td>
+                <td>ロング</td>
+                <td>最も安定。小波に強い</td>
+                <td>¥40,000〜¥100,000</td>
+                <td class="btns" data-keyword="ロングボード 9'0 ソフト"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card-list" id="mobile-cards" aria-hidden="true"></div>
+      </section>
+
+      <section id="faq">
+        <h2>FAQ</h2>
+        <details>
+          <summary>最初の1本はいくら位が目安？</summary>
+          <p>初心者向けのソフトボード/ファンボードは2.5万円〜7万円程度。リーシュやワックスなどの小物も同時に揃えると合計で3万〜10万円ほど。</p>
+        </details>
+        <details>
+          <summary>中古はアリ？</summary>
+          <p>状態・サイズが適正ならアリ。ただし初心者はダメージの良し悪し判断が難しいため、最初は新品/整備済み推奨。</p>
+        </details>
+      </section>
+
+      <aside class="aside" style="margin-top:24px">
+        <strong>関連記事</strong>
+        <ul>
+          <li><a href="/articles/wetsuit-beginner.html">初心者向けウェットスーツの選び方</a></li>
+          <li><a href="/articles/leash-howto.html">リーシュコードの選び方</a></li>
+          <li><a href="/articles/wax-guide.html">サーフワックス完全ガイド</a></li>
+          <li><a href="/articles/first-set.html">初心者が揃えるべき道具一式</a></li>
+        </ul>
+      </aside>
+    </article>
+
+    <footer>
+      <div class="foot">
+        <div>© <span id="year"></span> Surf Lab</div>
+        <div><a href="/about.html">運営者情報</a> · <a href="/policy.html">アフィリエイトポリシー</a></div>
+      </div>
+    </footer>
   </main>
 
   <script>
-  const AFFIL = {
-    amazon: {
-      base: 'https://www.amazon.co.jp/s',
-      tag: 'surf526-22'
-    },
-    rakuten: {
-      base: 'https://search.rakuten.co.jp/search/mall/',
-      affId: '4be85441.78c3c098.4be85442.035cdd1c'
+    // ====== ここだけ置き換え：各ASPのパラメータ ======
+    const AFFIL = {
+      amazon: {
+        base: 'https://www.amazon.co.jp/s',
+        tag: 'surf526-22' // ★トラッキングID
+      },
+      rakuten: {
+        base: 'https://search.rakuten.co.jp/search/mall/',
+        affId: '4be85441.78c3c098.4be85442.035cdd1c' // ★楽天アフィリエイトID
+      }
+    };
+
+    // ====== ヘルパー：検索リンク生成（キーワードベース） ======
+    function buildAmazonUrl(keyword){
+      const p = new URL(AFFIL.amazon.base);
+      p.searchParams.set('k', keyword);
+      if (AFFIL.amazon.tag) p.searchParams.set('tag', AFFIL.amazon.tag);
+      return p.toString();
     }
-  };
+    function buildRakutenUrl(keyword){
+      // hb.afl リダイレクト形式に統一（PC/モバイル両対応）
+      const dest = `${AFFIL.rakuten.base}${encodeURIComponent(keyword)}/`;
+      return `https://hb.afl.rakuten.co.jp/hgc/${AFFIL.rakuten.affId}/?pc=${encodeURIComponent(dest)}&m=${encodeURIComponent(dest)}`;
+    }
 
-  const boards = [
-    {name:"ソフトボード 8’0", size:"8’0", level:"初心者～中級者", feature:"安定感抜群、最初の1本に最適", keyword:"サーフボード ソフトボード"},
-    {name:"ファンボード 7’0", size:"7’0", level:"初心者", feature:"小波でも乗りやすい", keyword:"サーフボード ファンボード"},
-    {name:"ショートボード 6’0", size:"6’0", level:"中級者以上", feature:"パフォーマンス重視", keyword:"サーフボード ショートボード"}
-  ];
+    // ====== 比較表：各行のボタンを自動生成（元仕様のまま） ======
+    function mountButtons(){
+      document.querySelectorAll('td.btns[data-keyword]').forEach(cell =>{
+        const kw = cell.getAttribute('data-keyword');
+        cell.innerHTML = '';
+        const a1 = document.createElement('a');
+        a1.className = 'btn'; a1.setAttribute('data-a','');
+        a1.href = buildAmazonUrl(kw);
+        a1.rel = 'sponsored nofollow noopener'; a1.target = '_blank';
+        a1.innerHTML = `
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M5 8l7-7 7 7"/></svg>
+          <span>Amazon</span>`;
+        const a2 = document.createElement('a');
+        a2.className = 'btn'; a2.setAttribute('data-r','');
+        a2.href = buildRakutenUrl(kw);
+        a2.rel = 'sponsored nofollow noopener'; a2.target = '_blank';
+        a2.innerHTML = `
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M16 8H8l8 8H8"/></svg>
+          <span>楽天</span>`;
+        cell.append(a1,a2);
+      });
+    }
 
-  function amazonLink(q){
-    return `${AFFIL.amazon.base}?k=${encodeURIComponent(q)}&tag=${AFFIL.amazon.tag}`;
-  }
-  function rakutenLink(q){
-    const dest = AFFIL.rakuten.base + encodeURIComponent(q) + "/";
-    return `https://hb.afl.rakuten.co.jp/hgc/${AFFIL.rakuten.affId}/?pc=${encodeURIComponent(dest)}&m=${encodeURIComponent(dest)}`;
-  }
+    // ====== モバイル用カードへ同期（元仕様のまま） ======
+    function syncMobileCards(){
+      const tableRows = document.querySelectorAll('#board-rows tr');
+      const wrap = document.getElementById('mobile-cards');
+      wrap.innerHTML = '';
+      tableRows.forEach(tr =>{
+        const tds = tr.querySelectorAll('td');
+        const nameHtml = tds[0].innerHTML;
+        const spec = tds[2].textContent.trim();
+        const type = tds[3].textContent.trim();
+        const feat = tds[4].textContent.trim();
+        const price = tds[5].textContent.trim();
+        const kw = tr.querySelector('td.btns').getAttribute('data-keyword');
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <h3>${nameHtml}</h3>
+          <div class="meta">${type} / ${spec} / ${price}</div>
+          <p style="margin:8px 0 0">${feat}</p>
+          <div class="btns" style="margin-top:8px"></div>
+        `;
+        const btnArea = card.querySelector('.btns');
+        const a1 = document.createElement('a');
+        a1.className='btn'; a1.setAttribute('data-a','');
+        a1.href = buildAmazonUrl(kw); a1.rel='sponsored nofollow noopener'; a1.target='_blank';
+        a1.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M5 8l7-7 7 7"/></svg><span>Amazon</span>`;
+        const a2 = document.createElement('a');
+        a2.className='btn'; a2.setAttribute('data-r','');
+        a2.href = buildRakutenUrl(kw); a2.rel='sponsored nofollow noopener'; a2.target='_blank';
+        a2.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M16 8H8l8 8H8"/></svg><span>楽天</span>`;
+        btnArea.append(a1,a2);
+        wrap.append(card);
+      });
+    }
 
-  const tbody = document.getElementById("board-rows");
-  boards.forEach(b=>{
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${b.name}</td>
-      <td>${b.size}</td>
-      <td>${b.level}</td>
-      <td>${b.feature}</td>
-      <td>
-        <a href="${amazonLink(b.keyword)}" target="_blank" rel="sponsored noopener noreferrer">Amazonで見る</a><br>
-        <a href="${rakutenLink(b.keyword)}" target="_blank" rel="sponsored noopener noreferrer">楽天で見る</a>
-      </td>`;
-    tbody.appendChild(tr);
-  });
+    document.getElementById('year').textContent = new Date().getFullYear();
+    mountButtons();
+    syncMobileCards();
   </script>
+
+  <nav class="global-menu" id="global-menu" data-global-menu aria-hidden="true">
+    <div class="global-menu__backdrop" data-menu-dismiss aria-hidden="true"></div>
+    <div class="global-menu__panel" role="dialog" aria-modal="true" aria-labelledby="global-menu-title">
+      <div class="global-menu__header">
+        <h2 class="global-menu__title" id="global-menu-title">コンテンツ一覧</h2>
+        <button class="global-menu__close" type="button" aria-label="メニューを閉じる" data-menu-dismiss data-menu-initial>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M6 6l12 12M18 6L6 18" />
+          </svg>
+        </button>
+      </div>
+      <ul class="global-menu__list">
+        <li class="global-menu__item"><a href="./index.html#apps">ホーム / コンテンツ一覧</a><p>Surf Nav の最新コンテンツまとめ。</p></li>
+        <li class="global-menu__item"><a href="./サーフボード選び.html">サーフボード選び【保存版】</a><p>目的に合わせたボードの選び方ガイド。</p></li>
+        <li class="global-menu__item"><a href="./game.html">Surf Mini Game</a><p>波を避けてコインを集めるカジュアルゲーム。</p></li>
+        <li class="global-menu__item"><a href="./stickers.html">サーフステッカー配布</a><p>ボードやSNSで使えるデジタルステッカー。</p></li>
+        <li class="global-menu__item"><a href="./about.html">Surf Nav について</a><p>サイトのコンセプトや制作背景を紹介。</p></li>
+        <li class="global-menu__item"><a href="./policy.html">プライバシーポリシー</a><p>利用者のみなさまに安心して使っていただくために。</p></li>
+      </ul>
+      <p class="global-menu__footer">ご希望のコンテンツを選択してください。</p>
+      <button class="global-menu__close" type="button" data-menu-dismiss>
+        メニューを閉じる
+      </button>
+    </div>
+  </nav>
 </body>
 </html>

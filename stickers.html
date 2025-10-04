@@ -1,38 +1,122 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="utf-8">
-  <title>ステッカー配布｜Surf Nav</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="stickers.css">
+  <meta charset="UTF-8" />
+  <title>丘サーファーアイテム｜スポンサー風・丘サーファー風ステッカー配布</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="./nav.css" />
+  <script src="./nav.js" defer></script>
+  <link rel="stylesheet" href="./stickers.css" />
 </head>
 <body>
-  <main>
-    <h1>スポンサー風ステッカー配布</h1>
-    <p>サーファー気分を楽しめるジョーク系ロゴ素材を配布しています。</p>
+  <header class="global-bar">
+    <div class="global-bar__inner">
+      <a class="global-bar__brand" href="./index.html#top" aria-label="Surf Nav のトップへ戻る">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 16c4 0 4-8 8-8s4 8 8 8 4-8 8-8"/></svg>
+        <span>Surf Nav</span>
+      </a>
+      <button class="global-bar__menu" type="button" aria-label="メニューを開く" aria-expanded="false" aria-controls="global-menu">
+        <svg class="global-bar__menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+          <path d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    </div>
+    <nav class="global-bar__meta" aria-label="パンくずリスト">
+      <ol class="global-bar__crumbs">
+        <li aria-current="page">ステッカー</li>
+      </ol>
+    </nav>
+  </header>
 
-    <!-- ここにステッカー一覧を生成するJSが入る -->
-    <div id="stickers"></div>
+  <header class="site-header">
+    <div class="site-header__top">
+      <h1>🏄 丘サーファーアイテム｜スポンサー風・丘サーファー風ステッカー</h1>
+    </div>
+    <p class="lead">プロみたいにボードを“盛る”ジョーク系ステッカーに、<b>丘サーファー風イラスト</b>を追加。<br />SVG/PNGでダウンロードして、印刷サービスへ入稿してください。</p>
+  </header>
 
-    <section>
-      <h2>ステッカー印刷サービスで作る</h2>
-      <p>以下のリンクから外部サイトでステッカー制作サービスを利用できます。</p>
+  <main class="container">
+    <!-- Controls -->
+    <section class="controls">
+      <input id="q" type="search" placeholder="キーワードで検索（例: oka / desk / flip / van / palm / wifi / sponsor / local ）" aria-label="検索" />
+      <div class="tags" id="tags"></div>
+    </section>
+
+    <!-- Grid -->
+    <section id="grid" class="grid" aria-live="polite"></section>
+
+    <!-- Customize Modal -->
+    <dialog id="customize" class="modal">
+      <form method="dialog" class="modal__card" id="customize-form">
+        <header class="modal__head">
+          <h3 id="customize-title">カスタマイズ</h3>
+          <button type="submit" class="icon-btn" aria-label="閉じる">✕</button>
+        </header>
+        <div class="modal__body">
+          <div class="fields" id="field-area"><!-- 動的にフィールド挿入 --></div>
+          <div class="preview modal-preview" id="modal-preview" aria-label="プレビュー領域"></div>
+        </div>
+        <footer class="modal__foot">
+          <button type="button" class="btn" id="apply">プレビュー更新</button>
+          <div class="spacer"></div>
+          <button type="button" class="btn" id="save-svg">SVG保存</button>
+          <button type="button" class="btn" id="save-png-1024">PNG 1024px</button>
+        </footer>
+      </form>
+    </dialog>
+
+    <!-- Print services -->
+    <section class="print">
+      <h2>🖨 ステッカー印刷サービスで作る</h2>
+      <p>ダウンロードしたSVG/PNGを、以下の印刷サービスへアップロードしてご注文ください。</p>
       <ul>
-        <li>
-          <a href="https://www.amazon.co.jp/s?k=ステッカー+制作&tag=surf526-22"
-             target="_blank" rel="sponsored noopener noreferrer">
-             Amazonで「ステッカー 制作」を検索
-          </a>
-        </li>
-        <li>
-          <a href="https://hb.afl.rakuten.co.jp/hgc/4be85441.78c3c098.4be85442.035cdd1c/?pc=https%3A%2F%2Fsearch.rakuten.co.jp%2Fsearch%2Fmall%2F%25E3%2582%25B9%25E3%2583%2586%25E3%2583%2583%25E3%2582%25AB%25E3%2583%25BC%2B%25E5%2588%25B6%25E4%25BD%259C%2F&m=https%3A%2F%2Fsearch.rakuten.co.jp%2Fsearch%2Fmall%2F%25E3%2582%25B9%25E3%2583%2586%25E3%2583%2583%25E3%2582%25AB%25E3%2583%25BC%2B%25E5%2588%25B6%25E4%25BD%259C%2F"
-             target="_blank" rel="sponsored noopener noreferrer">
-             楽天市場で「ステッカー 制作」を検索
-          </a>
-        </li>
+        <!-- ★ここだけ置き換え：AmazonはトラッキングID surf526-22 -->
+        <li><a href="https://www.amazon.co.jp/s?k=%E3%82%B9%E3%83%86%E3%83%83%E3%82%AB%E3%83%BC+%E5%88%B6%E4%BD%9C&tag=surf526-22" target="_blank" rel="noopener noreferrer">Amazonで「ステッカー 制作」を検索</a></li>
+        <!-- ★ここだけ置き換え：楽天は hb.afl 形式でアフィリエイトID付与 -->
+        <li><a href="https://hb.afl.rakuten.co.jp/hgc/4be85441.78c3c098.4be85442.035cdd1c/?pc=https%3A%2F%2Fsearch.rakuten.co.jp%2Fsearch%2Fmall%2F%25E3%2582%25B9%25E3%2583%2586%25E3%2583%2583%25E3%2582%25AB%25E3%2583%25BC%2B%25E5%2588%25B6%25E4%25BD%259C%2F&m=https%3A%2F%2Fsearch.rakuten.co.jp%2Fsearch%2Fmall%2F%25E3%2582%25B9%25E3%2583%2586%25E3%2583%2583%25E3%2582%25AB%25E3%2583%25BC%2B%25E5%2588%25B6%25E4%25BD%259C%2F" target="_blank" rel="noopener noreferrer">楽天市場で「ステッカー 制作」を検索</a></li>
       </ul>
+      <details class="tips">
+        <summary>入稿のコツ（簡単）</summary>
+        <ul>
+          <li>背景は透過のままがおすすめ（白フチあり/なしは業者側で指定）</li>
+          <li>PNGは目的サイズ（px）でダウンロード（512px/1024px推奨）</li>
+          <li>色はsRGB、フォントは標準系（環境差を減らす）</li>
+        </ul>
+      </details>
     </section>
   </main>
-  <script src="stickers.js"></script>
+
+  <footer class="site-footer">
+    <div>© <span id="year"></span> Surf Nav / Oka Surfer Items</div>
+    <div style="margin-top:8px"><a href="./about.html">運営者情報</a>・<a href="./policy.html">アフィリエイトポリシー</a></div>
+  </footer>
+
+  <nav class="global-menu" id="global-menu" data-global-menu aria-hidden="true">
+    <div class="global-menu__backdrop" data-menu-dismiss aria-hidden="true"></div>
+    <div class="global-menu__panel" role="dialog" aria-modal="true" aria-labelledby="global-menu-title">
+      <div class="global-menu__header">
+        <h2 class="global-menu__title" id="global-menu-title">コンテンツ一覧</h2>
+        <button class="global-menu__close" type="button" aria-label="メニューを閉じる" data-menu-dismiss data-menu-initial>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M6 6l12 12M18 6L6 18" />
+          </svg>
+        </button>
+      </div>
+      <ul class="global-menu__list">
+        <li class="global-menu__item"><a href="./index.html#apps">ホーム / コンテンツ一覧</a><p>Surf Nav の最新コンテンツまとめ。</p></li>
+        <li class="global-menu__item"><a href="./サーフボード選び.html">サーフボード選び【保存版】</a><p>目的に合わせたボードの選び方ガイド。</p></li>
+        <li class="global-menu__item"><a href="./game.html">Surf Mini Game</a><p>波を避けてコインを集めるカジュアルゲーム。</p></li>
+        <li class="global-menu__item"><a href="./stickers.html">サーフステッカー配布</a><p>ボードやSNSで使えるデジタルステッカー。</p></li>
+        <li class="global-menu__item"><a href="./about.html">Surf Nav について</a><p>サイトのコンセプトや制作背景を紹介。</p></li>
+        <li class="global-menu__item"><a href="./policy.html">プライバシーポリシー</a><p>利用者のみなさまに安心して使っていただくために。</p></li>
+      </ul>
+      <p class="global-menu__footer">ご希望のコンテンツを選択してください。</p>
+      <button class="global-menu__close" type="button" data-menu-dismiss>
+        メニューを閉じる
+      </button>
+    </div>
+  </nav>
+
+  <script src="./stickers.js" defer></script>
 </body>
 </html>
