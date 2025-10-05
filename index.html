@@ -23,7 +23,6 @@
     body{margin:0; color:var(--fg); background:linear-gradient(180deg, #f8ffff 0%, #ffffff 40%); font-family:system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", sans-serif; line-height:1.7}
     a{color:var(--brand); text-decoration:none}
     a:hover{text-decoration:underline}
-
     .wrap{max-width:1100px; margin:0 auto; padding:0 16px}
 
     /* Hero */
@@ -71,7 +70,6 @@
     }
   </style>
 
-  <!-- JSON-LD: Site + Search -->
   <script type="application/ld+json">
   {
     "@context":"https://schema.org",
@@ -109,13 +107,10 @@
           <h1>シンプルなサーフポータル</h1>
           <p>初めてのサーフボード選び、遊べるミニゲーム、ボードを“盛る”ステッカーデザイン配布等<br>初心者からわかりやすい情報を届けます</p>
           <div class="cta">
-            <a class="btn" href="#apps" aria-label="コンテンツ一覧へ">
-              一覧を見る
-            </a>
+            <a class="btn" href="#apps" aria-label="コンテンツ一覧へ">一覧を見る</a>
           </div>
         </div>
         <div aria-hidden="true">
-          <!-- Decorative sea panel -->
           <div style="aspect-ratio:4/3; border-radius:18px; border:1px solid var(--line); overflow:hidden; background:radial-gradient(120% 100% at 50% 0%, #e0fbff 0%, #c7f7ff 35%, #baf4ff 50%, #aaf2ff 60%, #97f0ff 70%, #7ee7ff 85%, #5ad6f7 100%), linear-gradient(180deg, var(--sea1), var(--sea2)); position:relative">
             <svg viewBox="0 0 1440 320" style="position:absolute; left:0; bottom:-1px; width:100%; height:44%" preserveAspectRatio="none" aria-hidden="true">
               <path fill="#7dd3fc" fill-opacity="1" d="M0,192L60,176C120,160,240,128,360,112C480,96,600,96,720,106.7C840,117,960,139,1080,165.3C1200,192,1320,224,1380,240L1440,256L1440,320L1440,320L0,320Z"></path>
@@ -137,26 +132,23 @@
       <div class="wrap">
         <h2>コンテンツ</h2>
         <div class="grid" role="list">
-          <!-- 1: 記事（リストを拡張：新記事を追加） -->
+          <!-- 1: 記事（「開く」ボタン削除／各リンクを正しく個別のページへ） -->
           <article class="card" role="listitem">
             <div class="thumb" aria-hidden="true"></div>
             <div class="body">
               <h3>記事</h3>
               <p>サーフィンの基礎知識やhow toをまとめた読み物コンテンツ。</p>
               <ul>
+                <!-- 別ページ1：サーフボード選び【保存版】 -->
                 <li><a href="./サーフボード選び.html" aria-label="サーフボード選び【保存版】の記事を開く">サーフボード選び【保存版】</a></li>
-                <!-- ★追加：初心者が揃えるべき道具一式 -->
+                <!-- 別ページ2：初心者が揃えるべき道具一式 -->
                 <li><a href="./初心者が揃えるべき道具一式.html" aria-label="初心者が揃えるべき道具一式の記事を開く">初心者が揃えるべき道具一式</a></li>
               </ul>
             </div>
-            <div class="actions">
-              <a class="chip" href="./サーフボード選び.html" aria-label="サーフボード選び【保存版】の記事を開く">開く</a>
-              <!-- ★追加：新記事のショートカット -->
-              <a class="chip" href="./初心者が揃えるべき道具一式.html" aria-label="初心者が揃えるべき道具一式の記事を開く">開く</a>
-            </div>
+            <!-- 記事カテゴリでは「開く」ボタンを削除 -->
           </article>
 
-          <!-- 2: Surf Mini Game -->
+          <!-- 2: Surf Mini Game（従来どおり） -->
           <article class="card" role="listitem">
             <div class="thumb" aria-hidden="true"></div>
             <div class="body">
@@ -168,7 +160,7 @@
             </div>
           </article>
 
-          <!-- 3: スポンサー風ステッカー配布 -->
+          <!-- 3: スポンサー風ステッカー配布（従来どおり） -->
           <article class="card" role="listitem">
             <div class="thumb" aria-hidden="true"></div>
             <div class="body">
@@ -213,7 +205,6 @@
       <ul class="global-menu__list">
         <li class="global-menu__item"><a href="./index.html#apps">ホーム / コンテンツ一覧</a><p>Surf Nav の最新コンテンツまとめ。</p></li>
         <li class="global-menu__item"><a href="./サーフボード選び.html">サーフボード選び【保存版】</a><p>目的に合わせたボードの選び方ガイド。</p></li>
-        <!-- ★追加：メニューにも新記事を追加 -->
         <li class="global-menu__item"><a href="./初心者が揃えるべき道具一式.html">初心者が揃えるべき道具一式</a><p>着替えポンチョ・バケツなど必携小物まとめ。</p></li>
         <li class="global-menu__item"><a href="./game.html">Surf Mini Game</a><p>波を避けてコインを集めるカジュアルゲーム。</p></li>
         <li class="global-menu__item"><a href="./stickers.html">サーフステッカー配布</a><p>ボードやSNSで使えるデジタルステッカー。</p></li>
@@ -221,9 +212,7 @@
         <li class="global-menu__item"><a href="./policy.html">プライバシーポリシー</a><p>利用者のみなさまに安心して使っていただくために。</p></li>
       </ul>
       <p class="global-menu__footer">ご希望のコンテンツを選択してください。</p>
-      <button class="global-menu__close" type="button" data-menu-dismiss>
-        メニューを閉じる
-      </button>
+      <button class="global-menu__close" type="button" data-menu-dismiss>メニューを閉じる</button>
     </div>
   </nav>
 
