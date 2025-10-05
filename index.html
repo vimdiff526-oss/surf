@@ -50,9 +50,12 @@
     .card .body{padding:14px}
     .card h3{margin:0 0 6px; font-size:18px}
     .card p{margin:0; color:var(--muted); font-size:14px}
-    .card .body ul{margin:8px 0 0; padding-left:18px; color:var(--muted); font-size:14px}
-    .card .body li{margin:4px 0}
-    .card .body li a{font-weight:700}
+
+    /* 記事リンク（クリック優先度を上げる） */
+    .card .body ul{margin:8px 0 0; padding-left:18px; color:var(--muted); font-size:14px; position:relative}
+    .card .body li{margin:6px 0; position:relative}
+    .card .body li a{font-weight:700; position:relative; z-index:1; pointer-events:auto; display:inline}
+
     .card .actions{display:flex; gap:8px; padding:12px 14px; margin-top:auto}
     .chip{display:inline-flex; align-items:center; gap:6px; border:1px solid var(--line); background:#fff; border-radius:999px; padding:6px 10px; font-weight:700}
 
@@ -132,20 +135,17 @@
       <div class="wrap">
         <h2>コンテンツ</h2>
         <div class="grid" role="list">
-          <!-- 1: 記事（「開く」ボタン削除／各リンクを正しく個別のページへ） -->
+          <!-- 1: 記事（リンク優先の構造。開くボタンは設置しない） -->
           <article class="card" role="listitem">
             <div class="thumb" aria-hidden="true"></div>
             <div class="body">
               <h3>記事</h3>
               <p>サーフィンの基礎知識やhow toをまとめた読み物コンテンツ。</p>
               <ul>
-                <!-- 別ページ1：サーフボード選び【保存版】 -->
                 <li><a href="./サーフボード選び.html" aria-label="サーフボード選び【保存版】の記事を開く">サーフボード選び【保存版】</a></li>
-                <!-- 別ページ2：初心者が揃えるべき道具一式 -->
                 <li><a href="./初心者が揃えるべき道具一式.html" aria-label="初心者が揃えるべき道具一式の記事を開く">初心者が揃えるべき道具一式</a></li>
               </ul>
             </div>
-            <!-- 記事カテゴリでは「開く」ボタンを削除 -->
           </article>
 
           <!-- 2: Surf Mini Game（従来どおり） -->
@@ -218,6 +218,13 @@
 
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
+
+    // 念のため、記事カード内リンク以外のクリック干渉を無効化
+    document.querySelectorAll('.card .body a').forEach(a=>{
+      a.addEventListener('click', e=>{
+        e.stopPropagation();
+      }, {capture:true});
+    });
   </script>
 </body>
 </html>
