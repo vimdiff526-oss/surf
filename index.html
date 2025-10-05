@@ -43,27 +43,18 @@
     .section{padding:28px 0}
     .section h2{font-size:clamp(20px,2.4vw,28px); margin:0 0 12px}
     .grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px}
-    .card{border:1px solid var(--line); border-radius:16px; background:#fff; overflow:hidden; display:flex; flex-direction:column; position:relative}
+    .card{border:1px solid var(--line); border-radius:16px; background:#fff; overflow:hidden; display:flex; flex-direction:column}
     .card .thumb{height:140px; background:linear-gradient(135deg, var(--sea2), var(--sea3))}
     .card:nth-child(2) .thumb{background:linear-gradient(135deg, #60a5fa, #93c5fd)}
     .card:nth-child(3) .thumb{background:linear-gradient(135deg, #34d399, #a7f3d0)}
     .card .body{padding:14px}
-
     .card h3{margin:0 0 6px; font-size:18px}
     .card p{margin:0; color:var(--muted); font-size:14px}
 
-    /* ===== 記事リンクのクリック干渉対策（根治） ===== */
-    .article-links{display:grid; gap:8px; margin:10px 0 0}
-    .article-link{
-      display:block; padding:10px 12px; border:1px solid var(--line); border-radius:10px;
-      background:#fff; font-weight:700; color:var(--brand);
-      position:relative; z-index:2; pointer-events:auto;
-    }
-    .article-link:focus, .article-link:hover{outline:none; box-shadow:0 0 0 3px rgba(14,165,233,.15)}
-    /* 親要素や疑似要素のオーバーレイを無効化 */
-    .card::after{content:none !important}
-    .card *{pointer-events:auto}
-    .card .thumb, .card .thumb *{pointer-events:none}
+    /* 記事リンク（クリック優先度を上げる） */
+    .card .body ul{margin:8px 0 0; padding-left:18px; color:var(--muted); font-size:14px; position:relative}
+    .card .body li{margin:6px 0; position:relative}
+    .card .body li a{font-weight:700; position:relative; z-index:1; pointer-events:auto; display:inline}
 
     .card .actions{display:flex; gap:8px; padding:12px 14px; margin-top:auto}
     .chip{display:inline-flex; align-items:center; gap:6px; border:1px solid var(--line); background:#fff; border-radius:999px; padding:6px 10px; font-weight:700}
@@ -144,20 +135,20 @@
       <div class="wrap">
         <h2>コンテンツ</h2>
         <div class="grid" role="list">
-          <!-- 1: 記事（クリック干渉回避のため各リンクをブロック化） -->
+          <!-- 1: 記事（リンク優先の構造。開くボタンは設置しない） -->
           <article class="card" role="listitem">
             <div class="thumb" aria-hidden="true"></div>
             <div class="body">
               <h3>記事</h3>
               <p>サーフィンの基礎知識やhow toをまとめた読み物コンテンツ。</p>
-              <div class="article-links">
-                <a class="article-link" href="./surfboard-guide.html" aria-label="サーフボード選び【保存版】の記事を開く">サーフボード選び【保存版】</a>
-                <a class="article-link" href="./beginner-gear.html" aria-label="初心者が揃えるべき道具一式の記事を開く">初心者が揃えるべき道具一式</a>
-              </div>
+              <ul>
+                <li><a href="./surfboard-guide.html" aria-label="サーフボード選び【保存版】の記事を開く">サーフボード選び【保存版】</a></li>
+                <li><a href="./beginner-gear.html" aria-label="初心者が揃えるべき道具一式の記事を開く">初心者が揃えるべき道具一式</a></li>
+              </ul>
             </div>
           </article>
 
-          <!-- 2: Surf Mini Game -->
+          <!-- 2: Surf Mini Game（従来どおり） -->
           <article class="card" role="listitem">
             <div class="thumb" aria-hidden="true"></div>
             <div class="body">
@@ -169,7 +160,7 @@
             </div>
           </article>
 
-          <!-- 3: スポンサー風ステッカー配布 -->
+          <!-- 3: スポンサー風ステッカー配布（従来どおり） -->
           <article class="card" role="listitem">
             <div class="thumb" aria-hidden="true"></div>
             <div class="body">
@@ -228,11 +219,10 @@
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    // 念のため：記事リンクに対する親のクリック奪取を完全ブロック
-    document.querySelectorAll('.article-link').forEach(a=>{
+    // 念のため、記事カード内リンク以外のクリック干渉を無効化
+    document.querySelectorAll('.card .body a').forEach(a=>{
       a.addEventListener('click', e=>{
         e.stopPropagation();
-        e.stopImmediatePropagation();
       }, {capture:true});
     });
   </script>
