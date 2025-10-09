@@ -130,12 +130,13 @@ const FRUITS = [
   { id:'melon',  label:'🍈' }, { id:'straw',  label:'🍓' }, { id:'water',  label:'🍉' }
 ];
 
-/* ==== 前回と同じ固定ストリップ（順番は変更していません） ==== */
+/* ==== 固定ストリップ（順番は前回と同一） ==== */
 const BASE_STRIPS = [
   [ 'lemon','grape','banana','cherry','melon','pine','straw','peach','water','banana','grape','lemon','char','peach','cherry','water' ],
   [ 'banana','water','peach','cherry','grape','lemon','melon','straw','pine','banana','grape','char','lemon','peach','water','cherry' ],
   [ 'grape','lemon','water','banana','peach','straw','pine','melon','cherry','grape','banana','water','peach','char','lemon','straw' ]
 ];
+
 const ID2SYM = Object.fromEntries([
   ...FRUITS.map(o=>[o.id,o]),
   ['char', SPECIAL_CHAR]
@@ -143,5 +144,257 @@ const ID2SYM = Object.fromEntries([
 
 /* ======== リール管理（上→下スクロール、即停止スナップ） ======== */
 const REEL_HEIGHT = 168;     // CSSと合わせる
-theconst_CELL_HEIGHT = 120;  // typo! fix: need to ensure correct variable name. Oops.
+const CELL_HEIGHT = 120;     // CSSと合わせる
+const CENTER_TOP  = (REEL_HEIGHT - CELL_HEIGHT)/2; // 24px
 
+class Reel {
+  constructor(rootEl, orderIds, speed){
+    this.root  = rootEl;
+    this.strip = rootEl.querySelector('.strip');
+    this.order = orderIds.slice();
+    this.n = this.order.length;
+    this.totalH = this.n * CELL_HEIGHT;        // 1周ぶん
+    this.scrollH = this.totalH * 3;            // 無限スクロール用に3周
+
+    // 3周ぶんのセルを並べる（空白防止）
+    const dup = [...this.order, ...this.order, ...this.order];
+    this.strip.replaceChildren(...dup.map(id => renderCell(ID2SYM[id])));
+
+    // posは「stripの先頭がどれだけ上に隠れているか」を表す量（px）
+    // 画面は translateY(-pos) を掛ける。posが減るほど strip が下へ動き、絵柄は上→下に流れる。
+    this.pos = Math.random()*this.scrollH;
+    this.speed = speed;      // px/s
+    this.spin = false;
+    this.finalIndex = null;
+
+    this.apply();
+  }
+  apply(){
+    // wrap（0..scrollH）
+    if(this.pos < 0) this.pos += this.scrollH;
+    if(this.pos >= this.scrollH) this.pos -= this.scrollH;
+    this.strip.style.transform = `translateY(${-this.pos}px)`;
+  }
+  update(dt){
+    if(!this.spin) return;
+    this.pos -= this.speed * dt;   // 上→下へ流す（posを減らす）
+    this.apply();
+  }
+  indexAtCenter(){
+    // 中央ライン位置（strip座標）＝ pos + CENTER_TOP
+    // 3周並べているが、柄の確定は1周ぶんで良いので totalH で折りたたむ
+    const p = mod(this.pos + CENTER_TOP, this.totalH);
+    const idx = Math.round(p / CELL_HEIGHT) % this.n;
+    return idx < 0 ? idx + this.n : idx;
+  }
+  snapStop(){
+    // 押下瞬間の中央セルを求め、そのセルが中央にピタッと来る pos に“即座に”合わせて停止
+    const idx = this.indexAtCenter();
+    const base = idx * CELL_HEIGHT - CENTER_TOP; // その柄が中央に来るpos（1周座標系）
+    const baseMod = mod(base, this.totalH);
+    const curMod  = mod(this.pos,  this.totalH);
+
+    // 3候補のうち最もジャンプ量が小さい位置を採用（空白防止＆違和感低減）
+    const candidates = [
+      this.pos - curMod + baseMod,                 // 同じ周回へ合わせる
+      this.pos - curMod + baseMod + this.totalH,   // 1周先
+      this.pos - curMod + baseMod - this.totalH    // 1周手前
+    ];
+    let best = candidates[0], bestDiff = Math.abs(candidates[0]-this.pos);
+    for(const c of candidates){
+      const d = Math.abs(c - this.pos);
+      if(d < bestDiff){ best = c; bestDiff = d; }
+    }
+    this.pos = best;
+    this.spin = false;
+    this.finalIndex = idx;
+    this.apply(); // 最終位置を即反映
+  }
+}
+
+function renderCell(sym){
+  const el = document.createElement('div'); el.className = 'cell';
+  if(sym.type === 'img'){
+    const img = document.createElement('img'); img.className='char'; img.src = sym.src; img.alt = '大当たりキャラ';
+    el.appendChild(img);
+  } else {
+    el.textContent = sym.label;
+  }
+  el.dataset.id = sym.id;
+  return el;
+}
+const mod = (x,m)=>((x%m)+m)%m;
+
+/* ======== 初期化 ======== */
+const reels = [
+  new Reel(document.getElementById('reel0'), BASE_STRIPS[0], 900),
+  new Reel(document.getElementById('reel1'), BASE_STRIPS[1], 980),
+  new Reel(document.getElementById('reel2'), BASE_STRIPS[2], 1060)
+];
+
+/* ======== コントロール ======== */
+const btnStart = document.getElementById('btnStart');
+const btnStops  = [0,1,2].map(i=>document.getElementById('btnStop'+i));
+const btnAgain  = document.getElementById('btnAgain');
+const btnShuffleTerm = document.getElementById('btnShuffleTerm');
+const meterBar = document.getElementById('meterBar');
+const luckText = document.getElementById('luckText');
+const desc = document.getElementById('desc');
+
+btnStart.addEventListener('click', startSpin);
+btnStops.forEach((b,i)=>b.addEventListener('click', ()=>stopReel(i)));
+btnAgain.addEventListener('click', ()=>{ resetUI(); startSpin(); });
+btnShuffleTerm.addEventListener('click', showRandomTerm);
+
+/* キー操作（1,2,3でSTOP、SpaceでSPIN） */
+window.addEventListener('keydown', (e)=>{
+  if(e.key === ' ') { e.preventDefault(); if(!btnStart.disabled) startSpin(); }
+  if(e.key === '1') stopReel(0);
+  if(e.key === '2') stopReel(1);
+  if(e.key === '3') stopReel(2);
+});
+
+/* ======== ゲームループ ======== */
+let last = performance.now();
+(function loop(t){
+  const dt = Math.min(0.04, (t - last)/1000); // <= 40ms
+  last = t;
+  reels.forEach(r=>r.update(dt));
+  requestAnimationFrame(loop);
+})(last);
+
+function startSpin(){
+  resetUI();
+  btnStart.disabled = true;
+  btnAgain.disabled = true;
+  btnShuffleTerm.disabled = true;
+  btnStops.forEach(b=>b.disabled=false);
+
+  luckText.textContent = 'スピン中…';
+  luckText.className = 'luck ok';
+  desc.textContent = '止めたいタイミングで STOP（中央破線で即停止します）。';
+
+  reels.forEach((r,idx)=>{
+    r.spin = true; r.finalIndex = null;
+    // スタート時に少しだけ位相をずらしておく
+    r.pos = mod(r.pos - (idx*CELL_HEIGHT/2), r.scrollH);
+    r.apply();
+  });
+}
+
+function stopReel(i){
+  const r = reels[i];
+  if(!r.spin) return;
+  r.snapStop();                 // ★ 即停止＆中央にスナップ
+  btnStops[i].disabled = true;
+
+  // 全部止まったら評価
+  if(reels.every(R=>!R.spin)) evaluate();
+}
+
+function resetUI(){
+  meterBar.style.width = '0%';
+  luckText.textContent = '—';
+  luckText.className = 'luck ok';
+  desc.textContent = 'SPIN を押して開始してください。';
+  document.getElementById('termWord').textContent = '—';
+  document.getElementById('termDesc').textContent = '結果確定後に用語が表示されます。';
+  btnStops.forEach(b=>b.disabled=true);
+}
+
+/* ======== 判定 ======== */
+function evaluate(){
+  // 中央に停止した各リールのシンボルを取得
+  const ids = reels.map((r,ri)=>{
+    const idx = r.finalIndex ?? r.indexAtCenter();
+    const id  = BASE_STRIPS[ri][idx % BASE_STRIPS[ri].length];
+    return id;
+  });
+
+  const counts = ids.reduce((m,id)=> (m[id]=(m[id]||0)+1, m), {});
+  const hasChar = ids.includes('char');
+
+  let score = 40, message='普通：無理なく練習日和。', level='ok';
+  const uniq = Object.keys(counts).length;
+
+  if(uniq===1){
+    if(hasChar){ score=100; message='大当たり！爆発的：最高の一本を狙える日。'; level='good'; confetti(); }
+    else{ score=86; message='絶好調：セットで良い波が安定。'; level='good'; }
+  }else if(uniq===2){
+    const pairId = Object.entries(counts).find(([id,c])=>c===2)?.[0];
+    const hasPair = !!pairId && pairId!=='char';
+    if(hasChar && hasPair){ score=78; message='かなり良い：風と潮を合わせて狙い撃ち。'; level='good'; }
+    else if(hasPair){ score=62; message='まずまず：混雑回避で充実セッションへ。'; level='ok'; }
+    else{ score=55; message='可もなく不可もなく：潮回り次第。'; level='ok'; }
+  }else{
+    if(hasChar){ score=58; message='チャンス有り：タイミング次第で当てられそう。'; level='ok'; }
+    else{ score=30; message='イマイチ：無理せず陸トレや情報収集も。'; level='warn'; }
+  }
+
+  meterBar.style.width = Math.min(score,100)+'%';
+  luckText.textContent = message;
+  luckText.className = 'luck ' + (level==='good'?'good':level==='warn'?'warn':'ok');
+  desc.textContent = `出目：${ids.map(idToEmoji).join(' | ')}`;
+
+  btnAgain.disabled = false;
+  btnShuffleTerm.disabled = false;
+  btnStart.disabled = false;
+
+  showRandomTerm();
+}
+function idToEmoji(id){
+  if(id==='char') return '🎯大当たりキャラ';
+  const f = FRUITS.find(x=>x.id===id); return f ? f.label : '？';
+}
+
+/* ======== 用語 ======== */
+const TERMS = [
+  ['オフショア','海から陸へ向かう風。面が整いやすく、良いブレイクを生む。'],
+  ['オンショア','陸から海へ向かう風。面が荒れがちでトロめの割れ方になりやすい。'],
+  ['セット','周期的に入るサイズの大きい波のまとまり。間隔も意識。'],
+  ['ピーク','波が最初に立ち上がる頂点。最もパワーが集中する位置。'],
+  ['ショルダー','ピークから横に伸びる乗りしろ部分。ラインどりのキー。'],
+  ['インサイド','岸に近い浅場。スープが多く戻りが重い。'],
+  ['アウト','沖側のラインナップ。待機とテイクオフの基点。'],
+  ['ダックダイブ','ボードを沈めて波の下をくぐる。ショート向け。'],
+  ['テイクオフ','波に押されて立ち上がる動作。初級者の最重要基礎。'],
+  ['ボトムターン','立ち上がり直後の大きなターン。以降の動きの土台。'],
+  ['カットバック','走りすぎ後にブレイクへ戻るターン。スピード調整。'],
+  ['リップ','波の崩れる上端。アクションの的になる。'],
+  ['クローズアウト','岸まで一斉に割れる状態。走る余地が少ない。'],
+  ['ダンパー','急に潰れる力強い割れ。刺さりやすく注意。'],
+  ['レギュラー/グーフィー','右足/左足が後ろのスタンス。自分の向きを把握。'],
+  ['ショアブレイク','岸近くで急に掘れる波。サイズ以上に危険度高め。'],
+  ['クロスショア','横風。面がバラけやすいがポジション次第で◎。'],
+  ['フェイス','波の滑走面。綺麗なフェイス＝乗りやすいサイン。']
+];
+function showRandomTerm(){
+  const [w,d] = TERMS[Math.floor(Math.random()*TERMS.length)];
+  document.getElementById('termWord').textContent = w;
+  document.getElementById('termDesc').textContent = d;
+}
+
+/* ======== 紙吹雪 ======== */
+function confetti(){
+  const n=24, root=document.body;
+  for(let i=0;i<n;i++){
+    const s=document.createElement('div');
+    const size=8+Math.random()*8;
+    s.style.position='fixed'; s.style.left=Math.random()*100+'vw'; s.style.top='-10px';
+    s.style.width=size+'px'; s.style.height=size+'px';
+    s.style.background=`hsl(${Math.floor(Math.random()*360)} 85% 60%)`;
+    s.style.borderRadius='2px'; s.style.opacity='0.9'; s.style.zIndex='9999';
+    s.style.transform=`rotate(${Math.random()*360}deg)`;
+    s.style.transition='transform 1.2s linear, top 1.2s linear, opacity .3s ease 1.1s';
+    root.appendChild(s);
+    requestAnimationFrame(()=>{
+      s.style.top='110vh';
+      s.style.transform+=` translateY(100vh) rotate(${720+Math.random()*360}deg)`;
+      s.addEventListener('transitionend',()=>s.remove(),{once:true});
+      setTimeout(()=>s.style.opacity='0',1100);
+    });
+  }
+}
+</script>
+</body>
+</html>
