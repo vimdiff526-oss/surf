@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>SloSea Slot｜目押しスロットで波運占い</title>
-<meta name="description" content="日本のスロット風3リール。目押しでSTOP！出目で今日の波運とサーフ用語解説を表示。大当たりはアニメ風キャラ。">
+<title>SloSea Slot｜目押しスロット（上→下／即停止）</title>
+<meta name="description" content="日本のスロット風3リール。回転は上から下へ。STOP ですぐ停止＆中央ラインでスナップ。出目で今日の波運とサーフ用語を表示。大当たりはアニメ風キャラ。">
 <style>
   :root{
     --bg:#f7fbff; --card:#fff; --ink:#0f172a; --muted:#475569; --line:#e2e8f0;
@@ -79,7 +79,7 @@
 <body>
 <div class="wrap">
   <header>
-    <h1>波運スロット（目押し版） <small>— SloSea</small></h1>
+    <h1>波運スロット（上→下／即停止版） <small>— SloSea</small></h1>
     <small class="note">※完全な娯楽機能です。ギャンブル要素はありません。</small>
   </header>
 
@@ -103,7 +103,7 @@
       <div class="panel">
         <h2>今日の波運</h2>
         <div id="luckText" class="luck ok">—</div>
-        <p id="desc" class="note" style="margin:.4rem 0 0">SPIN を押して開始してください。中央の破線に“目押し”です。</p>
+        <p id="desc" class="note" style="margin:.4rem 0 0">SPIN → 目押しで STOP。中央の破線位置で即停止します。</p>
       </div>
       <div class="panel">
         <h2>サーフ用語</h2>
@@ -130,83 +130,64 @@ const FRUITS = [
   { id:'melon',  label:'🍈' }, { id:'straw',  label:'🍓' }, { id:'water',  label:'🍉' }
 ];
 
-/* 日本のスロットのように各リールは固定ストリップ（順番） */
+/* 日本のスロットのように各リールは固定ストリップ順 */
 const BASE_STRIPS = [
-  // Char は各リールに1〜2個だけ入れて低出現＆目押し可能に
   [ 'lemon','grape','banana','cherry','melon','pine','straw','peach','water','banana','grape','lemon','char','peach','cherry','water' ],
   [ 'banana','water','peach','cherry','grape','lemon','melon','straw','pine','banana','grape','char','lemon','peach','water','cherry' ],
   [ 'grape','lemon','water','banana','peach','straw','pine','melon','cherry','grape','banana','water','peach','char','lemon','straw' ]
 ];
-// id→実体へ
 const ID2SYM = Object.fromEntries([
   ...FRUITS.map(o=>[o.id,o]),
   ['char', SPECIAL_CHAR]
 ]);
 
-/* ======== リール管理 ======== */
+/* ======== リール管理（上→下スクロール） ======== */
 const REEL_HEIGHT = 168;     // CSSと合わせる
 const CELL_HEIGHT = 120;     // CSSと合わせる
 const CENTER_TOP  = (REEL_HEIGHT - CELL_HEIGHT)/2;
 
-// 制御用
 class Reel {
   constructor(rootEl, orderIds, speed){
     this.root = rootEl;
     this.strip = rootEl.querySelector('.strip');
-    this.order = orderIds.slice();                 // 基本順
+    this.order = orderIds.slice();
     this.n = this.order.length;
     this.totalH = this.n * CELL_HEIGHT;
 
-    // スクロール用に3周分複製（無限スクロール）
+    // 無限スクロール用に3周分並べる
     const dup = [...this.order, ...this.order, ...this.order];
     this.strip.replaceChildren(...dup.map(id => renderCell(ID2SYM[id])));
 
-    this.pos = Math.random()*this.totalH;          // 現在オフセット(px)
-    this.speed = speed;                            // px/s
+    this.pos = Math.random()*this.totalH; // 現在オフセット(px) — translateY(+pos) で下方向に動く
+    this.speed = speed;                   // px/s
     this.spin = false;
-    this.stopping = false;
-    this.targetPos = 0;
     this.finalIndex = null;
+
+    this.apply();
+  }
+  apply(){
+    this.strip.style.transform = `translateY(${this.pos}px)`; // 下方向に移動
   }
   update(dt){
     if(!this.spin) return;
-    if(this.stopping){
-      // イージング減速：pos -> targetPos
-      const REMAIN = this.targetPos - this.pos;
-      const vel = Math.max(320, this.speed * 0.08); // 最低速度
-      const step = Math.min(Math.abs(REMAIN), vel * dt) * Math.sign(REMAIN);
-      this.pos += step;
-      if(Math.abs(REMAIN) < 0.6){ // ほぼ到達
-        this.pos = this.targetPos;
-        this.spin = false;
-        this.stopping = false;
-        this.finalIndex = this.indexAtCenter(); // 決定
-      }
-    } else {
-      this.pos += this.speed * dt;
-    }
-    // wrap
+    this.pos += this.speed * dt;           // 上→下
     if(this.pos >= this.totalH) this.pos -= this.totalH;
-    // 反映
-    this.strip.style.transform = `translateY(${-this.pos}px)`;
+    this.apply();
   }
   indexAtCenter(){
-    // 現在の中心に近いセルのインデックス（0..n-1）
-    const p = (this.pos + CENTER_TOP) % this.totalH;     // 中央ラインの“strip上の位置”
+    // 現在の中央ラインに近いセルindex（0..n-1）
+    const p = mod(this.pos + CENTER_TOP, this.totalH);
     const idx = Math.round(p / CELL_HEIGHT) % this.n;
     return idx < 0 ? idx + this.n : idx;
   }
-  computeStopTarget(){
-    // 押した瞬間の中心にあるセルidxを採用し、1周以上先でピタッと止まるようターゲットを計算
+  snapStop(){
+    // 押した瞬間の中央セルに“即座に”スナップして停止
     const idx = this.indexAtCenter();
-    const base = idx * CELL_HEIGHT - CENTER_TOP;
-    let t = mod(base, this.totalH);
-    // 最低でも 1.2周 先にして減速演出
-    const minTravel = this.totalH * 1.2;
-    while(t < this.pos + minTravel){ t += this.totalH; }
-    this.targetPos = t;
-    this.stopping = true;
-    return idx;
+    const base = idx * CELL_HEIGHT - CENTER_TOP;     // そのセルが中央に来るオフセット
+    this.pos = mod(base, this.totalH);
+    this.apply();
+    this.spin = false;
+    this.finalIndex = idx;
   }
 }
 function renderCell(sym){
@@ -224,11 +205,10 @@ const mod = (x,m)=>((x%m)+m)%m;
 
 /* ======== 初期化 ======== */
 const reels = [
-  new Reel(document.getElementById('reel0'), BASE_STRIPS[0], 900),  // px/s
+  new Reel(document.getElementById('reel0'), BASE_STRIPS[0], 900),
   new Reel(document.getElementById('reel1'), BASE_STRIPS[1], 980),
   new Reel(document.getElementById('reel2'), BASE_STRIPS[2], 1060)
 ];
-reels.forEach(r=>r.strip.style.transform = `translateY(${-r.pos}px)`);
 
 /* ======== コントロール ======== */
 const btnStart = document.getElementById('btnStart');
@@ -244,7 +224,7 @@ btnStops.forEach((b,i)=>b.addEventListener('click', ()=>stopReel(i)));
 btnAgain.addEventListener('click', ()=>{ resetUI(); startSpin(); });
 btnShuffleTerm.addEventListener('click', showRandomTerm);
 
-/* キー操作（1,2,3でSTOP） */
+/* キー操作（1,2,3でSTOP、SpaceでSPIN） */
 window.addEventListener('keydown', (e)=>{
   if(e.key === ' ') { e.preventDefault(); if(!btnStart.disabled) startSpin(); }
   if(e.key === '1') stopReel(0);
@@ -270,32 +250,24 @@ function startSpin(){
 
   luckText.textContent = 'スピン中…';
   luckText.className = 'luck ok';
-  desc.textContent = '止めたいタイミングで STOP を押してください（中央の破線に揃います）。';
+  desc.textContent = '止めたいタイミングで STOP（中央破線で即停止します）。';
 
   reels.forEach((r,idx)=>{
-    r.spin = true; r.stopping = false; r.finalIndex = null;
+    r.spin = true; r.finalIndex = null;
     // スタート時に少しズラす
     r.pos = mod(r.pos + (idx*CELL_HEIGHT/2), r.totalH);
+    r.apply();
   });
 }
 
 function stopReel(i){
   const r = reels[i];
-  if(!r.spin || r.stopping) return;
-  r.computeStopTarget();      // 目押しタイミングで止め先を確定
+  if(!r.spin) return;
+  r.snapStop();                 // ★ 即停止＆中央にスナップ
   btnStops[i].disabled = true;
 
   // 全部止まったら評価
-  if(reels.every(R=>!R.spin || R.stopping)){ // 全STOP押下済み
-    pollAllStopped().then(evaluate);
-  }
-}
-function pollAllStopped(){
-  return new Promise(resolve=>{
-    const id = setInterval(()=>{
-      if(reels.every(r=>!r.spin && !r.stopping)){ clearInterval(id); resolve(); }
-    }, 40);
-  });
+  if(reels.every(R=>!R.spin)) evaluate();
 }
 
 function resetUI(){
@@ -310,7 +282,7 @@ function resetUI(){
 
 /* ======== 判定 ======== */
 function evaluate(){
-  // 中心に停止した各リールのシンボルを取得
+  // 中央に停止した各リールのシンボルを取得
   const ids = reels.map((r,ri)=>{
     const idx = r.finalIndex ?? r.indexAtCenter();
     const id  = BASE_STRIPS[ri][idx % BASE_STRIPS[ri].length];
