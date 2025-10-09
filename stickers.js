@@ -1,4 +1,4 @@
-/* stickers.js — humor-boosted edition
+/* stickers.js — humor-boosted edition (+10 new designs)
    - 強化点:
      * 文言を全面見直し（パンチライン/自虐/逆張り）
      * タグ検索・カスタマイズ・SVG/PNG保存の仕様は従来通り
@@ -346,7 +346,7 @@
   function buildDesigns(){
     const list = [];
 
-    // 擬似スポンサー（より皮肉に）
+    // 既存デザイン（――ここから既存） ---------------------------------
     list.push({
       id: "sponsor-waveplus",
       title: "WAVE++ | 近日入荷（波）",
@@ -379,7 +379,6 @@
       })
     });
 
-    // バッジ
     list.push({
       id: "oka-surfer-cert",
       title: "丘サーファー認定証｜公式（自称）",
@@ -393,7 +392,6 @@
       })
     });
 
-    // スローガン（逆張りを強化）
     list.push({
       id: "no-surf-no-life",
       title: "NO SURF NO LIFE｜※今日は会議",
@@ -410,7 +408,6 @@
       })
     });
 
-    // 楕円スポンサー
     list.push({
       id: "air-surfer",
       title: "AIR SURFER｜飛ぶのは妄想だけ",
@@ -427,7 +424,6 @@
       })
     });
 
-    // TAX FREE（皮肉）
     list.push({
       id: "wave-tax-free",
       title: "WAVE TAX FREE｜乗れない税 0%",
@@ -444,7 +440,6 @@
       })
     });
 
-    // 禁止ワード系（言い訳添付）
     [
       { id:"no-shore",       main:"NO SHORE",        sub:"CITY BREAK ONLY (…today)", color:"#ef4444" },
       { id:"middle-of-city", main:"MIDDLE OF CITY",  sub:"LANDLOCKED CREW – proudly", color:"#f59e0b" },
@@ -465,7 +460,6 @@
       })
     }));
 
-    // メーカーロゴ風（誇大）
     [
       { id:"deep-blue-labs",  a:"DEEP",  b:"BLUE LABS — beta waves",  grad1:"#3b82f6", grad2:"#06b6d4", icon:"hex"},
       { id:"foam-core-works", a:"FOAM",  b:"CORE WORKS — R&D dept.",   grad1:"#22c55e", grad2:"#84cc16", icon:"tri"},
@@ -486,7 +480,6 @@
       })
     }));
 
-    // ご当地（湘南）— 誇張
     ["湘南"].forEach(name => list.push({
       id: `local-${slug(name)}`,
       title: `ご当地版｜${name} SURF — traffic jam edition`,
@@ -500,7 +493,6 @@
       })
     }));
 
-    // 丘サーファー風イラスト（言い訳を強化）
     list.push({
       id:"oka-coffee-board",
       title:"OKA SURFER｜COFFEE & BOARD（乗る前に2杯）",
@@ -722,6 +714,202 @@
         `
       })
     });
+
+    // 既存デザイン（――ここまで既存） ---------------------------------
+
+    // ======== 新規10デザイン追加 ========
+
+    // 1) DAD BOD SURF TEAM（家族ネタ）
+    list.push({
+      id: "dad-bod-surf-team",
+      title: "DAD BOD SURF TEAM｜公式キャプテン制",
+      tags: ["family","joke","sponsor","logo"],
+      badge: ["楕円","家族","自虐"],
+      editable: [
+        {key:"title", label:"タイトル", default:"DAD BOD"},
+        {key:"sub",   label:"サブ",     default:"SURF TEAM — captain"}
+      ],
+      defaultFields: {title:"DAD BOD", sub:"SURF TEAM — captain"},
+      svg: ({w=860,h=480,fields={}}={}) => withFrame({
+        w,h, stroke:"#ffffff", strokeW:10, bg:"#0b1220",
+        body: (x,y,W,H)=> ovalSponsor({x,y,W,H,grad1:"#fb7185",grad2:"#f59e0b",title:fields.title,sub:fields.sub})
+      })
+    });
+
+    // 2) EARLY? NO.（辛口・脱力）
+    list.push({
+      id: "early-no",
+      title: "EARLY? NO.｜潮が落ち着いたら出ます",
+      tags: ["slogan","joke","lazy"],
+      badge: ["白黒","極太","横長"],
+      editable: [
+        {key:"main", label:"メイン", default:"EARLY? NO."},
+        {key:"sub",  label:"サブ",  default:"arrive after tide"}
+      ],
+      defaultFields: {main:"EARLY? NO.", sub:"arrive after tide"},
+      svg: ({w=900,h=300,fields={}}={}) => withFrame({
+        w,h, stroke:"#0f172a", strokeW:8, bg:"#ffffff",
+        body: (x,y,W,H)=> slogan({x,y,W,H,fg:"#0f172a",text:fields.main,sub:fields.sub})
+      })
+    });
+
+    // 3) GROM TAXI（家族送迎）
+    list.push({
+      id: "grom-taxi",
+      title: "GROM TAXI｜週末は運転手",
+      tags: ["family","illust","joke","van"],
+      badge: ["バン","家族","横長"],
+      editable: [
+        {key:"main", label:"メイン", default:"GROM TAXI"},
+        {key:"sub",  label:"サブ",  default:"weekend driver"}
+      ],
+      defaultFields: {main:"GROM TAXI", sub:"weekend driver"},
+      svg: ({w=900,h=360,fields={}}={}) => withFrame({
+        w,h, stroke:"#22c55e", strokeW:10, bg:"#0b1220",
+        body:(x,y,W,H)=> `
+          <g stroke="#22c55e" stroke-width="8" fill="none" stroke-linecap="round">
+            <rect x="${x+W*0.12}" y="${y+H*0.28}" width="${W*0.52}" height="${H*0.24}" rx="${W*0.02}" />
+            <circle cx="${x+W*0.24}" cy="${y+H*0.56}" r="${H*0.06}" />
+            <circle cx="${x+W*0.54}" cy="${y+H*0.56}" r="${H*0.06}" />
+            <line x1="${x+W*0.40}" y1="${y+H*0.28}" x2="${x+W*0.40}" y2="${y+H*0.52}"/>
+            <path d="M ${x+W*0.68} ${y+H*0.22} q ${W*0.06} ${-H*0.10} ${W*0.14} 0" />
+          </g>
+          <g font-family="system-ui, sans-serif" fill="#e2e8f0" font-weight="900">
+            ${fitTextTag({x:x+W*0.70, y:y+H*0.46, text:(fields.main), weight:900, sizePx:H*0.20, boxW:W*0.26})}
+            ${fitTextTag({x:x+W*0.70, y:y+H*0.72, text:(fields.sub),  weight:800, sizePx:H*0.16, boxW:W*0.26, fill:"#22c55e"})}
+          </g>
+        `
+      })
+    });
+
+    // 4) RAIN CHECK PRO（辛口）
+    list.push({
+      id: "rain-check-pro",
+      title: "RAIN CHECK PRO｜天候言い訳協会",
+      tags: ["ban","joke","lazy"],
+      badge: ["斜線","強調","モノクロ"],
+      editable: [
+        {key:"title", label:"メイン", default:"RAIN CHECK"},
+        {key:"sub",   label:"サブ",   default:"PRO — officially postponed"}
+      ],
+      defaultFields: {title:"RAIN CHECK", sub:"PRO — officially postponed"},
+      svg: ({w=880,h=420,fields={}}={}) => withFrame({
+        w,h, stroke:"#93c5fd", strokeW:10, bg:"#0b1220",
+        body: (x,y,W,H)=> prohibited({x,y,W,H,color:"#93c5fd",title:fields.title,sub:fields.sub})
+      })
+    });
+
+    // 5) LEFTOVER WAX（皮肉スポンサー）
+    list.push({
+      id: "leftover-wax",
+      title: "LEFTOVER WAX｜前回の余りがスポンサー",
+      tags: ["sponsor","joke","logo"],
+      badge: ["矩形","白地","皮肉"],
+      editable: [
+        {key:"line1", label:"1行目", default:"LEFTOVER"},
+        {key:"line2", label:"2行目", default:"WAX — since last trip"}
+      ],
+      defaultFields: {line1:"LEFTOVER", line2:"WAX — since last trip"},
+      svg: ({w=860,h=420,fields={}}={}) => withFrame({
+        w,h, stroke:"#111827", strokeW:10, bg:"#ffffff",
+        body: (x,y,W,H)=> rectSponsor({x,y,W,H,text1:fields.line1,text2:fields.line2,t1:"#111827",t2:"#0ea5e9"})
+      })
+    });
+
+    // 6) WEEKEND WARRIOR（自虐スローガン）
+    list.push({
+      id: "weekend-warrior",
+      title: "WEEKEND WARRIOR｜平日は口だけ",
+      tags: ["slogan","joke"],
+      badge: ["横長","白黒","大文字"],
+      editable: [
+        {key:"main", label:"メイン", default:"WEEKEND WARRIOR"},
+        {key:"sub",  label:"サブ",  default:"talks on weekdays"}
+      ],
+      defaultFields: {main:"WEEKEND WARRIOR", sub:"talks on weekdays"},
+      svg: ({w=900,h=300,fields={}}={}) => withFrame({
+        w,h, stroke:"#111827", strokeW:8, bg:"#ffffff",
+        body: (x,y,W,H)=> slogan({x,y,W,H,fg:"#111827",text:fields.main,sub:fields.sub})
+      })
+    });
+
+    // 7) SPREADSHEET SURF CLUB（IT/脱力）
+    list.push({
+      id: "spreadsheet-surf-club",
+      title: "SPREADSHEET SURF CLUB｜表計算から波予測",
+      tags: ["maker","logo","joke","nerd"],
+      badge: ["幾何","グラデ","横長"],
+      editable: [
+        {key:"a", label:"上段", default:"SPREADSHEET"},
+        {key:"b", label:"下段", default:"SURF CLUB — vLOOKUP tide"}
+      ],
+      defaultFields: {a:"SPREADSHEET", b:"SURF CLUB — vLOOKUP tide"},
+      svg: ({w=900,h=360,fields={}}={}) => withFrame({
+        w,h, stroke:"#ffffff", strokeW:10, bg:"#0b1220",
+        body: (x,y,W,H)=> maker({x,y,W,H,a:fields.a,b:fields.b,grad1:"#22c55e",grad2:"#3b82f6",icon:"hex"})
+      })
+    });
+
+    // 8) QUIVER = 1 (borrowed)（辛口）
+    list.push({
+      id: "quiver-eq-1",
+      title: "QUIVER = 1（借り物）｜身軽すぎる装備",
+      tags: ["slogan","joke","gear"],
+      badge: ["白黒","数式","横長"],
+      editable: [
+        {key:"main", label:"メイン", default:"QUIVER = 1"},
+        {key:"sub",  label:"サブ",  default:"(borrowed)"}
+      ],
+      defaultFields: {main:"QUIVER = 1", sub:"(borrowed)"},
+      svg: ({w=860,h=320,fields={}}={}) => withFrame({
+        w,h, stroke:"#0f172a", strokeW:8, bg:"#ffffff",
+        body: (x,y,W,H)=> slogan({x,y,W,H,fg:"#0f172a",text:fields.main,sub:fields.sub})
+      })
+    });
+
+    // 9) TETRA BLOCKS LOCAL（テトラポッド地元）
+    list.push({
+      id: "tetra-blocks-local",
+      title: "TETRA BLOCKS LOCAL｜テトラ観測隊",
+      tags: ["local","illust","joke"],
+      badge: ["幾何","波消し","丸角"],
+      editable: [{key:"main",label:"メイン",default:"TETRA BLOCKS"},{key:"sub",label:"サブ",default:"LOCAL — sit & watch"}],
+      defaultFields: {main:"TETRA BLOCKS", sub:"LOCAL — sit & watch"},
+      svg: ({w=880,h=420,fields={}}={}) => withFrame({
+        w,h, stroke:"#93c5fd", strokeW:10, bg:"#0b1220",
+        body:(x,y,W,H)=> `
+          <g stroke="#93c5fd" stroke-width="8" fill="none" stroke-linejoin="round">
+            <polygon points="${polygonPoints(3, x+W*0.25, y+H*0.62, Math.min(W,H)*0.10)}" />
+            <polygon points="${polygonPoints(3, x+W*0.40, y+H*0.66, Math.min(W,H)*0.10)}" />
+            <polygon points="${polygonPoints(3, x+W*0.55, y+H*0.60, Math.min(W,H)*0.10)}" />
+            <path d="M ${x+W*0.10} ${y+H*0.70} q ${W*0.15} ${-H*0.12} ${W*0.30} 0 q ${W*0.15} ${H*0.12} ${W*0.30} 0" />
+          </g>
+          <g font-family="system-ui, sans-serif" fill="#e5e7eb" font-weight="900" text-anchor="middle">
+            ${fitTextTag({x:x+W*0.70, y:y+H*0.46, text:(fields.main), weight:900, sizePx:H*0.18, boxW:W*0.36, anchor:'middle'})}
+            ${fitTextTag({x:x+W*0.70, y:y+H*0.74, text:(fields.sub),  weight:800, sizePx:H*0.14, boxW:W*0.30, anchor:'middle', fill:"#93c5fd"})}
+          </g>
+        `
+      })
+    });
+
+    // 10) TIDE IN-LAWS（家族ネタ・義実家）
+    list.push({
+      id: "tide-in-laws",
+      title: "TIDE IN-LAWS｜潮と義実家の機嫌待ち",
+      tags: ["family","slogan","joke"],
+      badge: ["横長","白黒","社会派"],
+      editable: [
+        {key:"main", label:"メイン", default:"TIDE IN-LAWS"},
+        {key:"sub",  label:"サブ",  default:"both unpredictable"}
+      ],
+      defaultFields: {main:"TIDE IN-LAWS", sub:"both unpredictable"},
+      svg: ({w=900,h=320,fields={}}={}) => withFrame({
+        w,h, stroke:"#111827", strokeW:8, bg:"#ffffff",
+        body: (x,y,W,H)=> slogan({x,y,W,H,fg:"#111827",text:fields.main,sub:fields.sub})
+      })
+    });
+
+    // ======== 追加ここまで ========
 
     return list;
   }
