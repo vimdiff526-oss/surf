@@ -268,4 +268,466 @@
   function rectSponsor({x,y,W,H, text1,text2, t1,t2}){
     const pad = Math.round(W*0.08);
     const w1 = W - pad*2, w2 = W - pad*2;
-    const line1 = fitTextTag({x:x+pad, y:y+H*0.48, text:text1, weight:900, sizePx:Math.min(W,H)*0.24, boxW:w1,
+    const line1 = fitTextTag({x:x+pad, y:y+H*0.48, text:text1, weight:900, sizePx:Math.min(W,H)*0.24, boxW:w1, fill:t1});
+    const line2 = fitTextTag({x:x+pad, y:y+H*0.78, text:text2, weight:800, sizePx:Math.min(W,H)*0.18, boxW:w2, fill:t2});
+    return `<g font-family="system-ui, sans-serif">${line1}${line2}</g>`;
+  }
+  function roundBadge({x,y,W,H, text}){
+    const cx = x+W/2, cy = y+H/2, r = Math.min(W,H)/2 - 6;
+    const gid = `g${hash(text)}`;
+    const t = fitTextTag({x:cx, y:cy, text, weight:900, sizePx:r*0.28, boxW:r*1.8, anchor:'middle', fill:'#fff'});
+    return `
+      <defs><linearGradient id="${gid}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3ec4ff"/><stop offset="1" stop-color="#0ea5e980"/></linearGradient></defs>
+      <circle cx="${cx}" cy="${cy}" r="${r}" fill="url(#${gid})" stroke="#ffffff" stroke-width="8"/>
+      <g font-family="system-ui, sans-serif" fill="#ffffff" text-anchor="middle">
+        ${t}
+        <text x="${cx}" y="${cy+r*0.52}" font-weight="700" font-size="${r*0.18}" opacity="0.9">2025</text>
+      </g>`;
+  }
+  function slogan({x,y,W,H, fg,text,sub}){
+    const t1 = fitTextTag({x:x+W/2, y:y+H*0.54, text, weight:900, sizePx:H*0.34, boxW:W*0.86, anchor:'middle', fill:fg});
+    const t2 = fitTextTag({x:x+W/2, y:y+H*0.82, text:sub, weight:700, sizePx:H*0.12, boxW:W*0.70, anchor:'middle', fill:fg, opacity:0.85});
+    return `<g font-family="system-ui, sans-serif" text-anchor="middle">${t1}${t2}</g>`;
+  }
+  function ovalSponsor({x,y,W,H,grad1,grad2,title,sub}){
+    const pad = Math.min(W,H)*0.08;
+    const cx = x+W/2, cy = y+H/2, rx = W/2 - pad, ry = H/2 - pad;
+    const gid = `lg${hash(title)}`;
+    const t1 = fitTextTag({x:cx, y:cy - H*0.06, text:title, weight:900, sizePx:H*0.22, boxW:W*0.9, anchor:'middle', fill:'#fff'});
+    const t2 = fitTextTag({x:cx, y:cy + H*0.16, text:sub,   weight:700, sizePx:H*0.12, boxW:W*0.8, anchor:'middle', fill:'#fff', opacity:0.92});
+    return `
+      <defs><linearGradient id="${gid}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${grad1}"/><stop offset="1" stop-color="${grad2}"/></linearGradient></defs>
+      <ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="url(#${gid})" stroke="#ffffff" stroke-width="8"/>
+      <g font-family="system-ui, sans-serif">${t1}${t2}</g>`;
+  }
+  function prohibited({x,y,W,H, color, title, sub}){
+    const gid = `pat${hash(title)}`;
+    const t1 = fitTextTag({x:x+W/2, y:y+H*0.48, text:title, weight:900, sizePx:H*0.22, boxW:W*0.9, anchor:'middle', fill:'#fff'});
+    const t2 = fitTextTag({x:x+W/2, y:y+H*0.78, text:sub,   weight:700, sizePx:H*0.12, boxW:W*0.8, anchor:'middle', fill:color, opacity:0.95});
+    return `
+      <defs><pattern id="${gid}" patternUnits="userSpaceOnUse" width="40" height="40" patternTransform="rotate(-20)">
+        <rect width="40" height="40" fill="#0b1220"/><rect width="20" height="40" fill="#111827"/></pattern></defs>
+      <rect x="${x}" y="${y}" width="${W}" height="${H}" rx="${Math.min(W,H)*0.06}" fill="url(#${gid})" stroke="${color}" stroke-width="6"/>
+      <g font-family="system-ui, sans-serif" text-anchor="middle">${t1}${t2}</g>`;
+  }
+  function maker({x,y,W,H,a,b,grad1,grad2,icon}){
+    const gid = `grad${hash(a+b)}`;
+    const iconEl = makerIcon(icon, x+W*0.18, y+H*0.5, Math.min(W,H)*0.22);
+    const tA = fitTextTag({x:x+W*0.42, y:y+H*0.50, text:a, weight:800, sizePx:H*0.22, boxW:W*0.50, fill:'#e5e7eb'});
+    const tB = fitTextTag({x:x+W*0.42, y:y+H*0.78, text:b, weight:800, sizePx:H*0.18, boxW:W*0.50, fill:`url(#${gid})`});
+    return `
+      <defs><linearGradient id="${gid}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${grad1}"/><stop offset="1" stop-color="${grad2}"/></linearGradient></defs>
+      ${iconEl}
+      <g font-family="system-ui, sans-serif">${tA}${tB}</g>`;
+  }
+  function makerIcon(type, cx, cy, R){
+    const stroke = "#ffffff";
+    if (type === "hex"){ const pts = polygonPoints(6, cx, cy, R*0.72); return `<polygon points="${pts}" fill="#0f172a" stroke="${stroke}" stroke-width="10"/>`; }
+    if (type === "tri"){ const pts = polygonPoints(3, cx, cy, R*0.82); return `<polygon points="${pts}" fill="#0f172a" stroke="${stroke}" stroke-width="10"/>`; }
+    return `<circle cx="${cx}" cy="${cy}" r="${R*0.55}" fill="#0f172a" stroke="${stroke}" stroke-width="10"/>`;
+  }
+  function localRound({x,y,W,H,name}){
+    const cx = x+W/2, cy = y+H/2, r = Math.min(W,H)/2 - 8;
+    const gid = `lg${hash(name)}`;
+    const top = `${name} SURF`, bottom = `LOCAL PRIDE`;
+    const t1 = fitTextTag({x:cx, y:cy - r*0.25, text:top,    weight:900, sizePx:r*0.28, boxW:r*1.8, anchor:'middle'});
+    const t2 = fitTextTag({x:cx, y:cy + r*0.30, text:bottom, weight:700, sizePx:r*0.18, boxW:r*1.6, anchor:'middle', opacity:0.95});
+    return `
+      <defs><radialGradient id="${gid}" cx="50%" cy="38%" r="70%">
+        <stop offset="0%" stop-color="#59d0ff"/><stop offset="100%" stop-color="#0ea5e9"/></radialGradient></defs>
+      <circle cx="${cx}" cy="${cy}" r="${r}" fill="url(#${gid})" stroke="#fff" stroke-width="10"/>
+      <g font-family="system-ui, sans-serif" fill="#ffffff">${t1}${t2}</g>`;
+  }
+
+  // ======== デザイン定義（ジョーク増量版） ========
+  const designs = buildDesigns();
+  designs.forEach((d, idx) => { d.no = idx + 1; });
+
+  function buildDesigns(){
+    const list = [];
+
+    // 擬似スポンサー（より皮肉に）
+    list.push({
+      id: "sponsor-waveplus",
+      title: "WAVE++ | 近日入荷（波）",
+      tags: ["sponsor","wave","logo","joke"],
+      badge: ["矩形","白地","自虐"],
+      editable: [
+        {key:"line1", label:"1行目", default:"WAVE"},
+        {key:"line2", label:"2行目", default:"COMING SOON"}
+      ],
+      defaultFields: {line1:"WAVE", line2:"COMING SOON"},
+      svg: ({w=800,h=534,fields={}}={}) => withFrame({
+        w,h, stroke:"#111827", strokeW:12, bg:"#ffffff",
+        body: (x,y,W,H)=> rectSponsor({x,y,W,H, text1:fields.line1||"WAVE", text2:fields.line2||"COMING SOON", t1:"#111827", t2:"#22c55e"})
+      })
+    });
+
+    list.push({
+      id: "dry-fish-energy",
+      title: "DRY FISH ENERGY | 干物でも動く",
+      tags: ["sponsor","energy","logo","joke"],
+      badge: ["横長","黒地","蛍光"],
+      editable: [
+        {key:"line1", label:"1行目", default:"DRY FISH"},
+        {key:"line2", label:"2行目", default:"ENERGY (0 kcal)"}
+      ],
+      defaultFields: {line1:"DRY FISH", line2:"ENERGY (0 kcal)"},
+      svg: ({w=880,h=420,fields={}}={}) => withFrame({
+        w,h, stroke:"#22d3ee", strokeW:12, bg:"#0b1220",
+        body: (x,y,W,H)=> rectSponsor({x,y,W,H, text1:fields.line1, text2:fields.line2, t1:"#e2e8f0", t2:"#22d3ee"})
+      })
+    });
+
+    // バッジ
+    list.push({
+      id: "oka-surfer-cert",
+      title: "丘サーファー認定証｜公式（自称）",
+      tags: ["badge","joke","license"],
+      badge: ["丸型","認定","白抜き"],
+      editable: [{key:"text", label:"中央テキスト", default:"OFFICIALLY* OKA SURFER"}],
+      defaultFields: {text:"OFFICIALLY* OKA SURFER"},
+      svg: ({w=620,h=620,fields={}}={}) => withFrame({
+        w,h, stroke:"#ffffff", strokeW:14, bg:"#0ea5e9",
+        body: (x,y,W,H)=> roundBadge({x,y,W,H, text:fields.text})
+      })
+    });
+
+    // スローガン（逆張りを強化）
+    list.push({
+      id: "no-surf-no-life",
+      title: "NO SURF NO LIFE｜※今日は会議",
+      tags: ["slogan","joke"],
+      badge: ["横長","白黒","大文字"],
+      editable: [
+        {key:"main", label:"メイン", default:"NO SURF NO LIFE"},
+        {key:"sub",  label:"サブ",  default:"but I have a meeting"}
+      ],
+      defaultFields: {main:"NO SURF NO LIFE", sub:"but I have a meeting"},
+      svg: ({w=900,h=320,fields={}}={}) => withFrame({
+        w,h, stroke:"#111827", strokeW:8, bg:"#ffffff",
+        body: (x,y,W,H)=> slogan({x,y,W,H, fg:"#111827", text:fields.main, sub:fields.sub})
+      })
+    });
+
+    // 楕円スポンサー
+    list.push({
+      id: "air-surfer",
+      title: "AIR SURFER｜飛ぶのは妄想だけ",
+      tags: ["sponsor","air","logo","joke"],
+      badge: ["楕円","グラデ","アイコン"],
+      editable: [
+        {key:"title", label:"タイトル", default:"AIR SURFER"},
+        {key:"sub",   label:"サブ",     default:"IMAGINARY TEAM"}
+      ],
+      defaultFields: {title:"AIR SURFER", sub:"IMAGINARY TEAM"},
+      svg: ({w=860,h=480,fields={}}={}) => withFrame({
+        w,h, stroke:"#ffffff", strokeW:12, bg:"#0b1220",
+        body: (x,y,W,H)=> ovalSponsor({x,y,W,H, grad1:"#22c55e", grad2:"#06b6d4", title:fields.title, sub:fields.sub})
+      })
+    });
+
+    // TAX FREE（皮肉）
+    list.push({
+      id: "wave-tax-free",
+      title: "WAVE TAX FREE｜乗れない税 0%",
+      tags: ["sponsor","tax","joke"],
+      badge: ["矩形","赤系","太字"],
+      editable: [
+        {key:"line1", label:"1行目", default:"WAVE"},
+        {key:"line2", label:"2行目", default:"TAX FREE (for me)"}
+      ],
+      defaultFields: {line1:"WAVE", line2:"TAX FREE (for me)"},
+      svg: ({w=860,h=420,fields={}}={}) => withFrame({
+        w,h, stroke:"#ef4444", strokeW:12, bg:"#ffe4e6",
+        body: (x,y,W,H)=> rectSponsor({x,y,W,H, text1:fields.line1, text2:fields.line2, t1:"#ef4444", t2:"#111827"})
+      })
+    });
+
+    // 禁止ワード系（言い訳添付）
+    [
+      { id:"no-shore",       main:"NO SHORE",        sub:"CITY BREAK ONLY (…today)", color:"#ef4444" },
+      { id:"middle-of-city", main:"MIDDLE OF CITY",  sub:"LANDLOCKED CREW – proudly", color:"#f59e0b" },
+      { id:"desk-surf-only", main:"DESK SURF ONLY",  sub:"OFFICE WAVES • 9–18",        color:"#22c55e" }
+    ].forEach(p => list.push({
+      id: `ban-${p.id}`,
+      title: `${p.main}｜禁止ワード風ロゴ（正論）`,
+      tags: ["ban","joke","logo","slogan"],
+      badge: ["斜線","強調","コントラスト"],
+      editable: [
+        {key:"title", label:"メイン", default:p.main},
+        {key:"sub",   label:"サブ",   default:p.sub}
+      ],
+      defaultFields: {title:p.main, sub:p.sub},
+      svg: ({w=880,h=420,fields={}}={}) => withFrame({
+        w,h, stroke:p.color, strokeW:12, bg:"#0b1220",
+        body: (x,y,W,H)=> prohibited({x,y,W,H, color:p.color, title:fields.title, sub:fields.sub})
+      })
+    }));
+
+    // メーカーロゴ風（誇大）
+    [
+      { id:"deep-blue-labs",  a:"DEEP",  b:"BLUE LABS — beta waves",  grad1:"#3b82f6", grad2:"#06b6d4", icon:"hex"},
+      { id:"foam-core-works", a:"FOAM",  b:"CORE WORKS — R&D dept.",   grad1:"#22c55e", grad2:"#84cc16", icon:"tri"},
+      { id:"salt-tech",       a:"SALT",  b:"TECH — Grade NaCl+",       grad1:"#f59e0b", grad2:"#ef4444", icon:"dot"},
+    ].forEach(m => list.push({
+      id: `mk-${m.id}`,
+      title: `${m.a} ${m.b}｜メーカーロゴ風（なんちゃって）`,
+      tags: ["maker","logo","brand","joke"],
+      badge: ["幾何アイコン","グラデ","横長"],
+      editable: [
+        {key:"a", label:"上段", default:m.a},
+        {key:"b", label:"下段", default:m.b}
+      ],
+      defaultFields: {a:m.a, b:m.b},
+      svg: ({w=900,h=360,fields={}}={}) => withFrame({
+        w,h, stroke:"#ffffff", strokeW:10, bg:"#0b1220",
+        body: (x,y,W,H)=> maker({x,y,W,H, a:fields.a, b:fields.b, grad1:m.grad1, grad2:m.grad2, icon:m.icon})
+      })
+    }));
+
+    // ご当地（湘南）— 誇張
+    ["湘南"].forEach(name => list.push({
+      id: `local-${slug(name)}`,
+      title: `ご当地版｜${name} SURF — traffic jam edition`,
+      tags: ["local","place","logo","joke"],
+      badge: ["丸型","ご当地","白抜き"],
+      editable: [{key:"name", label:"地名", default:name}],
+      defaultFields: {name},
+      svg: ({w=620,h=620,fields={}}={}) => withFrame({
+        w,h, stroke:"#ffffff", strokeW:14, bg:"#0ea5e9",
+        body: (x,y,W,H)=> localRound({x,y,W,H, name:fields.name})
+      })
+    }));
+
+    // 丘サーファー風イラスト（言い訳を強化）
+    list.push({
+      id:"oka-coffee-board",
+      title:"OKA SURFER｜COFFEE & BOARD（乗る前に2杯）",
+      tags:["oka","illust","coffee","board","joke"],
+      badge:["イラスト","矩形","やさしい色"],
+      editable:[{key:"main",label:"メイン",default:"OKA SURFER (caffeinated)"}],
+      defaultFields:{main:"OKA SURFER (caffeinated)"},
+      svg: ({w=900,h=540,fields={}}={}) => withFrame({
+        w,h, stroke:"#60a5fa", strokeW:10, bg:"#0f172a",
+        body:(x,y,W,H)=> `
+          <g stroke="#e2e8f0" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M ${x+W*0.18} ${y+H*0.16} C ${x+W*0.08} ${y+H*0.36}, ${x+W*0.08} ${y+H*0.64}, ${x+W*0.18} ${y+H*0.84}
+                     L ${x+W*0.22} ${y+H*0.84}
+                     C ${x+W*0.32} ${y+H*0.64}, ${x+W*0.32} ${y+H*0.36}, ${x+W*0.22} ${y+H*0.16} Z" fill="#0f172a"/>
+            <line x1="${x+W*0.20}" y1="${y+H*0.18}" x2="${x+W*0.20}" y2="${y+H*0.82}" stroke="#60a5fa" />
+            <rect x="${x+W*0.60}" y="${y+H*0.20}" width="${W*0.18}" height="${H*0.20}" rx="${W*0.02}" fill="#111827" />
+            <path d="M ${x+W*0.60} ${y+H*0.24} h ${W*0.18}" stroke="#e2e8f0"/>
+            <rect x="${x+W*0.78}" y="${y+H*0.24}" width="${W*0.05}" height="${H*0.10}" rx="${W*0.01}" fill="#111827" stroke="#e2e8f0"/>
+            <path d="M ${x+W*0.66} ${y+H*0.18} c -10 -14, 10 -14, 0 -28 M ${x+W*0.70} ${y+H*0.18} c -10 -14, 10 -14, 0 -28" />
+          </g>
+          <g font-family="system-ui, sans-serif" fill="#e2e8f0" font-weight="900">
+            ${fitTextTag({x:x+W*0.58, y:y+H*0.75, text:(fields.main), weight:900, sizePx:H*0.14, boxW:W*0.34})}
+          </g>
+        `
+      })
+    });
+
+    list.push({
+      id:"desk-surf-dept",
+      title:"DESK SURF DEPT.｜在宅ポイントブレイク",
+      tags:["oka","desk","illust","logo","joke"],
+      badge:["デスク","キーボード","横長"],
+      editable:[{key:"main",label:"メイン",default:"DESK SURF"},{key:"sub",label:"サブ",default:"DEPARTMENT (HR-approved)"}],
+      defaultFields:{main:"DESK SURF", sub:"DEPARTMENT (HR-approved)"},
+      svg: ({w=900,h=360,fields={}}={}) => withFrame({
+        w,h, stroke:"#22d3ee", strokeW:10, bg:"#0b1220",
+        body:(x,y,W,H)=> `
+          <g stroke="#22d3ee" stroke-width="8" fill="none" stroke-linecap="round">
+            <rect x="${x+W*0.10}" y="${y+H*0.20}" width="${W*0.50}" height="${H*0.18}" rx="${W*0.02}" />
+            <rect x="${x+W*0.12}" y="${y+H*0.22}" width="${W*0.18}" height="${H*0.14}" rx="${W*0.01}" fill="#0f172a"/>
+            <line x1="${x+W*0.10}" y1="${y+H*0.40}" x2="${x+W*0.60}" y2="${y+H*0.40}" />
+            <rect x="${x+W*0.28}" y="${y+H*0.34}" width="${W*0.20}" height="${H*0.06}" rx="${W*0.01}" />
+            <path d="M ${x+W*0.15} ${y+H*0.28} q ${W*0.04} ${-H*0.06} ${W*0.08} 0 q ${W*0.04} ${H*0.06} ${W*0.08} 0" />
+            <path d="M ${x+W*0.66} ${y+H*0.56} c -${W*0.10} ${H*0.08}, -${W*0.10} ${H*0.20}, 0 ${H*0.28}
+                     c ${W*0.10} -${H*0.08}, ${W*0.10} -${H*0.20}, 0 -${H*0.28} z" fill="#0f172a" stroke="#22c55e"/>
+          </g>
+          <g font-family="system-ui, sans-serif" fill="#e2e8f0" font-weight="900">
+            ${fitTextTag({x:x+W*0.66, y:y+H*0.30, text:(fields.main), weight:900, sizePx:H*0.20, boxW:W*0.32})}
+            ${fitTextTag({x:x+W*0.66, y:y+H*0.54, text:(fields.sub),  weight:800, sizePx:H*0.18, boxW:W*0.32, fill:"#22d3ee"})}
+          </g>
+        `
+      })
+    });
+
+    list.push({
+      id:"flipflop-life",
+      title:"FLIP-FLOP LIFE｜正装はビーサン",
+      tags:["oka","illust","flipflop","slogan","joke"],
+      badge:["サンダル","角丸","カジュアル"],
+      editable:[{key:"main",label:"メイン",default:"FLIP-FLOP"},{key:"sub",label:"サブ",default:"IS FORMAL"}],
+      defaultFields:{main:"FLIP-FLOP", sub:"IS FORMAL"},
+      svg: ({w=800,h=480,fields={}}={}) => withFrame({
+        w,h, stroke:"#a7f3d0", strokeW:10, bg:"#0b1220",
+        body:(x,y,W,H)=> `
+          <g stroke="#a7f3d0" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <ellipse cx="${x+W*0.30}" cy="${y+H*0.50}" rx="${W*0.12}" ry="${H*0.24}" fill="#0f172a"/>
+            <ellipse cx="${x+W*0.50}" cy="${y+H*0.54}" rx="${W*0.12}" ry="${H*0.24}" fill="#0f172a"/>
+            <path d="M ${x+W*0.30} ${y+H*0.44} q ${W*0.02} ${H*0.08} 0 ${H*0.16} M ${x+W*0.50} ${y+H*0.48} q ${W*0.02} ${H*0.08} 0 ${H*0.16}"/>
+          </g>
+          <g font-family="system-ui, sans-serif" fill="#e2e8f0" font-weight="900">
+            ${fitTextTag({x:x+W*0.66, y:y+H*0.46, text:(fields.main), weight:900, sizePx:H*0.18, boxW:W*0.32})}
+            ${fitTextTag({x:x+W*0.66, y:y+H*0.70, text:(fields.sub),  weight:800, sizePx:H*0.16, boxW:W*0.32, fill:"#a7f3d0"})}
+          </g>
+        `
+      })
+    });
+
+    list.push({
+      id:"van-and-board",
+      title:"PARKING LOT PRO｜波待ちは駐車場から",
+      tags:["oka","illust","van","board","parking","joke"],
+      badge:["バン","ボード","ミニマル"],
+      editable:[{key:"main",label:"メイン",default:"PARKING LOT"},{key:"sub",label:"サブ",default:"PRO LEVEL • idle"}],
+      defaultFields:{main:"PARKING LOT", sub:"PRO LEVEL • idle"},
+      svg: ({w=880,h=420,fields={}}={}) => withFrame({
+        w,h, stroke:"#22c55e", strokeW:10, bg:"#0b1220",
+        body:(x,y,W,H)=> `
+          <g stroke="#22c55e" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="${x+W*0.12}" y="${y+H*0.30}" width="${W*0.52}" height="${H*0.24}" rx="${W*0.02}" fill="#0f172a" />
+            <rect x="${x+W*0.16}" y="${y+H*0.34}" width="${W*0.16}" height="${H*0.10}" rx="${W*0.01}" />
+            <rect x="${x+W*0.36}" y="${y+H*0.34}" width="${W*0.12}" height="${H*0.10}" rx="${W*0.01}" />
+            <circle cx="${x+W*0.22}" cy="${y+H*0.58}" r="${H*0.06}" />
+            <circle cx="${x+W*0.50}" cy="${y+H*0.58}" r="${H*0.06}" />
+            <path d="M ${x+W*0.10} ${y+H*0.26} q ${W*0.24} ${-H*0.10} ${W*0.48} 0" />
+          </g>
+          <g font-family="system-ui, sans-serif" fill="#e2e8f0" font-weight="900">
+            ${fitTextTag({x:x+W*0.72, y:y+H*0.48, text:(fields.main), weight:900, sizePx:H*0.18, boxW:W*0.26})}
+            ${fitTextTag({x:x+W*0.72, y:y+H*0.72, text:(fields.sub),  weight:800, sizePx:H*0.16, boxW:W*0.26, fill:"#22c55e"})}
+          </g>
+        `
+      })
+    });
+
+    list.push({
+      id:"palm-and-wave",
+      title:"PALM & WAVE｜脳内アイランド",
+      tags:["oka","illust","palm","wave","island","joke"],
+      badge:["南国","シルエット","ラウンド角"],
+      editable:[{key:"main",label:"メイン",default:"PALM &"},{key:"sub",label:"サブ",default:"WAVE (mental)"}],
+      defaultFields:{main:"PALM &", sub:"WAVE (mental)"},
+      svg: ({w=880,h=420,fields={}}={}) => withFrame({
+        w,h, stroke:"#ffffff", strokeW:10, bg:"#0b1220",
+        body:(x,y,W,H)=> `
+          <g stroke="#ffffff" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M ${x+W*0.22} ${y+H*0.64} v ${-H*0.28}" />
+            <path d="M ${x+W*0.22} ${y+H*0.36} q ${W*0.06} ${-H*0.08} ${W*0.14} ${-H*0.02}" />
+            <path d="M ${x+W*0.22} ${y+H*0.36} q -${W*0.06} ${-H*0.08} -${W*0.14} ${-H*0.02}" />
+            <path d="M ${x+W*0.36} ${y+H*0.64} q ${W*0.10} ${-H*0.16} ${W*0.22} 0 q ${W*0.06} ${H*0.08} ${W*0.14} 0" />
+          </g>
+          <g font-family="system-ui, sans-serif" fill="#e2e8f0" font-weight="900">
+            ${fitTextTag({x:x+W*0.70, y:y+H*0.50, text:(fields.main), weight:900, sizePx:H*0.18, boxW:W*0.28})}
+            ${fitTextTag({x:x+W*0.70, y:y+H*0.74, text:(fields.sub),  weight:800, sizePx:H*0.16, boxW:W*0.28, fill:"#60a5fa"})}
+          </g>
+        `
+      })
+    });
+
+    list.push({
+      id:"wifi-fin",
+      title:"WIFI FIN｜家サーフ上級者",
+      tags:["oka","illust","wifi","fin","joke"],
+      badge:["小ネタ","丸角","電波"],
+      editable:[{key:"main",label:"メイン",default:"WIFI FIN — full bars"}],
+      defaultFields:{main:"WIFI FIN — full bars"},
+      svg: ({w=800,h=480,fields={}}={}) => withFrame({
+        w,h, stroke:"#60a5fa", strokeW:10, bg:"#0b1220",
+        body:(x,y,W,H)=> `
+          <g stroke="#60a5fa" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M ${x+W*0.18} ${y+H*0.70} q ${W*0.10} ${-H*0.30} ${W*0.20} 0 v ${H*0.10} h -${W*0.20} z" fill="#0f172a"/>
+            <path d="M ${x+W*0.54} ${y+H*0.54} q ${W*0.10} ${-H*0.10} ${W*0.20} 0" />
+            <path d="M ${x+W*0.56} ${y+H*0.62} q ${W*0.08} ${-H*0.08} ${W*0.16} 0" />
+            <path d="M ${x+W*0.58} ${y+H*0.70} q ${W*0.06} ${-H*0.06} ${W*0.12} 0" />
+          </g>
+          <g font-family="system-ui, sans-serif" fill="#e2e8f0" font-weight="900" text-anchor="middle">
+            ${fitTextTag({x:x+W*0.58, y:y+H*0.38, text:(fields.main), weight:900, sizePx:H*0.16, boxW:W*0.46, anchor:'middle'})}
+          </g>
+        `
+      })
+    });
+
+    list.push({
+      id:"lunch-break-surf",
+      title:"LUNCH BREAK SURF｜休憩は海行くフリ",
+      tags:["oka","illust","lunch","slogan","joke"],
+      badge:["弁当","ショートタイム","横長"],
+      editable:[{key:"main",label:"メイン",default:"LUNCH BREAK"},{key:"sub",label:"サブ",default:"SURF (mentally)"}],
+      defaultFields:{main:"LUNCH BREAK", sub:"SURF (mentally)"},
+      svg: ({w=880,h=360,fields={}}={}) => withFrame({
+        w,h, stroke:"#f59e0b", strokeW:10, bg:"#0b1220",
+        body:(x,y,W,H)=> `
+          <g stroke="#f59e0b" stroke-width="7" fill="none" stroke-linecap="round">
+            <rect x="${x+W*0.18}" y="${y+H*0.22}" width="${W*0.20}" height="${H*0.14}" rx="${W*0.01}" />
+            <path d="M ${x+W*0.18} ${y+H*0.22} h ${W*0.20}" />
+            <path d="M ${x+W*0.40} ${y+H*0.22} h ${W*0.08}" />
+            <circle cx="${x+W*0.60}" cy="${y+H*0.30}" r="${H*0.08}" />
+            <path d="M ${x+W*0.60} ${y+H*0.30} l 0 ${H*0.05} M ${x+W*0.60} ${y+H*0.30} l ${W*0.04} 0" />
+          </g>
+          <g font-family="system-ui, sans-serif" fill="#e2e8f0" font-weight="900">
+            ${fitTextTag({x:x+W*0.64, y:y+H*0.62, text:(fields.main), weight:900, sizePx:H*0.20, boxW:W*0.34})}
+            ${fitTextTag({x:x+W*0.64, y:y+H*0.82, text:(fields.sub),  weight:800, sizePx:H*0.16, boxW:W*0.34, fill:"#f59e0b"})}
+          </g>
+        `
+      })
+    });
+
+    list.push({
+      id:"tide-chart-nerd",
+      title:"TIDE CHART NERD｜潮より会議に詳しい",
+      tags:["oka","illust","tide","nerd","joke"],
+      badge:["グラフ","潮汐","丸角"],
+      editable:[{key:"main",label:"メイン",default:"TIDE CHART"},{key:"sub",label:"サブ",default:"NERD (excel)"}],
+      defaultFields:{main:"TIDE CHART", sub:"NERD (excel)"},
+      svg: ({w=860,h=420,fields={}}={}) => withFrame({
+        w,h, stroke:"#84cc16", strokeW:10, bg:"#0b1220",
+        body:(x,y,W,H)=> `
+          <g stroke="#84cc16" stroke-width="8" fill="none">
+            <path d="M ${x+W*0.10} ${y+H*0.70}
+                     C ${x+W*0.22} ${y+H*0.30}, ${x+W*0.38} ${y+H*0.30}, ${x+W*0.50} ${y+H*0.70}
+                     S ${x+W*0.78} ${y+H*1.10}, ${x+W*0.90} ${y+H*0.70}" />
+            <line x1="${x+W*0.10}" y1="${y+H*0.70}" x2="${x+W*0.90}" y2="${y+H*0.70}" stroke-opacity="0.3"/>
+          </g>
+          <g font-family="system-ui, sans-serif" fill="#e2e8f0" font-weight="900" text-anchor="middle">
+            ${fitTextTag({x:x+W*0.50, y:y+H*0.35, text:(fields.main), weight:900, sizePx:H*0.18, boxW:W*0.80, anchor:'middle'})}
+            ${fitTextTag({x:x+W*0.50, y:y+H*0.55, text:(fields.sub),  weight:800, sizePx:H*0.14, boxW:W*0.60, anchor:'middle', fill:"#84cc16"})}
+          </g>
+        `
+      })
+    });
+
+    list.push({
+      id:"home-break-only",
+      title:"HOME BREAK ONLY｜家から出ない主義",
+      tags:["oka","illust","home","slogan","joke"],
+      badge:["家","ローカル","控えめ"],
+      editable:[{key:"main",label:"メイン",default:"HOME BREAK"},{key:"sub",label:"サブ",default:"ONLY (door-to-fridge)"}],
+      defaultFields:{main:"HOME BREAK", sub:"ONLY (door-to-fridge)"},
+      svg: ({w=800,h=420,fields={}}={}) => withFrame({
+        w,h, stroke:"#e2e8f0", strokeW:8, bg:"#0b1220",
+        body:(x,y,W,H)=> `
+          <g stroke="#e2e8f0" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M ${x+W*0.20} ${y+H*0.56} l ${W*0.10} ${-H*0.10} l ${W*0.10} ${H*0.10} v ${H*0.14} h -${W*0.20} z" />
+            <path d="M ${x+W*0.26} ${y+H*0.60} h ${W*0.08} v ${H*0.10} h -${W*0.08} z" />
+            <path d="M ${x+W*0.52} ${y+H*0.70} q ${W*0.08} ${-H*0.10} ${W*0.16} 0 q ${W*0.06} ${H*0.08} ${W*0.12} 0" />
+          </g>
+          <g font-family="system-ui, sans-serif" fill="#e2e8f0" font-weight="900">
+            ${fitTextTag({x:x+W*0.70, y:y+H*0.46, text:(fields.main), weight:900, sizePx:H*0.16, boxW:W*0.28})}
+            ${fitTextTag({x:x+W*0.70, y:y+H*0.70, text:(fields.sub),  weight:800, sizePx:H*0.14, boxW:W*0.28, fill:"#60a5fa"})}
+          </g>
+        `
+      })
+    });
+
+    return list;
+  }
+
+  // ======== イベント初期化 ========
+  initTags();
+  $("#q")?.addEventListener("input", render);
+  render();
+})();
