@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>SloSea Slot｜目押しスロット（上→下／即停止）</title>
 <meta name="description" content="日本のスロット風3リール。回転は上から下へ。STOPですぐ停止＆中央ラインでスナップ。出目で今日の波運とサーフ用語を表示。大当たりはアニメ風キャラ。">
+<link rel="stylesheet" href="./nav.css" />
+<script src="./nav.js" defer></script>
 <style>
   :root{
     --bg:#f7fbff; --card:#fff; --ink:#0f172a; --muted:#475569; --line:#e2e8f0;
@@ -23,9 +25,9 @@
     text-size-adjust:100%;
   }
   .wrap{max-width:980px;margin:0 auto;padding:20px 16px 40px}
-  header{display:flex;align-items:center;justify-content:space-between;margin:8px 0 16px}
-  header h1{font-size:clamp(22px,4vw,32px);margin:0}
-  header small{color:var(--muted)}
+  .page-header{display:flex;align-items:center;justify-content:space-between;margin:8px 0 16px}
+  .page-header h1{font-size:clamp(22px,4vw,32px);margin:0}
+  .page-header small{color:var(--muted)}
 
   .game{background:var(--card); border:1px solid var(--line); border-radius:18px; box-shadow:0 12px 30px rgba(15,23,42,.07); padding:18px;}
 
@@ -99,8 +101,27 @@
 </style>
 </head>
 <body>
+  <header class="global-bar">
+    <div class="global-bar__inner">
+      <a class="global-bar__brand" href="./index.html#top" aria-label="SloSea のトップへ戻る">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 16c4 0 4-8 8-8s4 8 8 8 4-8 8-8"/></svg>
+        <span>SloSea</span>
+      </a>
+      <button class="global-bar__menu" type="button" aria-label="メニューを開く" aria-expanded="false" aria-controls="global-menu">
+        <svg class="global-bar__menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+          <path d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    </div>
+    <nav class="global-bar__meta" aria-label="パンくずリスト">
+      <ol class="global-bar__crumbs">
+        <li aria-current="page">波運スロット</li>
+      </ol>
+    </nav>
+  </header>
+
 <div class="wrap">
-  <header>
+  <header class="page-header">
     <h1>波運スロット（上→下／即停止版） <small>— SloSea</small></h1>
     <small class="note">※完全な娯楽機能です。ギャンブル要素はありません。</small>
   </header>
@@ -142,6 +163,34 @@
     <p class="note" style="margin:.6rem 0 0">キャラ画像：<code>game.png</code> を本HTMLと同じフォルダへ配置してください。</p>
   </section>
 </div>
+
+<nav class="global-menu" id="global-menu" data-global-menu aria-hidden="true">
+    <div class="global-menu__backdrop" data-menu-dismiss aria-hidden="true"></div>
+  <div class="global-menu__panel" role="dialog" aria-modal="true" aria-labelledby="global-menu-title">
+    <div class="global-menu__header">
+      <h2 class="global-menu__title" id="global-menu-title">コンテンツ一覧</h2>
+      <button class="global-menu__close" type="button" aria-label="メニューを閉じる" data-menu-dismiss data-menu-initial>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M6 6l12 12M18 6L6 18" />
+        </svg>
+      </button>
+    </div>
+    <ul class="global-menu__list">
+      <li class="global-menu__item"><a href="./index.html#apps">ホーム / コンテンツ一覧</a><p>SloSea の最新コンテンツまとめ。</p></li>
+      <li class="global-menu__item"><a href="./surfboard-guide.html">サーフボード選び【保存版】</a><p>目的に合わせたボードの選び方ガイド。</p></li>
+      <li class="global-menu__item"><a href="./beginner-gear.html">初心者が揃えるべき道具一式</a><p>着替えポンチョ・バケツなど必携小物まとめ。</p></li>
+      <li class="global-menu__item"><a href="./game.html">Surf Mini Game</a><p>波を避けてコインを集めるカジュアルゲーム。</p></li>
+      <li class="global-menu__item"><a href="./slot.html">波運スロット</a><p>目押しで遊べる縦スクロール型スロット。</p></li>
+      <li class="global-menu__item"><a href="./stickers.html">サーフステッカー配布</a><p>ボードやSNSで使えるデジタルステッカー。</p></li>
+      <li class="global-menu__item"><a href="./about.html">SloSea について</a><p>サイトのコンセプトや制作背景を紹介。</p></li>
+      <li class="global-menu__item"><a href="./policy.html">プライバシーポリシー</a><p>利用者のみなさまに安心して使っていただくために。</p></li>
+    </ul>
+    <p class="global-menu__footer">ご希望のコンテンツを選択してください。</p>
+    <button class="global-menu__close" type="button" data-menu-dismiss>
+      メニューを閉じる
+    </button>
+  </div>
+</nav>
 
 <script>
 /* ======== シンボル定義（フルーツ＋大当たりキャラ） ======== */
