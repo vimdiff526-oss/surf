@@ -9,6 +9,9 @@
   :root{
     --bg:#f7fbff; --card:#fff; --ink:#0f172a; --muted:#475569; --line:#e2e8f0;
     --brand:#0ea5e9; --accent:#22d3ee; --good:#10b981; --warn:#f59e0b; --bad:#ef4444;
+    /* 統一：セル高さとリール高さ（JSと一致させる） */
+    --cell-h:120px;
+    --reel-h:168px;
   }
   *{box-sizing:border-box} html,body{margin:0}
   body{
@@ -16,6 +19,8 @@
     line-height:1.6;color:var(--ink);
     background:radial-gradient(120% 100% at 50% 0%, #e6f8ff 0%, #f7fbff 55%) no-repeat var(--bg);
     min-height:100svh;
+    -webkit-text-size-adjust:100%;
+    text-size-adjust:100%;
   }
   .wrap{max-width:980px;margin:0 auto;padding:20px 16px 40px}
   header{display:flex;align-items:center;justify-content:space-between;margin:8px 0 16px}
@@ -27,15 +32,32 @@
   /* ==== Reels ==== */
   .reels{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:8px;}
   .reel{
-    position:relative; height:168px; border:1px solid var(--line); border-radius:16px; overflow:hidden;
+    position:relative; height:var(--reel-h); border:1px solid var(--line); border-radius:16px; overflow:hidden;
     background:linear-gradient(#f8feff,#fff);
+    contain: layout paint; /* スクロール中のはみ出し抑制 */
   }
-  .strip{position:absolute; left:0; top:0; width:100%; will-change:transform;}
+  .strip{
+    position:absolute; left:0; top:0; width:100%;
+    will-change:transform; transform:translateZ(0);
+    backface-visibility:hidden; 
+  }
   .cell{
-    height:120px; display:flex; align-items:center; justify-content:center;
-    font-size:64px; background:#fff; border-top:1px solid #eef2ff; border-bottom:1px solid #eef2ff;
+    height:var(--cell-h);
+    display:flex; align-items:center; justify-content:center;
+    background:#fff; border-top:1px solid #eef2ff; border-bottom:1px solid #eef2ff;
+    /* 端末差異対策 */
+    padding:0; line-height:1; letter-spacing:0;
   }
-  .cell img.char{width:100%; height:100%; object-fit:cover; display:block;}
+  /* 中身を安全にフィットさせる共通ラッパ */
+  .fit{
+    display:block; width:100%; height:100%;
+    /* 余白を少し持たせて常に収まるようスケール（emojiは端末差が大きい） */
+    transform:scale(0.88);
+    transform-origin:center;
+  }
+  .glyph{ font-size:64px; text-align:center; }
+  .char{ width:100%; height:100%; object-fit:contain; display:block; border:0; }
+
   /* 中央ガイド（薄い線） */
   .reel::after{
     content:""; position:absolute; left:8px; right:8px; top:50%;
@@ -68,9 +90,9 @@
   .term dt{font-weight:900} .term dd{margin:0;color:var(--muted)}
   .note{color:var(--muted); font-size:13px}
 
+  /* レスポンシブ：高さは固定のまま。文字サイズのみ若干下げる */
   @media (max-width:760px){
-    .reel{height:150px}
-    .cell{height:110px;font-size:56px}
+    .glyph{ font-size:56px; }
     .controls{grid-template-columns:1fr 1fr; grid-auto-rows:1fr}
     .result{grid-template-columns:1fr}
   }
@@ -130,7 +152,7 @@ const FRUITS = [
   { id:'melon',  label:'🍈' }, { id:'straw',  label:'🍓' }, { id:'water',  label:'🍉' }
 ];
 
-/* ==== 固定ストリップ（順番は前回と同一） ==== */
+/* ==== 固定ストリップ（前回と同一） ==== */
 const BASE_STRIPS = [
   [ 'lemon','grape','banana','cherry','melon','pine','straw','peach','water','banana','grape','lemon','char','peach','cherry','water' ],
   [ 'banana','water','peach','cherry','grape','lemon','melon','straw','pine','banana','grape','char','lemon','peach','water','cherry' ],
@@ -143,9 +165,9 @@ const ID2SYM = Object.fromEntries([
 ]);
 
 /* ======== リール管理（上→下スクロール、即停止スナップ） ======== */
-const REEL_HEIGHT = 168;     // CSSと合わせる
-const CELL_HEIGHT = 120;     // CSSと合わせる
-const CENTER_TOP  = (REEL_HEIGHT - CELL_HEIGHT)/2; // 24px
+const REEL_HEIGHT = 168;                                 // CSS --reel-h と一致
+const CELL_HEIGHT = 120;                                 // CSS --cell-h と一致
+const CENTER_TOP  = (REEL_HEIGHT - CELL_HEIGHT)/2;       // 24
 
 class Reel {
   constructor(rootEl, orderIds, speed){
@@ -154,14 +176,13 @@ class Reel {
     this.order = orderIds.slice();
     this.n = this.order.length;
     this.totalH = this.n * CELL_HEIGHT;        // 1周ぶん
-    this.scrollH = this.totalH * 3;            // 無限スクロール用に3周
+    this.scrollH = this.totalH * 3;            // 3周ぶん（空白防止）
 
-    // 3周ぶんのセルを並べる（空白防止）
+    // 3周ぶんのセル（各セルは fit ラッパで安全にフィット）
     const dup = [...this.order, ...this.order, ...this.order];
     this.strip.replaceChildren(...dup.map(id => renderCell(ID2SYM[id])));
 
-    // posは「stripの先頭がどれだけ上に隠れているか」を表す量（px）
-    // 画面は translateY(-pos) を掛ける。posが減るほど strip が下へ動き、絵柄は上→下に流れる。
+    // posは strip の上端がどれだけ“上に隠れているか”。画面は translateY(-pos) を掛ける。
     this.pos = Math.random()*this.scrollH;
     this.speed = speed;      // px/s
     this.spin = false;
@@ -173,7 +194,9 @@ class Reel {
     // wrap（0..scrollH）
     if(this.pos < 0) this.pos += this.scrollH;
     if(this.pos >= this.scrollH) this.pos -= this.scrollH;
-    this.strip.style.transform = `translateY(${-this.pos}px)`;
+    // サブピクセル誤差を抑制（にじみ防止）
+    const snapped = Math.round(this.pos);
+    this.strip.style.transform = `translate3d(0, ${-snapped}px, 0)`;
   }
   update(dt){
     if(!this.spin) return;
@@ -182,23 +205,22 @@ class Reel {
   }
   indexAtCenter(){
     // 中央ライン位置（strip座標）＝ pos + CENTER_TOP
-    // 3周並べているが、柄の確定は1周ぶんで良いので totalH で折りたたむ
     const p = mod(this.pos + CENTER_TOP, this.totalH);
     const idx = Math.round(p / CELL_HEIGHT) % this.n;
     return idx < 0 ? idx + this.n : idx;
   }
   snapStop(){
-    // 押下瞬間の中央セルを求め、そのセルが中央にピタッと来る pos に“即座に”合わせて停止
+    // 押下瞬間の中央セルを求め、そのセルが中央にピタッと来る pos に即合わせて停止
     const idx = this.indexAtCenter();
     const base = idx * CELL_HEIGHT - CENTER_TOP; // その柄が中央に来るpos（1周座標系）
     const baseMod = mod(base, this.totalH);
     const curMod  = mod(this.pos,  this.totalH);
 
-    // 3候補のうち最もジャンプ量が小さい位置を採用（空白防止＆違和感低減）
+    // 3候補のうちジャンプ量が最小の位置を採用
     const candidates = [
-      this.pos - curMod + baseMod,                 // 同じ周回へ合わせる
-      this.pos - curMod + baseMod + this.totalH,   // 1周先
-      this.pos - curMod + baseMod - this.totalH    // 1周手前
+      this.pos - curMod + baseMod,                 // 同周回
+      this.pos - curMod + baseMod + this.totalH,   // +1周
+      this.pos - curMod + baseMod - this.totalH    // -1周
     ];
     let best = candidates[0], bestDiff = Math.abs(candidates[0]-this.pos);
     for(const c of candidates){
@@ -208,17 +230,18 @@ class Reel {
     this.pos = best;
     this.spin = false;
     this.finalIndex = idx;
-    this.apply(); // 最終位置を即反映
+    this.apply();
   }
 }
 
 function renderCell(sym){
   const el = document.createElement('div'); el.className = 'cell';
   if(sym.type === 'img'){
-    const img = document.createElement('img'); img.className='char'; img.src = sym.src; img.alt = '大当たりキャラ';
+    const img = document.createElement('img'); img.className='char fit'; img.src = sym.src; img.alt = '大当たりキャラ';
     el.appendChild(img);
   } else {
-    el.textContent = sym.label;
+    const span = document.createElement('span'); span.className='glyph fit'; span.textContent = sym.label;
+    el.appendChild(span);
   }
   el.dataset.id = sym.id;
   return el;
@@ -276,7 +299,7 @@ function startSpin(){
 
   reels.forEach((r,idx)=>{
     r.spin = true; r.finalIndex = null;
-    // スタート時に少しだけ位相をずらしておく
+    // スタート時に少しだけ位相をずらす
     r.pos = mod(r.pos - (idx*CELL_HEIGHT/2), r.scrollH);
     r.apply();
   });
@@ -285,7 +308,7 @@ function startSpin(){
 function stopReel(i){
   const r = reels[i];
   if(!r.spin) return;
-  r.snapStop();                 // ★ 即停止＆中央にスナップ
+  r.snapStop();                 // 即停止＆中央スナップ
   btnStops[i].disabled = true;
 
   // 全部止まったら評価
