@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>初心者向けサーフボードの選び方と比較表【保存版】</title>
-  <meta name="description" content="初心者向けサーフボードの選び方をわかりやすく解説。体重・身長別のサイズ目安、タイプ別の特徴、厳選ボードの比較表と購入リンク付き。" />
+  <title>初心者向けサーフボードの選び方【診断付き・保存版】</title>
+  <meta name="description" content="体重・波・スタイルから最適タイプを診断し、該当ボードのAmazon/Rakuten検索リンク（アフィリエイト）を自動生成。タイプ別の特徴とサイズ目安、よくある失敗も解説。" />
   <link rel="canonical" href="https://example.com/articles/beginner-surfboard-guide.html" />
   <meta property="og:type" content="article" />
-  <meta property="og:title" content="初心者向けサーフボードの選び方と比較表【保存版】" />
-  <meta property="og:description" content="体重・身長別のサイズ目安、タイプ別の特徴、厳選ボードの比較表と購入リンク付き。" />
+  <meta property="og:title" content="初心者向けサーフボードの選び方【診断付き・保存版】" />
+  <meta property="og:description" content="体重・波・スタイルから診断→おすすめタイプとサイズの目安、購入検索リンクを自動表示。" />
   <meta property="og:url" content="https://example.com/articles/beginner-surfboard-guide.html" />
   <meta property="og:image" content="https://example.com/og/surfboard-guide.jpg" />
   <meta name="twitter:card" content="summary_large_image" />
@@ -33,36 +33,27 @@
     .toc{background:var(--chip);border:1px solid var(--line);border-radius:12px;padding:12px;margin:24px 0}
     .toc li{margin:6px 0}
 
-    /* comparison table */
-    .table-wrap{overflow-x:auto; -webkit-overflow-scrolling:touch; border:1px solid var(--line); border-radius:14px}
-    table{width:100%;border-collapse:collapse;min-width:680px;table-layout:fixed}
-    colgroup col:nth-child(1){width:22%}
-    colgroup col:nth-child(2){width:14%}
-    colgroup col:nth-child(3){width:18%}
-    colgroup col:nth-child(4){width:10%}
-    colgroup col:nth-child(5){width:18%}
-    colgroup col:nth-child(6){width:10%}
-    colgroup col:nth-child(7){width:8%}
-    th,td{padding:12px 10px;border-bottom:1px solid var(--line);vertical-align:top;word-break:break-word;overflow-wrap:anywhere}
-    th{background:#f8fafc;text-align:left;white-space:normal}
-    tbody tr:hover{background:#fafafa}
-    .chip{display:inline-block;background:var(--chip);border:1px solid var(--line);padding:2px 8px;border-radius:999px;font-size:12px;margin-right:6px}
-    .btns{display:flex;gap:8px;flex-wrap:wrap}
+    /* 診断 UI */
+    .diag{background:linear-gradient(180deg,#f0f9ff,#fff);border:1px solid var(--line);border-radius:14px;padding:16px;margin:18px 0}
+    .diag form{display:grid;gap:12px;grid-template-columns:1fr 1fr}
+    .diag label{display:flex;flex-direction:column;gap:6px;font-weight:600}
+    .diag select,.diag input{padding:10px;border-radius:8px;border:1px solid var(--line)}
+    .diag .span2{grid-column:1/-1}
+    .diag .mini{font-size:.9rem;color:var(--muted)}
+    .diag .out{margin-top:14px;display:grid;gap:16px;grid-template-columns:1.2fr 1fr}
+    .card{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff}
+    .prov{display:grid;gap:12px;grid-template-columns:repeat(2,1fr)}
+    .prov .p{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px}
+    .prov .btns{margin-top:8px;display:flex;gap:8px;flex-wrap:wrap}
     .btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#fff;padding:8px 10px;border-radius:10px;font-weight:600}
     .btn[data-a]{border-color:#ffd000;background:#fff8dd}
     .btn[data-r]{border-color:#e11d48;background:#fff1f2}
     .btn svg{width:16px;height:16px}
     .btn span{font-size:14px}
+    @media (max-width:900px){ .diag .out{grid-template-columns:1fr} .diag form{grid-template-columns:1fr} .prov{grid-template-columns:1fr} }
 
-    @media (max-width:960px){
-      table{display:none}
-      .card-list{display:grid;grid-template-columns:1fr;gap:12px}
-      .card{border:1px solid var(--line);border-radius:12px;padding:12px}
-      .card h3{margin:0 0 6px;font-size:16px}
-      .card .meta{font-size:12px;color:var(--muted)}
-      .card .btns{margin-top:8px}
-    }
-
+    /* その他（既存） */
+    .chip{display:inline-block;background:var(--chip);border:1px solid var(--line);padding:2px 8px;border-radius:999px;font-size:12px;margin-right:6px}
     .aside{background:#f8fafc;border:1px solid var(--line);padding:16px;border-radius:12px}
     footer{border-top:1px solid var(--line);margin-top:32px}
     .foot{display:flex;justify-content:space-between;gap:12px;padding:24px 0;color:var(--muted);font-size:14px}
@@ -70,8 +61,6 @@
     .meta{font-size:12px}
     code{white-space:normal}
   </style>
-
-  <!-- JSON-LD 省略（元のまま） -->
 </head>
 <body>
   <header class="global-bar">
@@ -89,13 +78,16 @@
     <nav class="global-bar__meta" aria-label="パンくずリスト">
       <ol class="global-bar__crumbs">
         <li><a href="./index.html#apps">記事</a></li>
-        <li aria-current="page">サーフボード選び【保存版】</li>
+        <li aria-current="page">サーフボード選び【診断付き】</li>
       </ol>
     </nav>
   </header>
 
   <nav class="page-links wrap" aria-label="ページ内リンク">
-    <a href="#compare">比較表</a>
+    <a href="#diagnosis">診断する</a>
+    <a href="#type">タイプ別の特徴</a>
+    <a href="#size">サイズ目安</a>
+    <a href="#mistakes">よくある失敗</a>
     <a href="#faq">FAQ</a>
   </nav>
 
@@ -103,20 +95,82 @@
     <div class="breadcrumbs">ホーム › 記事 › 初心者向けサーフボードの選び方</div>
 
     <article>
-      <h1>初心者向けサーフボードの選び方と比較表【保存版】</h1>
-      <p class="lead">サーフィンは波に乗るスポーツです。波に乗れずサーフィンをやめてしまう人を数多く見ています。まずは波に乗ることの楽しさを知りましょう。最初の1本で失敗しないために、<strong>体重・身長</strong>と<strong>現実的な上達ステップ</strong>に合ったボードを選びましょう。本記事ではタイプ別の特徴を整理し、最後に<a href="#compare">厳選ボードの比較表</a>を掲載します。</p>
+      <h1>初心者向けサーフボードの選び方【診断付き・保存版】</h1>
+      <p class="lead">
+        はじめての1本で失敗しないために、<strong>体重・波・スタイル</strong>から最適タイプを<strong>診断</strong>し、結果に合うキーワードで
+        <strong>Amazon / 楽天</strong>の<strong>検索リンク（アフィリエイト）</strong>を自動生成します。<br>
+        併せて、タイプ別の違いやサイズ目安、よくある失敗ポイントも整理しました。
+      </p>
 
       <div class="toc">
         <strong>目次</strong>
         <ol>
+          <li><a href="#diagnosis">サーフボード診断（購入候補リンク生成）</a></li>
           <li><a href="#type">タイプ別の特徴</a></li>
           <li><a href="#size">体重・身長別サイズ目安</a></li>
-          <li><a href="#mistakes">よくある失敗</a></li>
-          <li><a href="#compare">厳選ボード比較表</a></li>
+          <li><a href="#mistakes">初心者がやりがちな失敗</a></li>
           <li><a href="#faq">FAQ</a></li>
         </ol>
       </div>
 
+      <!-- ====== 診断（比較表の代わりに統合） ====== -->
+      <section id="diagnosis" class="diag" aria-labelledby="diag-title">
+        <h2 id="diag-title">サーフボード診断（体重・波・スタイル）</h2>
+        <form id="surfForm">
+          <label>体重（kg）
+            <input id="weight" type="number" min="35" max="120" step="1" placeholder="例）68" required />
+          </label>
+          <label>波のイメージ
+            <select id="wave">
+              <option value="small" selected>小さい波でゆるく</option>
+              <option value="mid">ふつうの波でほどほど</option>
+              <option value="solid">大きい波にも挑戦</option>
+            </select>
+          </label>
+          <label>スタイルのイメージ
+            <select id="style">
+              <option value="cruise" selected>ゆったりとクルーズしたい</option>
+              <option value="performance">機動性や技も楽しみたい</option>
+              <option value="alternative">オルタナ系に惹かれる</option>
+            </select>
+          </label>
+          <label>体力
+            <select id="fitness">
+              <option value="low">弱め</option>
+              <option value="mid" selected>ふつう</option>
+              <option value="high">強め</option>
+            </select>
+          </label>
+          <label class="span2"><input id="brandBoost" type="checkbox" /> ブランドブースト（CI / JS / LOST / DHD / Christenson / Firewire など）</label>
+          <div class="span2 mini">診断後、該当タイプの Amazon / 楽天 検索リンク（アフィリエイト）を生成します。</div>
+          <button class="btn span2" type="button" onclick="diagnose()">診断する</button>
+        </form>
+
+        <div id="diagOut" class="out" hidden>
+          <article class="card">
+            <h3 id="outType">—</h3>
+            <p id="outWhy" class="meta">—</p>
+            <p class="meta" id="outVol">—</p>
+            <table class="table" style="width:100%;border-collapse:collapse;border:1px solid var(--line);border-radius:12px;overflow:hidden">
+              <thead><tr><th>項目</th><th>推奨値（目安）</th></tr></thead>
+              <tbody>
+                <tr><td>長さ</td><td id="outLen">—</td></tr>
+                <tr><td>幅</td><td id="outWid">—</td></tr>
+                <tr><td>厚み</td><td id="outThk">—</td></tr>
+              </tbody>
+            </table>
+          </article>
+          <div class="card">
+            <h3>このタイプを探す</h3>
+            <div class="prov">
+              <div class="p"><strong>Amazon</strong><div class="btns" id="linksAmz"></div></div>
+              <div class="p"><strong>楽天市場</strong><div class="btns" id="linksRkt"></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====== 以下、元ページの知識セクションを維持 ====== -->
       <section id="type">
         <h2>タイプ別の特徴</h2>
         <ul>
@@ -136,7 +190,6 @@
             <li>65〜80kg: 50〜70L / 8'0〜9'0</li>
             <li>80kg〜: 60〜85L / 8'6〜9'6</li>
           </ul>
-          <p style="margin:0;color:var(--muted);font-size:14px"></p>
         </div>
       </section>
 
@@ -147,70 +200,6 @@
           <li>見た目重視でショートにする → 波に乗れない</li>
           <li>中古で安く買っても、合わずに結局買い直す。</li>
         </ul>
-      </section>
-
-      <section id="compare">
-        <h2>厳選ボード比較表</h2>
-        <p><br></p>
-
-        <div class="table-wrap" role="region" aria-label="サーフボード比較表">
-          <table>
-            <colgroup>
-              <col /><col /><col /><col /><col /><col /><col />
-            </colgroup>
-            <thead>
-              <tr>
-                <th scope="col">ボード名 / キーワード</th>
-                <th scope="col">推奨体重・身長</th>
-                <th scope="col">サイズ (長さ/幅/厚み/容積)</th>
-                <th scope="col">タイプ</th>
-                <th scope="col">特徴</th>
-                <th scope="col">価格帯</th>
-                <th scope="col">購入リンク</th>
-              </tr>
-            </thead>
-            <tbody id="board-rows">
-              <tr>
-                <td>
-                  <strong>ソフトボード 8'0</strong>
-                  <div class="meta" style="color:var(--muted);font-size:12px">キーワード: <code data-key="ソフトボード 8'0 初心者 セット"></code></div>
-                </td>
-                <td>〜80kg / 〜180cm</td>
-                <td>8'0 × 22" × 3" / 60L 目安</td>
-                <td>ソフト</td>
-                <td>安定・安全。初の1本に最適</td>
-                <td>¥25,000〜¥55,000</td>
-                <td class="btns" data-keyword="ソフトボード 8'0 初心者 セット"></td>
-              </tr>
-              <tr>
-                <td>
-                  <strong>ファンボード 7'6</strong>
-                  <div class="meta" style="color:var(--muted);font-size:12px">キーワード: <code data-key="ファンボード 7'6 初心者"></code></div>
-                </td>
-                <td>〜70kg / 〜175cm</td>
-                <td>7'6 × 21 1/2" × 2 7/8" / 50L 目安</td>
-                <td>ファン</td>
-                <td>取り回し良・上達も早い</td>
-                <td>¥30,000〜¥70,000</td>
-                <td class="btns" data-keyword="ファンボード 7'6 初心者"></td>
-              </tr>
-              <tr>
-                <td>
-                  <strong>ロングボード 9'0</strong>
-                  <div class="meta" style="color:var(--muted);font-size:12px">キーワード: <code data-key="ロングボード 9'0 ソフト"></code></div>
-                </td>
-                <td>全体重 / 〜190cm</td>
-                <td>9'0 × 23" × 3 1/8" / 75L 目安</td>
-                <td>ロング</td>
-                <td>最も安定。小波に強い</td>
-                <td>¥40,000〜¥100,000</td>
-                <td class="btns" data-keyword="ロングボード 9'0 ソフト"></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="card-list" id="mobile-cards" aria-hidden="true"></div>
       </section>
 
       <section id="faq">
@@ -245,19 +234,19 @@
   </main>
 
   <script>
-    // ====== ここだけ置き換え：各ASPのパラメータ ======
+    // ====== ASPパラメータ（Amazon/Rakuten） ======
     const AFFIL = {
       amazon: {
         base: 'https://www.amazon.co.jp/s',
-        tag: 'surf526-22' // ★トラッキングID
+        tag: 'surf526-22' // トラッキングID
       },
       rakuten: {
         base: 'https://search.rakuten.co.jp/search/mall/',
-        affId: '4be85441.78c3c098.4be85442.035cdd1c' // ★楽天アフィリエイトID
+        affId: '4be85441.78c3c098.4be85442.035cdd1c' // 楽天アフィリエイトID
       }
     };
 
-    // ====== ヘルパー：検索リンク生成（キーワードベース） ======
+    // ====== 検索リンク生成（キーワードベース） ======
     function buildAmazonUrl(keyword){
       const p = new URL(AFFIL.amazon.base);
       p.searchParams.set('k', keyword);
@@ -265,72 +254,127 @@
       return p.toString();
     }
     function buildRakutenUrl(keyword){
-      // hb.afl リダイレクト形式に統一（PC/モバイル両対応）
+      // hb.afl 経由（PC/モバイル両対応）
       const dest = `${AFFIL.rakuten.base}${encodeURIComponent(keyword)}/`;
       return `https://hb.afl.rakuten.co.jp/hgc/${AFFIL.rakuten.affId}/?pc=${encodeURIComponent(dest)}&m=${encodeURIComponent(dest)}`;
     }
 
-    // ====== 比較表：各行のボタンを自動生成（元仕様のまま） ======
-    function mountButtons(){
-      document.querySelectorAll('td.btns[data-keyword]').forEach(cell =>{
-        const kw = cell.getAttribute('data-keyword');
-        cell.innerHTML = '';
-        const a1 = document.createElement('a');
-        a1.className = 'btn'; a1.setAttribute('data-a','');
-        a1.href = buildAmazonUrl(kw);
-        a1.rel = 'sponsored nofollow noopener'; a1.target = '_blank';
-        a1.innerHTML = `
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M5 8l7-7 7 7"/></svg>
-          <span>Amazon</span>`;
-        const a2 = document.createElement('a');
-        a2.className = 'btn'; a2.setAttribute('data-r','');
-        a2.href = buildRakutenUrl(kw);
-        a2.rel = 'sponsored nofollow noopener'; a2.target = '_blank';
-        a2.innerHTML = `
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M16 8H8l8 8H8"/></svg>
-          <span>楽天</span>`;
-        cell.append(a1,a2);
+    // ====== 診断ロジック（diagnosis.html を統合・簡潔化） ======
+    function calcVolume(weight, fitness){
+      let base = 0.45; // 初心者寄りの中庸
+      if(fitness==='low') base += 0.03;
+      if(fitness==='high') base -= 0.03;
+      base = Math.max(0.35, Math.min(0.60, base));
+      const liters = Math.round(weight * base * 10)/10;
+      const low = Math.round(liters * 0.9 * 10)/10;
+      const high = Math.round(liters * 1.1 * 10)/10;
+      return { liters, range:[low, high], factor: base };
+    }
+    function pickBoardType(wave, style){
+      const small = wave === 'small';
+      const solid = wave === 'solid';
+      if(style === 'cruise'){
+        if(solid) return {type:'ミッド/ロング', why:'テイクオフの早さと安定感で挑戦をサポート'};
+        if(small) return {type:'ミッドレングス', why:'小波でも本数を確保しやすい'};
+        return {type:'ミッドレングス', why:'ゆったりとしたライン取りに合う'};
+      }
+      if(style === 'alternative'){
+        if(small) return {type:'フィッシュ/ツイン寄りショート', why:'小波での加速と遊び心'};
+        if(solid) return {type:'オルタナ系（エッグ/ピン）', why:'個性的なラインでパワーのある波にも'};
+        return {type:'オルタナ系（ツイン/エッグ）', why:'個性と楽しさを両立'};
+      }
+      if(solid) return {type:'HPショート', why:'機動性・ターン性能を重視'};
+      if(small) return {type:'ハイボリュームショート/フィッシュ', why:'小波でも推進力と取り回し'};
+      return {type:'オールラウンドショート', why:'技と走りのバランス'};
+    }
+    const sizeTable = {
+      'ソフトボード/ファン':   { len:[7.0, 8.0],   wid:[21.0, 23.0], thick:[2.75, 3.3] },
+      'ミッドレングス':        { len:[6.8, 7.6],   wid:[20.5, 22.5], thick:[2.6, 3.0] },
+      'ロング/ミッド':         { len:[9.0, 9.6],   wid:[22.5, 23.5], thick:[2.75, 3.25] },
+      'フィッシュ/ツイン寄りショート': { len:[5.4, 6.0], wid:[19.5, 21.5], thick:[2.4, 2.7] },
+      'オールラウンドショート': { len:[5.83, 6.33], wid:[18.5, 20.5], thick:[2.3, 2.6] },
+      'ミッド/ロング':         { len:[7.6, 9.0],  wid:[21.5, 23.5], thick:[2.6, 3.1] },
+      'オルタナ系（エッグ/ピン）': { len:[6.4, 7.4], wid:[20.0, 22.0], thick:[2.5, 2.9] },
+      'オルタナ系（ツイン/エッグ）': { len:[5.8, 6.8], wid:[19.75, 21.75], thick:[2.45, 2.85] },
+      'ハイボリュームショート/フィッシュ': { len:[5.8, 6.4], wid:[19.5, 21.5], thick:[2.5, 2.8] },
+      'HPショート':            { len:[5.8, 6.2],  wid:[18.0, 19.5], thick:[2.25, 2.5] }
+    };
+    const toFeetInches = (v)=>{ const f=Math.floor(v); const i=Math.round((v-f)*12); return {feet:f,inches:i}; };
+    const fmtFeetInches = ({feet,inches}) => `${feet}'${inches}"`;
+    const rangeFeetInches = ([a,b])=>{ const A=toFeetInches(a), B=toFeetInches(b); return `${fmtFeetInches(A)} 〜 ${fmtFeetInches(B)}`; };
+    const rangeCm = ([a,b])=>`${Math.round(a*30.48)}〜${Math.round(b*30.48)}cm`;
+    const rangeInch = ([a,b])=>`${a.toFixed(2)}〜${b.toFixed(2)}"`;
+    function normalizeTypeForQuery(type){
+      return type
+        .replace('ミッド/ロング','ミッド ロング')
+        .replace('オルタナ系（エッグ/ピン）','オルタナ エッグ ピン')
+        .replace('オルタナ系（ツイン/エッグ）','オルタナ ツイン エッグ')
+        .replace('ハイボリュームショート/フィッシュ','ショート フィッシュ')
+        .replace('フィッシュ/ツイン寄りショート','ショート フィッシュ ツイン')
+        .replace('オールラウンドショート','ショート オールラウンド');
+    }
+    function adjustByWeightAndWave(base, weight, wave){
+      const bucket = (weight<55)? -1 : (weight<=75)? 0 : 1;
+      const waveAdj = (wave==='small')? +0.0 : (wave==='mid')? +0.05 : +0.1;
+      const lerpRange = ([min,max], k)=>[ +(min+(max-min)*k).toFixed(2), +(max+(max-min)*k).toFixed(2) ];
+      const k = (bucket===-1)? -0.05 : (bucket===1)? 0.05 : 0;
+      let len=lerpRange(base.len, k + waveAdj*0.3);
+      let wid=lerpRange(base.wid, k*0.8 + waveAdj*0.2);
+      let thk=lerpRange(base.thick, k + waveAdj*0.4);
+      return {len,wid,thk};
+    }
+    function providerLinks(type, lenRange, liters, brandBoost){
+      const t = normalizeTypeForQuery(type);
+      const {feet,inches}=toFeetInches((lenRange[0]+lenRange[1])/2);
+      const qMain = `サーフボード ${t} ${feet}'${inches}" ${liters}L -リーシュ -ケース` + (brandBoost ? ' CI JS LOST DHD Christenson Firewire' : '');
+      const qAlt  = `サーフボード ${t}` + (brandBoost ? ' CI JS LOST DHD Christenson Firewire' : '');
+      return {
+        amazon: [ {label:'検索', url: buildAmazonUrl(qMain)}, {label:'代替', url: buildAmazonUrl(qAlt)} ],
+        rakuten: [ {label:'検索', url: buildRakutenUrl(qMain)}, {label:'代替', url: buildRakutenUrl(qAlt)} ]
+      };
+    }
+    function setBtnLinks(el, links){
+      el.innerHTML='';
+      links.forEach(l=>{
+        const a=document.createElement('a');
+        a.className='btn'; a.href=l.url; a.target='_blank';
+        a.rel='sponsored nofollow noopener';
+        a.textContent=l.label;
+        el.appendChild(a);
       });
     }
+    function diagnose(){
+      const weight = Number(document.getElementById('weight').value || 0);
+      const wave = document.getElementById('wave').value;
+      const style = document.getElementById('style').value;
+      const fitness = document.getElementById('fitness').value;
+      const brandBoost = document.getElementById('brandBoost').checked;
+      if(!weight || weight < 35){ alert('体重(kg)を入力してください'); return; }
 
-    // ====== モバイル用カードへ同期（元仕様のまま） ======
-    function syncMobileCards(){
-      const tableRows = document.querySelectorAll('#board-rows tr');
-      const wrap = document.getElementById('mobile-cards');
-      wrap.innerHTML = '';
-      tableRows.forEach(tr =>{
-        const tds = tr.querySelectorAll('td');
-        const nameHtml = tds[0].innerHTML;
-        const spec = tds[2].textContent.trim();
-        const type = tds[3].textContent.trim();
-        const feat = tds[4].textContent.trim();
-        const price = tds[5].textContent.trim();
-        const kw = tr.querySelector('td.btns').getAttribute('data-keyword');
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `
-          <h3>${nameHtml}</h3>
-          <div class="meta">${type} / ${spec} / ${price}</div>
-          <p style="margin:8px 0 0">${feat}</p>
-          <div class="btns" style="margin-top:8px"></div>
-        `;
-        const btnArea = card.querySelector('.btns');
-        const a1 = document.createElement('a');
-        a1.className='btn'; a1.setAttribute('data-a','');
-        a1.href = buildAmazonUrl(kw); a1.rel='sponsored nofollow noopener'; a1.target='_blank';
-        a1.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M5 8l7-7 7 7"/></svg><span>Amazon</span>`;
-        const a2 = document.createElement('a');
-        a2.className='btn'; a2.setAttribute('data-r','');
-        a2.href = buildRakutenUrl(kw); a2.rel='sponsored nofollow noopener'; a2.target='_blank';
-        a2.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M16 8H8l8 8H8"/></svg><span>楽天</span>`;
-        btnArea.append(a1,a2);
-        wrap.append(card);
-      });
+      const vol = calcVolume(weight, fitness);
+      const board = pickBoardType(wave, style);
+      const base = sizeTable[board.type] || sizeTable['ミッドレングス'];
+      const sized = adjustByWeightAndWave(base, weight, wave);
+
+      // 出力
+      document.getElementById('diagOut').hidden = false;
+      document.getElementById('outType').textContent = board.type;
+      document.getElementById('outWhy').textContent = board.why;
+      document.getElementById('outVol').innerHTML = `推奨浮力の目安: <strong>${vol.liters}L</strong>（約${vol.range[0]}〜${vol.range[1]}L） <span class="mini">係数:${vol.factor.toFixed(2)}</span>`;
+      document.getElementById('outLen').innerHTML = `${rangeFeetInches(sized.len)} <span class="mini">（${rangeCm(sized.len)}）</span>`;
+      document.getElementById('outWid').textContent = rangeInch(sized.wid);
+      document.getElementById('outThk').textContent = rangeInch(sized.thk);
+
+      // ASPリンク
+      const L = providerLinks(board.type, sized.len, vol.liters, brandBoost);
+      setBtnLinks(document.getElementById('linksAmz'), L.amazon);
+      setBtnLinks(document.getElementById('linksRkt'), L.rakuten);
+
+      // 結果までスムーズに移動
+      window.scrollTo({ top: document.getElementById('diagOut').offsetTop - 16, behavior: 'smooth' });
     }
 
     document.getElementById('year').textContent = new Date().getFullYear();
-    mountButtons();
-    syncMobileCards();
   </script>
 
   <nav class="global-menu" id="global-menu" data-global-menu aria-hidden="true">
