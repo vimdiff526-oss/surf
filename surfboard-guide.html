@@ -4,14 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>初心者向けサーフボードの選び方【診断付き・保存版】</title>
-  <meta name="description" content="体重・身長・タイプ（ソフト／ミッドレングス／ロング）からおすすめサイズを診断し、該当ボードのAmazon/Rakuten検索リンク（アフィリエイト）を自動生成。タイプ別の特徴や失敗しないコツも掲載。" />
-  <link rel="canonical" href="https://example.com/articles/beginner-surfboard-guide.html" />
-  <meta property="og:type" content="article" />
-  <meta property="og:title" content="初心者向けサーフボードの選び方【診断付き・保存版】" />
-  <meta property="og:description" content="体重・身長・タイプから診断→おすすめサイズと購入検索リンクを自動表示。" />
-  <meta property="og:url" content="https://example.com/articles/beginner-surfboard-guide.html" />
-  <meta property="og:image" content="https://example.com/og/surfboard-guide.jpg" />
-  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="description" content="体重・身長・タイプ（ソフト／ミッドレングス／ロング）からおすすめサイズと浮力を診断し、該当ボードのAmazon/Rakuten検索リンク（タイプ＋長さのみ）を自動生成。タイプ別の特徴や失敗しないコツも掲載。" />
   <link rel="stylesheet" href="./nav.css" />
   <script src="./nav.js" defer></script>
   <style>
@@ -97,9 +90,8 @@
     <article>
       <h1>初心者向けサーフボードの選び方【診断付き・保存版】</h1>
       <p class="lead">
-        はじめての1本で迷ったら、このページの<strong>診断</strong>を使ってください。<br>
-        <strong>体重・身長・タイプ（ソフト／ミッドレングス／ロング）</strong>を入力すると、目安の<strong>長さ・幅・厚み・浮力</strong>を算出し、結果に合う
-        <strong>Amazon / 楽天</strong>の<strong>検索リンク（アフィリエイト）</strong>を自動生成します。
+        <strong>体重・身長・タイプ（ソフト／ミッドレングス／ロング）</strong>を入力すると、<strong>長さ・幅・厚み・浮力</strong>の目安を提示し、結果に合う
+        <strong>Amazon / 楽天</strong>の<strong>検索リンク（タイプ＋長さのみ）</strong>を自動生成します。
       </p>
 
       <div class="toc">
@@ -137,7 +129,7 @@
               <option value="high">強め</option>
             </select>
           </label>
-          <div class="span2 mini">診断後、選択タイプに合わせた Amazon / 楽天 検索リンク（アフィリエイト）を表示します。</div>
+          <div class="span2 mini">診断後、選択タイプに合わせた Amazon / 楽天 検索リンク（タイプ＋長さのみ）を表示します。</div>
           <button class="btn span2" type="button" onclick="diagnose()">診断する</button>
         </form>
 
@@ -169,9 +161,9 @@
       <section id="type">
         <h2>タイプ別の特徴</h2>
         <ul>
-          <li><span class="chip">ソフトボード</span> 柔らかい素材のため安全性が高く、混雑時も安心。浮力大でパドルが楽。最初の1本に最適。</li>
-          <li><span class="chip">ミッドレングス</span> 6'8〜7'6。安定と取り回しのバランスが良く、小波〜胸肩まで守備範囲が広い。</li>
-          <li><span class="chip">ロング</span> 9'0〜。最も安定だが取り回しが悪い。小波に強く、スタイル重視のクルーズ向き。</li>
+          <li><span class="chip">ソフトボード</span> 柔らかい素材で安全性が高く、浮力大でパドルが楽。初の1本に最適。</li>
+          <li><span class="chip">ミッドレングス</span> 6'8〜7'6。安定と取り回しのバランス。小波〜胸肩まで守備範囲が広い。</li>
+          <li><span class="chip">ロング</span> 9'0〜。最も安定。小波に強くクルーズ向き。保管・運搬の確認が必要。</li>
         </ul>
       </section>
 
@@ -240,7 +232,7 @@
       }
     };
 
-    // ====== 検索リンク生成（キーワードベース） ======
+    // ====== 検索リンク生成（タイプ＋長さのみ） ======
     function buildAmazonUrl(keyword){
       const p = new URL(AFFIL.amazon.base);
       p.searchParams.set('k', keyword);
@@ -252,67 +244,80 @@
       return `https://hb.afl.rakuten.co.jp/hgc/${AFFIL.rakuten.affId}/?pc=${encodeURIComponent(dest)}&m=${encodeURIComponent(dest)}`;
     }
 
-    // ====== 診断ロジック ======
-    function calcVolume(weight, fitness){
-      let base = 0.45;                 // 初心者寄り
-      if(fitness==='low') base += 0.03;
-      if(fitness==='high') base -= 0.03;
-      base = Math.max(0.35, Math.min(0.60, base));
-      const liters = Math.round(weight * base * 10)/10;
-      const low = Math.round(liters * 0.9 * 10)/10;
-      const high = Math.round(liters * 1.1 * 10)/10;
-      return { liters, range:[low, high], factor: base };
-    }
+    // ====== 「体重・身長別サイズ目安」に基づく基準テーブル ======
+    // 長さはフィートで管理（7'6 = 7.5）
+    const WEIGHT_TABLE = [
+      { maxW: 50, len:[7.0,8.0],  vol:[35,50] },
+      { maxW: 65, len:[7.5,8.5],  vol:[40,60] }, // 7'6〜8'6
+      { maxW: 80, len:[8.0,9.0],  vol:[50,70] },
+      { maxW: 999, len:[8.5,9.5], vol:[60,85] }  // 8'6〜9'6
+    ];
 
-    // タイプ別の基準レンジ（長さ/幅/厚み）
-    const sizeTableByType = {
+    // タイプ別の基準レンジ（ページ内説明に準拠）
+    const TYPE_TABLE = {
       'ソフトボード': { len:[7.0, 8.6],   wid:[21.0, 23.5], thick:[2.75, 3.30], why:'安全性と浮力を重視。最初の1本に最適。' },
       'ミッドレングス': { len:[6.8, 7.6], wid:[20.5, 22.5], thick:[2.60, 3.00], why:'安定と取り回しのバランス。小波〜胸肩まで扱いやすい。' },
       'ロング':       { len:[9.0, 9.6],   wid:[22.5, 23.5], thick:[2.75, 3.25], why:'最も安定。小波に強くクルーズ向き。' }
     };
 
-    // フィート・インチ表示
+    // 体重→基準行を取得
+    function rowByWeight(w){
+      return WEIGHT_TABLE.find(r => w <= r.maxW) || WEIGHT_TABLE[WEIGHT_TABLE.length-1];
+    }
+
+    // 身長・体力でボリューム補正（高め寄り）
+    function adjustVolumeRange([lo,hi], height, fitness){
+      let add = 0;
+      if(height > 180) add += 10;          // 背が高い→+10L
+      else if(height >= 165) add += 5;     // 中背→+5L（低すぎ問題の補正を優先）
+      // 体力で微調整
+      if(fitness === 'low') add += 5;
+      if(fitness === 'high') add -= 5;
+      return [Math.max(30, lo + add), Math.max(35, hi + add)];
+    }
+
+    // タイプ基準と体重基準で長さレンジを統合（交差が無ければタイプ優先で近接合流）
+    function mergeLengthRanges(typeRange, weightRange){
+      const [a0,a1] = typeRange, [b0,b1] = weightRange;
+      const lo = Math.max(a0,b0), hi = Math.min(a1,b1);
+      if (lo <= hi) return [ +(lo.toFixed(2)), +(hi.toFixed(2)) ]; // 範囲が交差
+      // 交差しない場合はタイプをベースに、体重側に少し寄せる（±0.25ftの緩衝）
+      const adjLo = Math.max(Math.min(a0,a1), b0-0.25);
+      const adjHi = Math.min(Math.max(a0,a1), b1+0.25);
+      return [ +(adjLo.toFixed(2)), +(adjHi.toFixed(2)) ];
+    }
+
+    // 幅・厚みはタイプ基準を、体重・身長でわずかに寄せる
+    function tweakDimensions(baseWid, baseThk, weight, height){
+      const wBucket = (weight<55)? -1 : (weight<=75)? 0 : 1;
+      const hBucket = (height<165)? -1 : (height<=180)? 0 : 1;
+      const k = Math.max(-0.12, Math.min(0.12, (wBucket*0.07 + hBucket*0.05)));
+      const lerp = ([min,max], t)=>[ +(min+(max-min)*(0.5+t/2)).toFixed(2), +(max+(max-min)*(0.5+t/2)).toFixed(2) ];
+      return { wid: lerp(baseWid, k), thk: lerp(baseThk, k) };
+    }
+
+    // 表示フォーマット
     const toFeetInches = (v)=>{ const f=Math.floor(v); const i=Math.round((v-f)*12); return {feet:f,inches:i}; };
     const fmtFeetInches = ({feet,inches}) => `${feet}'${inches}"`;
     const rangeFeetInches = ([a,b])=>{ const A=toFeetInches(a), B=toFeetInches(b); return `${fmtFeetInches(A)} 〜 ${fmtFeetInches(B)}`; };
     const rangeCm = ([a,b])=>`${Math.round(a*30.48)}〜${Math.round(b*30.48)}cm`;
     const rangeInch = ([a,b])=>`${a.toFixed(2)}〜${b.toFixed(2)}"`;
 
-    // 体重・身長でレンジ微調整（長さ寄せ）
-    function tweakRangesByWH(base, weight, height){
-      const wBucket = (weight<55)? -1 : (weight<=75)? 0 : 1;           // 軽い/中/重い
-      const hBucket = (height<165)? -1 : (height<=180)? 0 : 1;         // 低い/中/高い
-      const kW = (wBucket===-1)? -0.06 : (wBucket===1)? 0.06 : 0.0;    // 長さ寄せ
-      const kH = (hBucket===-1)? -0.04 : (hBucket===1)? 0.04 : 0.0;
-      const k = Math.max(-0.12, Math.min(0.12, kW + kH));              // 合成（±約12%以内）
-      const lerp = ([min,max], t)=>[ +(min+(max-min)*(0.5+t/2)).toFixed(2), +(max+(max-min)*(0.5+t/2)).toFixed(2) ];
-      // 長さを中心に寄せ、幅・厚みは控えめに追随
-      const len = lerp(base.len, k);
-      const wid = [ +(base.wid[0] + (base.wid[1]-base.wid[0])*(0.5+k*0.35)).toFixed(2),
-                    +(base.wid[0] + (base.wid[1]-base.wid[0])*(0.9+k*0.35)).toFixed(2) ];
-      const thk = [ +(base.thick[0] + (base.thick[1]-base.thick[0])*(0.5+k*0.45)).toFixed(2),
-                    +(base.thick[0] + (base.thick[1]-base.thick[0])*(0.9+k*0.45)).toFixed(2) ];
-      return {len,wid,thk};
-    }
-
-    // タイプ別の検索キーワード
-    function keywordsForType(type, avgFeetInches, liters){
-      const {feet,inches} = avgFeetInches;
-      if(type==='ソフトボード'){
-        return [
-          `ソフトボード ${feet}'${inches}" ${liters}L 初心者 セット`,
-          `ソフトボード ${feet}'${inches}"`
-        ];
-      }
-      if(type==='ミッドレングス'){
-        return [
-          `ミッドレングス サーフボード ${feet}'${inches}" ${liters}L`,
-          `ミッドレングス サーフボード`
-        ];
-      }
+    // 検索キーワード（タイプ＋長さのみ）
+    function searchKeywords(type, avgLenFI){
+      const {feet,inches} = avgLenFI;
+      const lenStr = `${feet}'${inches}"`;
+      if(type==='ソフトボード') return [
+        `ソフトボード ${lenStr} 初心者 セット`,
+        `ソフトボード ${lenStr}`
+      ];
+      if(type==='ミッドレングス') return [
+        `ミッドレングス サーフボード ${lenStr}`,
+        `ミッドレングス サーフボード`
+      ];
       // ロング
       return [
-        `ロングボード ${feet}'${inches}" ${liters}L`,
+        `ロングボード ${lenStr}`,
         `ロングボード サーフボード`
       ];
     }
@@ -337,24 +342,35 @@
       if(!weight || weight < 35){ alert('体重(kg)を入力してください'); return; }
       if(!height || height < 145){ alert('身長(cm)を入力してください'); return; }
 
-      const base = sizeTableByType[type];
-      const vol = calcVolume(weight, fitness);
-      const sized = tweakRangesByWH(base, weight, height);
+      const T = TYPE_TABLE[type];
+      const W = rowByWeight(weight);
 
-      // 表示更新
+      // 長さ：タイプ基準と体重基準を統合
+      const lenRange = mergeLengthRanges(T.len, W.len);
+
+      // 幅・厚み：タイプ基準をベースに体重・身長で微調整
+      const dims = tweakDimensions(T.wid, T.thick, weight, height);
+
+      // 浮力：体重表のレンジを身長・体力で上振れ補正（低すぎ対策）
+      const volRange = adjustVolumeRange(W.vol, height, fitness);
+      const recLiters = Math.round((volRange[0] + volRange[1]) / 2); // 中央値を推奨として採用
+
+      // 出力反映
       document.getElementById('diagOut').hidden = false;
       document.getElementById('outType').textContent = `${type}`;
-      document.getElementById('outWhy').textContent = base.why;
-      document.getElementById('outVol').innerHTML = `推奨浮力の目安: <strong>${vol.liters}L</strong>（約${vol.range[0]}〜${vol.range[1]}L） <span class="mini">係数:${vol.factor.toFixed(2)}</span>`;
-      document.getElementById('outLen').innerHTML = `${rangeFeetInches(sized.len)} <span class="mini">（${rangeCm(sized.len)}）</span>`;
-      document.getElementById('outWid').textContent = rangeInch(sized.wid);
-      document.getElementById('outThk').textContent = rangeInch(sized.thk);
+      document.getElementById('outWhy').textContent = T.why;
+      document.getElementById('outVol').innerHTML =
+        `推奨浮力の目安: <strong>${recLiters}L</strong>（約${volRange[0]}〜${volRange[1]}L）`;
 
-      // キーワード → ASPリンク（タイプ別に振り分け）
-      const avgLen = (sized.len[0] + sized.len[1]) / 2;
+      document.getElementById('outLen').innerHTML =
+        `${rangeFeetInches(lenRange)} <span class="mini">（${rangeCm(lenRange)}）</span>`;
+      document.getElementById('outWid').textContent = rangeInch(dims.wid);
+      document.getElementById('outThk').textContent = rangeInch(dims.thk);
+
+      // 検索リンク（タイプ＋長さのみ）
+      const avgLen = (lenRange[0] + lenRange[1]) / 2;
       const avgFI = toFeetInches(avgLen);
-      const kws = keywordsForType(type, avgFI, vol.liters);
-
+      const kws = searchKeywords(type, avgFI);
       const L = {
         amazon: [ {label:'検索', url: buildAmazonUrl(kws[0])}, {label:'代替', url: buildAmazonUrl(kws[1])} ],
         rakuten:[ {label:'検索', url: buildRakutenUrl(kws[0])}, {label:'代替', url: buildRakutenUrl(kws[1])} ]
