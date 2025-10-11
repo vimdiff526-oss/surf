@@ -4,11 +4,11 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>初心者向けサーフボードの選び方【診断付き・保存版】</title>
-  <meta name="description" content="体重・波・スタイルから最適タイプを診断し、該当ボードのAmazon/Rakuten検索リンク（アフィリエイト）を自動生成。タイプ別の特徴とサイズ目安、よくある失敗も解説。" />
+  <meta name="description" content="体重・身長・タイプ（ソフト／ミッドレングス／ロング）からおすすめサイズを診断し、該当ボードのAmazon/Rakuten検索リンク（アフィリエイト）を自動生成。タイプ別の特徴や失敗しないコツも掲載。" />
   <link rel="canonical" href="https://example.com/articles/beginner-surfboard-guide.html" />
   <meta property="og:type" content="article" />
   <meta property="og:title" content="初心者向けサーフボードの選び方【診断付き・保存版】" />
-  <meta property="og:description" content="体重・波・スタイルから診断→おすすめタイプとサイズの目安、購入検索リンクを自動表示。" />
+  <meta property="og:description" content="体重・身長・タイプから診断→おすすめサイズと購入検索リンクを自動表示。" />
   <meta property="og:url" content="https://example.com/articles/beginner-surfboard-guide.html" />
   <meta property="og:image" content="https://example.com/og/surfboard-guide.jpg" />
   <meta name="twitter:card" content="summary_large_image" />
@@ -97,9 +97,9 @@
     <article>
       <h1>初心者向けサーフボードの選び方【診断付き・保存版】</h1>
       <p class="lead">
-        はじめての1本で失敗しないために、<strong>体重・波・スタイル</strong>から最適タイプを<strong>診断</strong>し、結果に合うキーワードで
-        <strong>Amazon / 楽天</strong>の<strong>検索リンク（アフィリエイト）</strong>を自動生成します。<br>
-        併せて、タイプ別の違いやサイズ目安、よくある失敗ポイントも整理しました。
+        はじめての1本で迷ったら、このページの<strong>診断</strong>を使ってください。<br>
+        <strong>体重・身長・タイプ（ソフト／ミッドレングス／ロング）</strong>を入力すると、目安の<strong>長さ・幅・厚み・浮力</strong>を算出し、結果に合う
+        <strong>Amazon / 楽天</strong>の<strong>検索リンク（アフィリエイト）</strong>を自動生成します。
       </p>
 
       <div class="toc">
@@ -113,25 +113,21 @@
         </ol>
       </div>
 
-      <!-- ====== 診断（比較表の代わりに統合） ====== -->
+      <!-- ====== 診断（比較表の代替） ====== -->
       <section id="diagnosis" class="diag" aria-labelledby="diag-title">
-        <h2 id="diag-title">サーフボード診断（体重・波・スタイル）</h2>
+        <h2 id="diag-title">サーフボード診断</h2>
         <form id="surfForm">
           <label>体重（kg）
             <input id="weight" type="number" min="35" max="120" step="1" placeholder="例）68" required />
           </label>
-          <label>波のイメージ
-            <select id="wave">
-              <option value="small" selected>小さい波でゆるく</option>
-              <option value="mid">ふつうの波でほどほど</option>
-              <option value="solid">大きい波にも挑戦</option>
-            </select>
+          <label>身長（cm）
+            <input id="height" type="number" min="145" max="210" step="1" placeholder="例）172" required />
           </label>
-          <label>スタイルのイメージ
-            <select id="style">
-              <option value="cruise" selected>ゆったりとクルーズしたい</option>
-              <option value="performance">機動性や技も楽しみたい</option>
-              <option value="alternative">オルタナ系に惹かれる</option>
+          <label>タイプを選ぶ
+            <select id="boardType">
+              <option value="ソフトボード" selected>ソフトボード</option>
+              <option value="ミッドレングス">ミッドレングス</option>
+              <option value="ロング">ロング</option>
             </select>
           </label>
           <label>体力
@@ -141,8 +137,7 @@
               <option value="high">強め</option>
             </select>
           </label>
-          <label class="span2"><input id="brandBoost" type="checkbox" /> ブランドブースト（CI / JS / LOST / DHD / Christenson / Firewire など）</label>
-          <div class="span2 mini">診断後、該当タイプの Amazon / 楽天 検索リンク（アフィリエイト）を生成します。</div>
+          <div class="span2 mini">診断後、選択タイプに合わせた Amazon / 楽天 検索リンク（アフィリエイト）を表示します。</div>
           <button class="btn span2" type="button" onclick="diagnose()">診断する</button>
         </form>
 
@@ -170,14 +165,13 @@
         </div>
       </section>
 
-      <!-- ====== 以下、元ページの知識セクションを維持 ====== -->
+      <!-- ====== 以下、知識セクションを維持 ====== -->
       <section id="type">
         <h2>タイプ別の特徴</h2>
         <ul>
-          <li><span class="chip">ソフトボード</span> 柔らかい素材のため安全性が高く、混雑時も安心。浮力大でパドルが楽。</li>
-          <li><span class="chip">ファンボード</span> 長さ7'0前後。安定と取り回しのバランスが良い。</li>
-          <li><span class="chip">ロング</span> 長さ9'0〜。最も安定だが取り回しが悪い。車載や保管スペースを要確認。</li>
-          <li><span class="chip">ショート</span> 上達後に検討。最初の1本には非推奨。</li>
+          <li><span class="chip">ソフトボード</span> 柔らかい素材のため安全性が高く、混雑時も安心。浮力大でパドルが楽。最初の1本に最適。</li>
+          <li><span class="chip">ミッドレングス</span> 6'8〜7'6。安定と取り回しのバランスが良く、小波〜胸肩まで守備範囲が広い。</li>
+          <li><span class="chip">ロング</span> 9'0〜。最も安定だが取り回しが悪い。小波に強く、スタイル重視のクルーズ向き。</li>
         </ul>
       </section>
 
@@ -206,7 +200,7 @@
         <h2>FAQ</h2>
         <details>
           <summary>最初の1本はいくら位が目安？</summary>
-          <p>初心者向けのソフトボード/ファンボードは2.5万円〜7万円程度。リーシュやワックスなどの小物も同時に揃えると合計で3万〜10万円ほど。</p>
+          <p>初心者向けのソフト/ミッドは2.5万円〜7万円程度。リーシュやワックスなどの小物も同時に揃えると合計で3万〜10万円ほど。</p>
         </details>
         <details>
           <summary>中古はアリ？</summary>
@@ -254,14 +248,13 @@
       return p.toString();
     }
     function buildRakutenUrl(keyword){
-      // hb.afl 経由（PC/モバイル両対応）
       const dest = `${AFFIL.rakuten.base}${encodeURIComponent(keyword)}/`;
       return `https://hb.afl.rakuten.co.jp/hgc/${AFFIL.rakuten.affId}/?pc=${encodeURIComponent(dest)}&m=${encodeURIComponent(dest)}`;
     }
 
-    // ====== 診断ロジック（diagnosis.html を統合・簡潔化） ======
+    // ====== 診断ロジック ======
     function calcVolume(weight, fitness){
-      let base = 0.45; // 初心者寄りの中庸
+      let base = 0.45;                 // 初心者寄り
       if(fitness==='low') base += 0.03;
       if(fitness==='high') base -= 0.03;
       base = Math.max(0.35, Math.min(0.60, base));
@@ -270,69 +263,60 @@
       const high = Math.round(liters * 1.1 * 10)/10;
       return { liters, range:[low, high], factor: base };
     }
-    function pickBoardType(wave, style){
-      const small = wave === 'small';
-      const solid = wave === 'solid';
-      if(style === 'cruise'){
-        if(solid) return {type:'ミッド/ロング', why:'テイクオフの早さと安定感で挑戦をサポート'};
-        if(small) return {type:'ミッドレングス', why:'小波でも本数を確保しやすい'};
-        return {type:'ミッドレングス', why:'ゆったりとしたライン取りに合う'};
-      }
-      if(style === 'alternative'){
-        if(small) return {type:'フィッシュ/ツイン寄りショート', why:'小波での加速と遊び心'};
-        if(solid) return {type:'オルタナ系（エッグ/ピン）', why:'個性的なラインでパワーのある波にも'};
-        return {type:'オルタナ系（ツイン/エッグ）', why:'個性と楽しさを両立'};
-      }
-      if(solid) return {type:'HPショート', why:'機動性・ターン性能を重視'};
-      if(small) return {type:'ハイボリュームショート/フィッシュ', why:'小波でも推進力と取り回し'};
-      return {type:'オールラウンドショート', why:'技と走りのバランス'};
-    }
-    const sizeTable = {
-      'ソフトボード/ファン':   { len:[7.0, 8.0],   wid:[21.0, 23.0], thick:[2.75, 3.3] },
-      'ミッドレングス':        { len:[6.8, 7.6],   wid:[20.5, 22.5], thick:[2.6, 3.0] },
-      'ロング/ミッド':         { len:[9.0, 9.6],   wid:[22.5, 23.5], thick:[2.75, 3.25] },
-      'フィッシュ/ツイン寄りショート': { len:[5.4, 6.0], wid:[19.5, 21.5], thick:[2.4, 2.7] },
-      'オールラウンドショート': { len:[5.83, 6.33], wid:[18.5, 20.5], thick:[2.3, 2.6] },
-      'ミッド/ロング':         { len:[7.6, 9.0],  wid:[21.5, 23.5], thick:[2.6, 3.1] },
-      'オルタナ系（エッグ/ピン）': { len:[6.4, 7.4], wid:[20.0, 22.0], thick:[2.5, 2.9] },
-      'オルタナ系（ツイン/エッグ）': { len:[5.8, 6.8], wid:[19.75, 21.75], thick:[2.45, 2.85] },
-      'ハイボリュームショート/フィッシュ': { len:[5.8, 6.4], wid:[19.5, 21.5], thick:[2.5, 2.8] },
-      'HPショート':            { len:[5.8, 6.2],  wid:[18.0, 19.5], thick:[2.25, 2.5] }
+
+    // タイプ別の基準レンジ（長さ/幅/厚み）
+    const sizeTableByType = {
+      'ソフトボード': { len:[7.0, 8.6],   wid:[21.0, 23.5], thick:[2.75, 3.30], why:'安全性と浮力を重視。最初の1本に最適。' },
+      'ミッドレングス': { len:[6.8, 7.6], wid:[20.5, 22.5], thick:[2.60, 3.00], why:'安定と取り回しのバランス。小波〜胸肩まで扱いやすい。' },
+      'ロング':       { len:[9.0, 9.6],   wid:[22.5, 23.5], thick:[2.75, 3.25], why:'最も安定。小波に強くクルーズ向き。' }
     };
+
+    // フィート・インチ表示
     const toFeetInches = (v)=>{ const f=Math.floor(v); const i=Math.round((v-f)*12); return {feet:f,inches:i}; };
     const fmtFeetInches = ({feet,inches}) => `${feet}'${inches}"`;
     const rangeFeetInches = ([a,b])=>{ const A=toFeetInches(a), B=toFeetInches(b); return `${fmtFeetInches(A)} 〜 ${fmtFeetInches(B)}`; };
     const rangeCm = ([a,b])=>`${Math.round(a*30.48)}〜${Math.round(b*30.48)}cm`;
     const rangeInch = ([a,b])=>`${a.toFixed(2)}〜${b.toFixed(2)}"`;
-    function normalizeTypeForQuery(type){
-      return type
-        .replace('ミッド/ロング','ミッド ロング')
-        .replace('オルタナ系（エッグ/ピン）','オルタナ エッグ ピン')
-        .replace('オルタナ系（ツイン/エッグ）','オルタナ ツイン エッグ')
-        .replace('ハイボリュームショート/フィッシュ','ショート フィッシュ')
-        .replace('フィッシュ/ツイン寄りショート','ショート フィッシュ ツイン')
-        .replace('オールラウンドショート','ショート オールラウンド');
-    }
-    function adjustByWeightAndWave(base, weight, wave){
-      const bucket = (weight<55)? -1 : (weight<=75)? 0 : 1;
-      const waveAdj = (wave==='small')? +0.0 : (wave==='mid')? +0.05 : +0.1;
-      const lerpRange = ([min,max], k)=>[ +(min+(max-min)*k).toFixed(2), +(max+(max-min)*k).toFixed(2) ];
-      const k = (bucket===-1)? -0.05 : (bucket===1)? 0.05 : 0;
-      let len=lerpRange(base.len, k + waveAdj*0.3);
-      let wid=lerpRange(base.wid, k*0.8 + waveAdj*0.2);
-      let thk=lerpRange(base.thick, k + waveAdj*0.4);
+
+    // 体重・身長でレンジ微調整（長さ寄せ）
+    function tweakRangesByWH(base, weight, height){
+      const wBucket = (weight<55)? -1 : (weight<=75)? 0 : 1;           // 軽い/中/重い
+      const hBucket = (height<165)? -1 : (height<=180)? 0 : 1;         // 低い/中/高い
+      const kW = (wBucket===-1)? -0.06 : (wBucket===1)? 0.06 : 0.0;    // 長さ寄せ
+      const kH = (hBucket===-1)? -0.04 : (hBucket===1)? 0.04 : 0.0;
+      const k = Math.max(-0.12, Math.min(0.12, kW + kH));              // 合成（±約12%以内）
+      const lerp = ([min,max], t)=>[ +(min+(max-min)*(0.5+t/2)).toFixed(2), +(max+(max-min)*(0.5+t/2)).toFixed(2) ];
+      // 長さを中心に寄せ、幅・厚みは控えめに追随
+      const len = lerp(base.len, k);
+      const wid = [ +(base.wid[0] + (base.wid[1]-base.wid[0])*(0.5+k*0.35)).toFixed(2),
+                    +(base.wid[0] + (base.wid[1]-base.wid[0])*(0.9+k*0.35)).toFixed(2) ];
+      const thk = [ +(base.thick[0] + (base.thick[1]-base.thick[0])*(0.5+k*0.45)).toFixed(2),
+                    +(base.thick[0] + (base.thick[1]-base.thick[0])*(0.9+k*0.45)).toFixed(2) ];
       return {len,wid,thk};
     }
-    function providerLinks(type, lenRange, liters, brandBoost){
-      const t = normalizeTypeForQuery(type);
-      const {feet,inches}=toFeetInches((lenRange[0]+lenRange[1])/2);
-      const qMain = `サーフボード ${t} ${feet}'${inches}" ${liters}L -リーシュ -ケース` + (brandBoost ? ' CI JS LOST DHD Christenson Firewire' : '');
-      const qAlt  = `サーフボード ${t}` + (brandBoost ? ' CI JS LOST DHD Christenson Firewire' : '');
-      return {
-        amazon: [ {label:'検索', url: buildAmazonUrl(qMain)}, {label:'代替', url: buildAmazonUrl(qAlt)} ],
-        rakuten: [ {label:'検索', url: buildRakutenUrl(qMain)}, {label:'代替', url: buildRakutenUrl(qAlt)} ]
-      };
+
+    // タイプ別の検索キーワード
+    function keywordsForType(type, avgFeetInches, liters){
+      const {feet,inches} = avgFeetInches;
+      if(type==='ソフトボード'){
+        return [
+          `ソフトボード ${feet}'${inches}" ${liters}L 初心者 セット`,
+          `ソフトボード ${feet}'${inches}"`
+        ];
+      }
+      if(type==='ミッドレングス'){
+        return [
+          `ミッドレングス サーフボード ${feet}'${inches}" ${liters}L`,
+          `ミッドレングス サーフボード`
+        ];
+      }
+      // ロング
+      return [
+        `ロングボード ${feet}'${inches}" ${liters}L`,
+        `ロングボード サーフボード`
+      ];
     }
+
     function setBtnLinks(el, links){
       el.innerHTML='';
       links.forEach(l=>{
@@ -343,34 +327,41 @@
         el.appendChild(a);
       });
     }
+
     function diagnose(){
       const weight = Number(document.getElementById('weight').value || 0);
-      const wave = document.getElementById('wave').value;
-      const style = document.getElementById('style').value;
+      const height = Number(document.getElementById('height').value || 0);
+      const type = document.getElementById('boardType').value;
       const fitness = document.getElementById('fitness').value;
-      const brandBoost = document.getElementById('brandBoost').checked;
+
       if(!weight || weight < 35){ alert('体重(kg)を入力してください'); return; }
+      if(!height || height < 145){ alert('身長(cm)を入力してください'); return; }
 
+      const base = sizeTableByType[type];
       const vol = calcVolume(weight, fitness);
-      const board = pickBoardType(wave, style);
-      const base = sizeTable[board.type] || sizeTable['ミッドレングス'];
-      const sized = adjustByWeightAndWave(base, weight, wave);
+      const sized = tweakRangesByWH(base, weight, height);
 
-      // 出力
+      // 表示更新
       document.getElementById('diagOut').hidden = false;
-      document.getElementById('outType').textContent = board.type;
-      document.getElementById('outWhy').textContent = board.why;
+      document.getElementById('outType').textContent = `${type}`;
+      document.getElementById('outWhy').textContent = base.why;
       document.getElementById('outVol').innerHTML = `推奨浮力の目安: <strong>${vol.liters}L</strong>（約${vol.range[0]}〜${vol.range[1]}L） <span class="mini">係数:${vol.factor.toFixed(2)}</span>`;
       document.getElementById('outLen').innerHTML = `${rangeFeetInches(sized.len)} <span class="mini">（${rangeCm(sized.len)}）</span>`;
       document.getElementById('outWid').textContent = rangeInch(sized.wid);
       document.getElementById('outThk').textContent = rangeInch(sized.thk);
 
-      // ASPリンク
-      const L = providerLinks(board.type, sized.len, vol.liters, brandBoost);
+      // キーワード → ASPリンク（タイプ別に振り分け）
+      const avgLen = (sized.len[0] + sized.len[1]) / 2;
+      const avgFI = toFeetInches(avgLen);
+      const kws = keywordsForType(type, avgFI, vol.liters);
+
+      const L = {
+        amazon: [ {label:'検索', url: buildAmazonUrl(kws[0])}, {label:'代替', url: buildAmazonUrl(kws[1])} ],
+        rakuten:[ {label:'検索', url: buildRakutenUrl(kws[0])}, {label:'代替', url: buildRakutenUrl(kws[1])} ]
+      };
       setBtnLinks(document.getElementById('linksAmz'), L.amazon);
       setBtnLinks(document.getElementById('linksRkt'), L.rakuten);
 
-      // 結果までスムーズに移動
       window.scrollTo({ top: document.getElementById('diagOut').offsetTop - 16, behavior: 'smooth' });
     }
 
