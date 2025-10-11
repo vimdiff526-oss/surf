@@ -76,11 +76,12 @@
     </nav>
   </header>
 
+  <!-- ページ内リンク（ご指定順） -->
   <nav class="page-links wrap" aria-label="ページ内リンク">
-    <a href="#diagnosis">診断する</a>
     <a href="#type">タイプ別の特徴</a>
-    <a href="#size">サイズ目安</a>
-    <a href="#mistakes">よくある失敗</a>
+    <a href="#size">体重・身長別サイズ目安</a>
+    <a href="#mistakes">初心者がやりがちな失敗</a>
+    <a href="#diagnosis">サーフボード診断</a>
     <a href="#faq">FAQ</a>
   </nav>
 
@@ -90,24 +91,59 @@
     <article>
       <h1>初心者向けサーフボードの選び方【診断付き・保存版】</h1>
       <p class="lead">
-        <strong>体重・身長・タイプ（ソフト／ミッドレングス／ロング）</strong>を入力すると、<strong>長さ・幅・厚み・浮力</strong>の目安を提示し、結果に合う
+        本記事は、<strong>1.タイプ別の特徴 → 2.体重・身長別サイズ目安 → 3.初心者がやりがちな失敗 → 4.サーフボード診断 → 5.FAQ</strong> の順で構成しています。<br>
+        診断（4章）では <strong>体重・身長・タイプ（ソフト／ミッドレングス／ロング）</strong>から<strong>長さ・幅・厚み・浮力</strong>の目安を提示し、結果に合う
         <strong>Amazon / 楽天</strong>の<strong>検索リンク（タイプ＋長さのみ）</strong>を自動生成します。
       </p>
 
+      <!-- 目次（ご指定順） -->
       <div class="toc">
         <strong>目次</strong>
         <ol>
-          <li><a href="#diagnosis">サーフボード診断（購入候補リンク生成）</a></li>
           <li><a href="#type">タイプ別の特徴</a></li>
           <li><a href="#size">体重・身長別サイズ目安</a></li>
           <li><a href="#mistakes">初心者がやりがちな失敗</a></li>
+          <li><a href="#diagnosis">サーフボード診断（購入候補リンク生成）</a></li>
           <li><a href="#faq">FAQ</a></li>
         </ol>
       </div>
 
-      <!-- ====== 診断（比較表の代替） ====== -->
+      <!-- 1. タイプ別の特徴 -->
+      <section id="type">
+        <h2>タイプ別の特徴</h2>
+        <ul>
+          <li><span class="chip">ソフトボード</span> 柔らかい素材で安全性が高く、浮力大でパドルが楽。初の1本に最適。</li>
+          <li><span class="chip">ミッドレングス</span> 6'8〜7'6。安定と取り回しのバランス。小波〜胸肩まで守備範囲が広い。</li>
+          <li><span class="chip">ロング</span> 9'0〜。最も安定。小波に強くクルーズ向き。保管・運搬の確認が必要。</li>
+        </ul>
+      </section>
+
+      <!-- 2. 体重・身長別サイズ目安 -->
+      <section id="size">
+        <h2>体重・身長別サイズ目安</h2>
+        <div class="aside">
+          <ul>
+            <li>〜50kg: 35〜50L / 7'0〜8'0</li>
+            <li>50〜65kg: 40〜60L / 7'6〜8'6</li>
+            <li>65〜80kg: 50〜70L / 8'0〜9'0</li>
+            <li>80kg〜: 60〜85L / 8'6〜9'6</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- 3. 初心者がやりがちな失敗 -->
+      <section id="mistakes">
+        <h2>初心者がやりがちな失敗</h2>
+        <ul>
+          <li>浮力不足を選んでしまい、波に乗れない</li>
+          <li>見た目重視でショートにする → 波に乗れない</li>
+          <li>中古で安く買っても、合わずに結局買い直す。</li>
+        </ul>
+      </section>
+
+      <!-- 4. サーフボード診断（購入候補リンク生成） -->
       <section id="diagnosis" class="diag" aria-labelledby="diag-title">
-        <h2 id="diag-title">サーフボード診断</h2>
+        <h2 id="diag-title">サーフボード診断（購入候補リンク生成）</h2>
         <form id="surfForm">
           <label>体重（kg）
             <input id="weight" type="number" min="35" max="120" step="1" placeholder="例）68" required />
@@ -157,37 +193,7 @@
         </div>
       </section>
 
-      <!-- ====== 以下、知識セクションを維持 ====== -->
-      <section id="type">
-        <h2>タイプ別の特徴</h2>
-        <ul>
-          <li><span class="chip">ソフトボード</span> 柔らかい素材で安全性が高く、浮力大でパドルが楽。初の1本に最適。</li>
-          <li><span class="chip">ミッドレングス</span> 6'8〜7'6。安定と取り回しのバランス。小波〜胸肩まで守備範囲が広い。</li>
-          <li><span class="chip">ロング</span> 9'0〜。最も安定。小波に強くクルーズ向き。保管・運搬の確認が必要。</li>
-        </ul>
-      </section>
-
-      <section id="size">
-        <h2>体重・身長別サイズ目安</h2>
-        <div class="aside">
-          <ul>
-            <li>〜50kg: 35〜50L / 7'0〜8'0</li>
-            <li>50〜65kg: 40〜60L / 7'6〜8'6</li>
-            <li>65〜80kg: 50〜70L / 8'0〜9'0</li>
-            <li>80kg〜: 60〜85L / 8'6〜9'6</li>
-          </ul>
-        </div>
-      </section>
-
-      <section id="mistakes">
-        <h2>初心者がやりがちな失敗</h2>
-        <ul>
-          <li>浮力不足を選んでしまい、波に乗れない</li>
-          <li>見た目重視でショートにする → 波に乗れない</li>
-          <li>中古で安く買っても、合わずに結局買い直す。</li>
-        </ul>
-      </section>
-
+      <!-- 5. FAQ -->
       <section id="faq">
         <h2>FAQ</h2>
         <details>
@@ -245,7 +251,6 @@
     }
 
     // ====== 「体重・身長別サイズ目安」に基づく基準テーブル ======
-    // 長さはフィートで管理（7'6 = 7.5）
     const WEIGHT_TABLE = [
       { maxW: 50, len:[7.0,8.0],  vol:[35,50] },
       { maxW: 65, len:[7.5,8.5],  vol:[40,60] }, // 7'6〜8'6
@@ -253,41 +258,39 @@
       { maxW: 999, len:[8.5,9.5], vol:[60,85] }  // 8'6〜9'6
     ];
 
-    // タイプ別の基準レンジ（ページ内説明に準拠）
+    // タイプ別の基準レンジ
     const TYPE_TABLE = {
       'ソフトボード': { len:[7.0, 8.6],   wid:[21.0, 23.5], thick:[2.75, 3.30], why:'安全性と浮力を重視。最初の1本に最適。' },
       'ミッドレングス': { len:[6.8, 7.6], wid:[20.5, 22.5], thick:[2.60, 3.00], why:'安定と取り回しのバランス。小波〜胸肩まで扱いやすい。' },
       'ロング':       { len:[9.0, 9.6],   wid:[22.5, 23.5], thick:[2.75, 3.25], why:'最も安定。小波に強くクルーズ向き。' }
     };
 
-    // 体重→基準行を取得
+    // 体重→基準行
     function rowByWeight(w){
       return WEIGHT_TABLE.find(r => w <= r.maxW) || WEIGHT_TABLE[WEIGHT_TABLE.length-1];
     }
 
-    // 身長・体力でボリューム補正（高め寄り）
+    // 身長・体力でボリューム補正（低すぎ対策の上振れ重視）
     function adjustVolumeRange([lo,hi], height, fitness){
       let add = 0;
-      if(height > 180) add += 10;          // 背が高い→+10L
-      else if(height >= 165) add += 5;     // 中背→+5L（低すぎ問題の補正を優先）
-      // 体力で微調整
+      if(height > 180) add += 10;
+      else if(height >= 165) add += 5;
       if(fitness === 'low') add += 5;
       if(fitness === 'high') add -= 5;
       return [Math.max(30, lo + add), Math.max(35, hi + add)];
     }
 
-    // タイプ基準と体重基準で長さレンジを統合（交差が無ければタイプ優先で近接合流）
+    // 長さレンジ統合（タイプ×体重）
     function mergeLengthRanges(typeRange, weightRange){
       const [a0,a1] = typeRange, [b0,b1] = weightRange;
       const lo = Math.max(a0,b0), hi = Math.min(a1,b1);
-      if (lo <= hi) return [ +(lo.toFixed(2)), +(hi.toFixed(2)) ]; // 範囲が交差
-      // 交差しない場合はタイプをベースに、体重側に少し寄せる（±0.25ftの緩衝）
+      if (lo <= hi) return [ +(lo.toFixed(2)), +(hi.toFixed(2)) ];
       const adjLo = Math.max(Math.min(a0,a1), b0-0.25);
       const adjHi = Math.min(Math.max(a0,a1), b1+0.25);
       return [ +(adjLo.toFixed(2)), +(adjHi.toFixed(2)) ];
     }
 
-    // 幅・厚みはタイプ基準を、体重・身長でわずかに寄せる
+    // 幅・厚みはタイプ基準から軽微に寄せる
     function tweakDimensions(baseWid, baseThk, weight, height){
       const wBucket = (weight<55)? -1 : (weight<=75)? 0 : 1;
       const hBucket = (height<165)? -1 : (height<=180)? 0 : 1;
@@ -315,7 +318,6 @@
         `ミッドレングス サーフボード ${lenStr}`,
         `ミッドレングス サーフボード`
       ];
-      // ロング
       return [
         `ロングボード ${lenStr}`,
         `ロングボード サーフボード`
@@ -351,17 +353,16 @@
       // 幅・厚み：タイプ基準をベースに体重・身長で微調整
       const dims = tweakDimensions(T.wid, T.thick, weight, height);
 
-      // 浮力：体重表のレンジを身長・体力で上振れ補正（低すぎ対策）
+      // 浮力：体重表レンジを身長・体力で上振れ補正（低すぎ対策）
       const volRange = adjustVolumeRange(W.vol, height, fitness);
-      const recLiters = Math.round((volRange[0] + volRange[1]) / 2); // 中央値を推奨として採用
+      const recLiters = Math.round((volRange[0] + volRange[1]) / 2);
 
-      // 出力反映
+      // 出力
       document.getElementById('diagOut').hidden = false;
       document.getElementById('outType').textContent = `${type}`;
       document.getElementById('outWhy').textContent = T.why;
       document.getElementById('outVol').innerHTML =
         `推奨浮力の目安: <strong>${recLiters}L</strong>（約${volRange[0]}〜${volRange[1]}L）`;
-
       document.getElementById('outLen').innerHTML =
         `${rangeFeetInches(lenRange)} <span class="mini">（${rangeCm(lenRange)}）</span>`;
       document.getElementById('outWid').textContent = rangeInch(dims.wid);
@@ -390,7 +391,7 @@
       <div class="global-menu__header">
         <h2 class="global-menu__title" id="global-menu-title">コンテンツ一覧</h2>
         <button class="global-menu__close" type="button" aria-label="メニューを閉じる" data-menu-dismiss data-menu-initial>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
             <path d="M6 6l12 12M18 6L6 18" />
           </svg>
         </button>
