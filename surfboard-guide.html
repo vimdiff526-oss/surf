@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>初心者向けサーフボードの選び方【診断付き・保存版】</title>
-  <meta name="description" content="タイプ（ショート／ミッドレングス／ロング）と体重・体力・素材から、長さ・幅・厚み・浮力の目安を提示し、タイプ＋長さでAmazon/Rakutenの検索リンクを生成。タイプ別・素材別の特徴、失敗しないコツも掲載。" />
+  <meta name="description" content="スタイルのイメージ（ゆっくり／ゆっくり＋技／技重視）と体重・体力・素材から、長さ・幅・厚み・浮力の目安を提示し、タイプ＋長さでAmazon/Rakutenの検索リンクを生成。タイプ別・素材別の特徴、失敗しないコツも掲載。" />
   <link rel="stylesheet" href="./nav.css" />
   <script src="./nav.js" defer></script>
   <style>
@@ -89,7 +89,7 @@
 
     <article>
       <h1>初心者向けサーフボードの選び方【診断付き・保存版】</h1>
-      <p class="lead">サーフィンは波に乗るスポーツです。波に乗れずサーフィンをやめてしまう人を数多く見ています。まずは波に乗ることの楽しさを知りましょう。最初の1本で失敗しないために、体重・身長と現実的な上達ステップに合ったボードを選びましょう。本記事ではタイプ別の特徴を整理し、最後に簡易的なサーフボード診断ツールを掲載します。</p>
+      <p class="lead">このページでは、タイプ別の特徴・サイズ目安・よくある失敗・診断・FAQの流れでご案内します。診断では入力内容に基づき目安のサイズを表示し、タイプ＋長さでAmazon/Rakutenの検索リンクを自動生成します。</p>
 
       <div class="toc">
         <strong>目次</strong>
@@ -148,11 +148,11 @@
           <label>体重（kg）
             <input id="weight" type="number" min="35" max="120" step="1" placeholder="例）68" required />
           </label>
-          <label>タイプを選ぶ
-            <select id="boardType">
-              <option value="ショート" selected>ショート</option>
-              <option value="ミッドレングス">ミッドレングス</option>
-              <option value="ロング">ロング</option>
+          <label>スタイルのイメージ
+            <select id="styleIntent" aria-label="スタイルのイメージ">
+              <option value="slow-cruise" selected>ゆっくりと波に乗りたい</option>
+              <option value="cruise-with-tricks">ゆっくりと波に乗りたいが技も楽しみたい</option>
+              <option value="tricks-focused">技を積極的に楽しみたい</option>
             </select>
           </label>
           <label>素材を選ぶ
@@ -168,7 +168,7 @@
               <option value="high">強め</option>
             </select>
           </label>
-          <div class="span2 mini">診断後、選択タイプに合わせた Amazon / 楽天 の検索リンク（タイプ＋長さのみ）を表示します。</div>
+          <div class="span2 mini">診断後、想定タイプに合わせた Amazon / 楽天 の検索リンク（タイプ＋長さのみ）を表示します。</div>
           <button class="btn span2" type="button" onclick="diagnose()">診断する</button>
         </form>
 
@@ -267,7 +267,7 @@
 
     function clamp(v, lo, hi){ return Math.max(lo, Math.min(hi, v)); }
 
-    // --- 浮力算出：ショートはベース＋5L ---
+    // --- ショートはベース+5L。スタイル→タイプのマッピングを追加 ---
     function getRecommendedVolume(type, weight, fitness){
       if(type === 'ショート'){
         const k = (fitness === 'low') ? 0.45 : (fitness === 'high') ? 0.36 : 0.40;
@@ -334,6 +334,13 @@
       return [ `${key} ${lenStr}`, `${key}` ];
     }
 
+    // スタイル → タイプにマッピング
+    function typeFromStyle(style){
+      if(style === 'slow-cruise') return 'ロング';
+      if(style === 'cruise-with-tricks') return 'ミッドレングス';
+      return 'ショート'; // tricks-focused
+    }
+
     function setBtnLinks(el, links){
       el.innerHTML='';
       links.forEach(l=>{
@@ -347,7 +354,8 @@
 
     function diagnose(){
       const weight = Number(document.getElementById('weight').value || 0);
-      const type = document.getElementById('boardType').value;
+      const style = document.getElementById('styleIntent').value;
+      const type = typeFromStyle(style);
       const material = document.getElementById('material').value;
       const fitness = document.getElementById('fitness').value;
 
