@@ -265,48 +265,40 @@
       return WEIGHT_TABLE.find(r => w <= r.maxW) || WEIGHT_TABLE[WEIGHT_TABLE.length-1];
     }
 
-    // --- 浮力算出（ショート専用＆ミッド/ロング従来） ---
     function clamp(v, lo, hi){ return Math.max(lo, Math.min(hi, v)); }
 
+    // --- 浮力算出：ショートはベース＋5L ---
     function getRecommendedVolume(type, weight, fitness){
       if(type === 'ショート'){
-        // 体力別係数（初心者寄りのショート目安）
         const k = (fitness === 'low') ? 0.45 : (fitness === 'high') ? 0.36 : 0.40;
-        const liters = weight * k;
-        // ショートは現実的レンジにクランプ（28〜48L）
         const lo = 28, hi = 48;
+        const base = weight * k;
+        const liters = base + 5; // ベース＋5L
         return { lo, hi, rec: Math.round(clamp(liters, lo, hi)) };
       }
       // ミッド／ロングは体重表レンジをベースに体力補正
       const base = rowByWeight(weight).vol.slice();
-      // 体力補正（弱め:+5L / 強め:-5L）＋ロング加点(+5L)
       let add = 0;
       if(fitness === 'low') add += 5;
       if(fitness === 'high') add -= 5;
       if(type === 'ロング') add += 5;
       let lo = base[0] + add, hi = base[1] + add;
-
-      // 型別クランプ
       if(type === 'ミッドレングス'){ lo = Math.max(40, lo); hi = Math.min(70, hi); }
       if(type === 'ロング'){ lo = Math.max(60, lo); hi = Math.min(90, hi, 85); }
-
       const rec = Math.round((lo + hi) / 2);
       return { lo, hi, rec };
     }
 
-    // 長さレンジ統合：ショートはタイプ優先、ミッド/ロングは体重表と統合
     function mergeLengthRanges(typeRange, weightRange, type){
       if (type === 'ショート') return [ +(typeRange[0].toFixed(2)), +(typeRange[1].toFixed(2)) ];
       const [a0,a1] = typeRange, [b0,b1] = weightRange;
       const lo = Math.max(a0,b0), hi = Math.min(a1,b1);
       if (lo <= hi) return [ +(lo.toFixed(2)), +(hi.toFixed(2)) ];
-      // 交差しない場合はタイプをベースに、体重側に少し寄せる（±0.25ft）
       const adjLo = Math.max(Math.min(a0,a1), b0-0.25);
       const adjHi = Math.min(Math.max(a0,a1), b1+0.25);
       return [ +(adjLo.toFixed(2)), +(adjHi.toFixed(2)) ];
     }
 
-    // 幅・厚み：タイプ基準を体重で軽微に寄せ、素材で補正（ソフトはややワイド/厚め）
     function tweakDimensions(baseWid, baseThk, weight){
       const wBucket = (weight<55)? -1 : (weight<=75)? 0 : 1;
       const k = Math.max(-0.12, Math.min(0.12, (wBucket*0.09)));
@@ -325,14 +317,12 @@
       return dims;
     }
 
-    // 表示フォーマット
     const toFeetInches = (v)=>{ const f=Math.floor(v); const i=Math.round((v-f)*12); return {feet:f,inches:i}; };
     const fmtFeetInches = ({feet,inches}) => `${feet}'${inches}"`;
     const rangeFeetInches = ([a,b])=>{ const A=toFeetInches(a), B=toFeetInches(b); return `${fmtFeetInches(A)} 〜 ${fmtFeetInches(B)}`; };
     const rangeCm = ([a,b])=>`${Math.round(a*30.48)}〜${Math.round(b*30.48)}cm`;
     const rangeInch = ([a,b])=>`${a.toFixed(2)}〜${b.toFixed(2)}"`;
 
-    // 検索キーワード（タイプ＋長さのみ）
     function typeKeyword(type){
       if(type==='ショート') return 'ショートボード';
       if(type==='ミッドレングス') return 'ミッドレングス サーフボード';
@@ -366,17 +356,12 @@
       const T = TYPE_TABLE[type];
       const W = rowByWeight(weight);
 
-      // 長さ：タイプ基準と体重基準を統合（ショートはタイプ優先）
       const lenRange = mergeLengthRanges(T.len, W.len, type);
-
-      // 幅・厚み：タイプ基準をベースに体重で微調整 → 素材補正
       let dims = tweakDimensions(T.wid, T.thick, weight);
       dims = materialTweakDims(dims, material);
 
-      // 浮力：タイプ別の専用ロジック（ショートは係数×体重、他は体重表＋体力補正）
       const vol = getRecommendedVolume(type, weight, fitness);
 
-      // 出力
       document.getElementById('diagOut').hidden = false;
       document.getElementById('outType').textContent = `${type}（${material}）`;
       document.getElementById('outWhy').textContent = T.why + (material==='ソフト' ? '（ソフトは安全性・浮力寄り）' : '');
@@ -387,7 +372,6 @@
       document.getElementById('outWid').textContent = rangeInch(dims.wid);
       document.getElementById('outThk').textContent = rangeInch(dims.thk);
 
-      // 検索リンク（タイプ＋長さのみ）
       const avgLen = (lenRange[0] + lenRange[1]) / 2;
       const avgFI = toFeetInches(avgLen);
       const kws = searchKeywords(type, avgFI);
