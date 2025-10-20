@@ -1,17 +1,17 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>SLOSEA Slot・懃岼謚ｼ縺励せ繝ｭ繝・ヨ</title>
-<meta name="description" content="譌･譛ｬ縺ｮ繧ｹ繝ｭ繝・ヨ鬚ｨ3繝ｪ繝ｼ繝ｫ縲ょ屓霆｢縺ｯ荳翫°繧我ｸ九∈縲４TOP縺ｧ縺吶＄蛛懈ｭ｢・・ｸｭ螟ｮ繝ｩ繧､繝ｳ縺ｧ繧ｹ繝翫ャ繝励ょ・逶ｮ縺ｧ莉頑律縺ｮ豕｢驕九→繧ｵ繝ｼ繝慕畑隱槭ｒ陦ｨ遉ｺ縲ょ､ｧ蠖薙◆繧翫・繧｢繝九Γ鬚ｨ繧ｭ繝｣繝ｩ縲・>
+<title>SloSea Slot｜目押しスロット</title>
+<meta name="description" content="日本のスロット風3リール。回転は上から下へ。STOPですぐ停止＆中央ラインでスナップ。出目で今日の波運とサーフ用語を表示。大当たりはアニメ風キャラ。">
 <link rel="stylesheet" href="./nav.css" />
 <script src="./nav.js" defer></script>
 <style>
   :root{
     --bg:#f7fbff; --card:#fff; --ink:#0f172a; --muted:#475569; --line:#e2e8f0;
     --brand:#0ea5e9; --accent:#22d3ee; --good:#10b981; --warn:#f59e0b; --bad:#ef4444;
-    /* 邨ｱ荳・壹そ繝ｫ鬮倥＆縺ｨ繝ｪ繝ｼ繝ｫ鬮倥＆・・S縺ｨ荳閾ｴ縺輔○繧具ｼ・*/
+    /* 統一：セル高さとリール高さ（JSと一致させる） */
     --cell-h:120px;
     --reel-h:168px;
   }
@@ -36,7 +36,7 @@
   .reel{
     position:relative; height:var(--reel-h); border:1px solid var(--line); border-radius:16px; overflow:hidden;
     background:linear-gradient(#f8feff,#fff);
-    contain: layout paint; /* 繧ｹ繧ｯ繝ｭ繝ｼ繝ｫ荳ｭ縺ｮ縺ｯ縺ｿ蜃ｺ縺玲椛蛻ｶ */
+    contain: layout paint; /* スクロール中のはみ出し抑制 */
   }
   .strip{
     position:absolute; left:0; top:0; width:100%;
@@ -47,20 +47,20 @@
     height:var(--cell-h);
     display:flex; align-items:center; justify-content:center;
     background:#fff; border-top:1px solid #eef2ff; border-bottom:1px solid #eef2ff;
-    /* 遶ｯ譛ｫ蟾ｮ逡ｰ蟇ｾ遲・*/
+    /* 端末差異対策 */
     padding:0; line-height:1; letter-spacing:0;
   }
-  /* 荳ｭ霄ｫ繧貞ｮ牙・縺ｫ繝輔ぅ繝・ヨ縺輔○繧句・騾壹Λ繝・ヱ */
+  /* 中身を安全にフィットさせる共通ラッパ */
   .fit{
     display:block; width:100%; height:100%;
-    /* 菴咏區繧貞ｰ代＠謖√◆縺帙※蟶ｸ縺ｫ蜿弱∪繧九ｈ縺・せ繧ｱ繝ｼ繝ｫ・・moji縺ｯ遶ｯ譛ｫ蟾ｮ縺悟､ｧ縺阪＞・・*/
+    /* 余白を少し持たせて常に収まるようスケール（emojiは端末差が大きい） */
     transform:scale(0.88);
     transform-origin:center;
   }
   .glyph{ font-size:64px; text-align:center; }
   .char{ width:100%; height:100%; object-fit:contain; display:block; border:0; }
 
-  /* 荳ｭ螟ｮ繧ｬ繧､繝会ｼ郁埋縺・ｷ夲ｼ・*/
+  /* 中央ガイド（薄い線） */
   .reel::after{
     content:""; position:absolute; left:8px; right:8px; top:50%;
     height:0; border-top:2px dashed rgba(14,165,233,.35); transform:translateY(-50%);
@@ -92,7 +92,7 @@
   .term dt{font-weight:900} .term dd{margin:0;color:var(--muted)}
   .note{color:var(--muted); font-size:13px}
 
-  /* 繝ｬ繧ｹ繝昴Φ繧ｷ繝厄ｼ夐ｫ倥＆縺ｯ蝗ｺ螳壹・縺ｾ縺ｾ縲よ枚蟄励し繧､繧ｺ縺ｮ縺ｿ闍･蟷ｲ荳九￡繧・*/
+  /* レスポンシブ：高さは固定のまま。文字サイズのみ若干下げる */
   @media (max-width:760px){
     .glyph{ font-size:56px; }
     .controls{grid-template-columns:1fr 1fr; grid-auto-rows:1fr}
@@ -103,30 +103,30 @@
 <body>
   <header class="global-bar">
     <div class="global-bar__inner">
-      <a class="global-bar__brand" href="./index.html#top" aria-label="SLOSEA 縺ｮ繝医ャ繝励∈謌ｻ繧・>
+      <a class="global-bar__brand" href="./index.html#top" aria-label="SloSea のトップへ戻る">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 16c4 0 4-8 8-8s4 8 8 8 4-8 8-8"/></svg>
-        <span>SLOSEA</span>
+        <span>SloSea</span>
       </a>
-      <button class="global-bar__menu" type="button" aria-label="繝｡繝九Η繝ｼ繧帝幕縺・ aria-expanded="false" aria-controls="global-menu">
+      <button class="global-bar__menu" type="button" aria-label="メニューを開く" aria-expanded="false" aria-controls="global-menu">
         <svg class="global-bar__menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
           <path d="M4 6h16M4 12h16M4 18h16" />
         </svg>
       </button>
     </div>
-    <nav class="global-bar__meta" aria-label="繝代Φ縺上★繝ｪ繧ｹ繝・>
+    <nav class="global-bar__meta" aria-label="パンくずリスト">
       <ol class="global-bar__crumbs">
-        <li aria-current="page">豕｢驕九せ繝ｭ繝・ヨ</li>
+        <li aria-current="page">波運スロット</li>
       </ol>
     </nav>
   </header>
 
 <div class="wrap">
   <header class="page-header">
-    <h1>豕｢驕九せ繝ｭ繝・ヨ <small>窶・SLOSEA</small></h1>
-    <small class="note">窶ｻ螳悟・縺ｪ螽ｯ讌ｽ讖溯・縺ｧ縺吶ゅぐ繝｣繝ｳ繝悶Ν隕∫ｴ縺ｯ縺ゅｊ縺ｾ縺帙ｓ縲・/small>
+    <h1>波運スロット <small>— SloSea</small></h1>
+    <small class="note">※完全な娯楽機能です。ギャンブル要素はありません。</small>
   </header>
 
-  <section class="game" aria-label="繧ｹ繝ｭ繝・ヨ繧ｲ繝ｼ繝">
+  <section class="game" aria-label="スロットゲーム">
     <div class="reels">
       <div class="reel" id="reel0"><div class="strip"></div></div>
       <div class="reel" id="reel1"><div class="strip"></div></div>
@@ -144,19 +144,19 @@
 
     <div class="result">
       <div class="panel">
-        <h2>莉頑律縺ｮ豕｢驕・/h2>
-        <div id="luckText" class="luck ok">窶・/div>
-        <p id="desc" class="note" style="margin:.4rem 0 0">SPIN 竊・逶ｮ謚ｼ縺励〒 STOP縲ゆｸｭ螟ｮ縺ｮ遐ｴ邱壻ｽ咲ｽｮ縺ｧ蜊ｳ蛛懈ｭ｢縺励∪縺吶・/p>
+        <h2>今日の波運</h2>
+        <div id="luckText" class="luck ok">—</div>
+        <p id="desc" class="note" style="margin:.4rem 0 0">SPIN → 目押しで STOP。中央の破線位置で即停止します。</p>
       </div>
       <div class="panel">
-        <h2>繧ｵ繝ｼ繝慕畑隱・/h2>
+        <h2>サーフ用語</h2>
         <dl class="term">
-          <dt id="termWord">窶・/dt>
-          <dd id="termDesc">邨先棡遒ｺ螳壼ｾ後↓逕ｨ隱槭→隗｣隱ｬ縺瑚｡ｨ遉ｺ縺輔ｌ縺ｾ縺吶・/dd>
+          <dt id="termWord">—</dt>
+          <dd id="termDesc">結果確定後に用語と解説が表示されます。</dd>
         </dl>
         <div style="display:flex;gap:8px;margin-top:8px">
-          <button id="btnAgain" class="btn btn--ghost" type="button" disabled>繧ゅ≧荳蠎ｦ</button>
-          <button id="btnShuffleTerm" class="btn btn--ghost" type="button" disabled>逕ｨ隱槭□縺代す繝｣繝・ヵ繝ｫ</button>
+          <button id="btnAgain" class="btn btn--ghost" type="button" disabled>もう一度</button>
+          <button id="btnShuffleTerm" class="btn btn--ghost" type="button" disabled>用語だけシャッフル</button>
         </div>
       </div>
     </div>
@@ -168,40 +168,40 @@
     <div class="global-menu__backdrop" data-menu-dismiss aria-hidden="true"></div>
   <div class="global-menu__panel" role="dialog" aria-modal="true" aria-labelledby="global-menu-title">
     <div class="global-menu__header">
-      <h2 class="global-menu__title" id="global-menu-title">繧ｳ繝ｳ繝・Φ繝・ｸ隕ｧ</h2>
-      <button class="global-menu__close" type="button" aria-label="繝｡繝九Η繝ｼ繧帝哩縺倥ｋ" data-menu-dismiss data-menu-initial>
+      <h2 class="global-menu__title" id="global-menu-title">コンテンツ一覧</h2>
+      <button class="global-menu__close" type="button" aria-label="メニューを閉じる" data-menu-dismiss data-menu-initial>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M6 6l12 12M18 6L6 18" />
         </svg>
       </button>
     </div>
     <ul class="global-menu__list">
-      <li class="global-menu__item"><a href="./index.html#apps">繝帙・繝 / 繧ｳ繝ｳ繝・Φ繝・ｸ隕ｧ</a><p>SLOSEA 縺ｮ譛譁ｰ繧ｳ繝ｳ繝・Φ繝・∪縺ｨ繧√・/p></li>
-      <li class="global-menu__item"><a href="./surfboard-guide.html">繧ｵ繝ｼ繝輔・繝ｼ繝蛾∈縺ｳ縲蝉ｿ晏ｭ倡沿縲・/a><p>逶ｮ逧・↓蜷医ｏ縺帙◆繝懊・繝峨・驕ｸ縺ｳ譁ｹ繧ｬ繧､繝峨・/p></li>
-      <li class="global-menu__item"><a href="./beginner-gear.html">蛻晏ｿ・・′謠・∴繧九∋縺埼％蜈ｷ荳蠑・/a><p>逹譖ｿ縺医・繝ｳ繝√Ι繝ｻ繝舌こ繝・↑縺ｩ蠢・声蟆冗黄縺ｾ縺ｨ繧√・/p></li>
-      <li class="global-menu__item"><a href="./game.html">Surf Mini Game</a><p>豕｢繧帝∩縺代※繧ｳ繧､繝ｳ繧帝寔繧√ｋ繧ｫ繧ｸ繝･繧｢繝ｫ繧ｲ繝ｼ繝縲・/p></li>
-      <li class="global-menu__item"><a href="./slot.html">豕｢驕九せ繝ｭ繝・ヨ</a><p>逶ｮ謚ｼ縺励〒驕翫∋繧狗ｸｦ繧ｹ繧ｯ繝ｭ繝ｼ繝ｫ蝙九せ繝ｭ繝・ヨ縲・/p></li>
-      <li class="global-menu__item"><a href="./stickers.html">繧ｵ繝ｼ繝輔せ繝・ャ繧ｫ繝ｼ驟榊ｸ・/a><p>繝懊・繝峨ｄSNS縺ｧ菴ｿ縺医ｋ繝・ず繧ｿ繝ｫ繧ｹ繝・ャ繧ｫ繝ｼ縲・/p></li>
-      <li class="global-menu__item"><a href="./about.html">SLOSEA 縺ｫ縺､縺・※</a><p>繧ｵ繧､繝医・繧ｳ繝ｳ繧ｻ繝励ヨ繧・宛菴懆レ譎ｯ繧堤ｴｹ莉九・/p></li>
-      <li class="global-menu__item"><a href="./policy.html">繝励Λ繧､繝舌す繝ｼ繝昴Μ繧ｷ繝ｼ</a><p>蛻ｩ逕ｨ閠・・縺ｿ縺ｪ縺輔∪縺ｫ螳牙ｿ・＠縺ｦ菴ｿ縺｣縺ｦ縺・◆縺縺上◆繧√↓縲・/p></li>
+      <li class="global-menu__item"><a href="./index.html#apps">ホーム / コンテンツ一覧</a><p>SloSea の最新コンテンツまとめ。</p></li>
+      <li class="global-menu__item"><a href="./surfboard-guide.html">サーフボード選び【保存版】</a><p>目的に合わせたボードの選び方ガイド。</p></li>
+      <li class="global-menu__item"><a href="./beginner-gear.html">初心者が揃えるべき道具一式</a><p>着替えポンチョ・バケツなど必携小物まとめ。</p></li>
+      <li class="global-menu__item"><a href="./game.html">Surf Mini Game</a><p>波を避けてコインを集めるカジュアルゲーム。</p></li>
+      <li class="global-menu__item"><a href="./slot.html">波運スロット</a><p>目押しで遊べる縦スクロール型スロット。</p></li>
+      <li class="global-menu__item"><a href="./stickers.html">サーフステッカー配布</a><p>ボードやSNSで使えるデジタルステッカー。</p></li>
+      <li class="global-menu__item"><a href="./about.html">SloSea について</a><p>サイトのコンセプトや制作背景を紹介。</p></li>
+      <li class="global-menu__item"><a href="./policy.html">プライバシーポリシー</a><p>利用者のみなさまに安心して使っていただくために。</p></li>
     </ul>
-    <p class="global-menu__footer">縺泌ｸ梧悍縺ｮ繧ｳ繝ｳ繝・Φ繝・ｒ驕ｸ謚槭＠縺ｦ縺上□縺輔＞縲・/p>
+    <p class="global-menu__footer">ご希望のコンテンツを選択してください。</p>
     <button class="global-menu__close" type="button" data-menu-dismiss>
-      繝｡繝九Η繝ｼ繧帝哩縺倥ｋ
+      メニューを閉じる
     </button>
   </div>
 </nav>
 
 <script>
-/* ======== 繧ｷ繝ｳ繝懊Ν螳夂ｾｩ・医ヵ繝ｫ繝ｼ繝・ｼ句､ｧ蠖薙◆繧翫く繝｣繝ｩ・・======== */
+/* ======== シンボル定義（フルーツ＋大当たりキャラ） ======== */
 const SPECIAL_CHAR = { id:'char', type:'img', src:'./game.png', label:'CHAR' };
 const FRUITS = [
-  { id:'cherry', label:'穀' }, { id:'lemon', label:'豪' }, { id:'banana', label:'轟' },
-  { id:'grape',  label:'合' }, { id:'peach',  label:'国' }, { id:'pine',   label:'麹' },
-  { id:'melon',  label:'壕' }, { id:'straw',  label:'酷' }, { id:'water',  label:'拷' }
+  { id:'cherry', label:'🍒' }, { id:'lemon', label:'🍋' }, { id:'banana', label:'🍌' },
+  { id:'grape',  label:'🍇' }, { id:'peach',  label:'🍑' }, { id:'pine',   label:'🍍' },
+  { id:'melon',  label:'🍈' }, { id:'straw',  label:'🍓' }, { id:'water',  label:'🍉' }
 ];
 
-/* ==== 蝗ｺ螳壹せ繝医Μ繝・・・亥燕蝗槭→蜷御ｸ・・==== */
+/* ==== 固定ストリップ（前回と同一） ==== */
 const BASE_STRIPS = [
   [ 'lemon','grape','banana','cherry','melon','pine','straw','peach','water','banana','grape','lemon','char','peach','cherry','water' ],
   [ 'banana','water','peach','cherry','grape','lemon','melon','straw','pine','banana','grape','char','lemon','peach','water','cherry' ],
@@ -213,9 +213,9 @@ const ID2SYM = Object.fromEntries([
   ['char', SPECIAL_CHAR]
 ]);
 
-/* ======== 繝ｪ繝ｼ繝ｫ邂｡逅・ｼ井ｸ岩・荳九せ繧ｯ繝ｭ繝ｼ繝ｫ縲∝叉蛛懈ｭ｢繧ｹ繝翫ャ繝暦ｼ・======== */
-const REEL_HEIGHT = 168;                                 // CSS --reel-h 縺ｨ荳閾ｴ
-const CELL_HEIGHT = 120;                                 // CSS --cell-h 縺ｨ荳閾ｴ
+/* ======== リール管理（上→下スクロール、即停止スナップ） ======== */
+const REEL_HEIGHT = 168;                                 // CSS --reel-h と一致
+const CELL_HEIGHT = 120;                                 // CSS --cell-h と一致
 const CENTER_TOP  = (REEL_HEIGHT - CELL_HEIGHT)/2;       // 24
 
 class Reel {
@@ -224,14 +224,14 @@ class Reel {
     this.strip = rootEl.querySelector('.strip');
     this.order = orderIds.slice();
     this.n = this.order.length;
-    this.totalH = this.n * CELL_HEIGHT;        // 1蜻ｨ縺ｶ繧・
-    this.scrollH = this.totalH * 3;            // 3蜻ｨ縺ｶ繧難ｼ育ｩｺ逋ｽ髦ｲ豁｢・・
+    this.totalH = this.n * CELL_HEIGHT;        // 1周ぶん
+    this.scrollH = this.totalH * 3;            // 3周ぶん（空白防止）
 
-    // 3蜻ｨ縺ｶ繧薙・繧ｻ繝ｫ・亥推繧ｻ繝ｫ縺ｯ fit 繝ｩ繝・ヱ縺ｧ螳牙・縺ｫ繝輔ぅ繝・ヨ・・
+    // 3周ぶんのセル（各セルは fit ラッパで安全にフィット）
     const dup = [...this.order, ...this.order, ...this.order];
     this.strip.replaceChildren(...dup.map(id => renderCell(ID2SYM[id])));
 
-    // pos縺ｯ strip 縺ｮ荳顔ｫｯ縺後←繧後□縺鯛應ｸ翫↓髫繧後※縺・ｋ縺銀昴ら判髱｢縺ｯ translateY(-pos) 繧呈寺縺代ｋ縲・
+    // posは strip の上端がどれだけ“上に隠れているか”。画面は translateY(-pos) を掛ける。
     this.pos = Math.random()*this.scrollH;
     this.speed = speed;      // px/s
     this.spin = false;
@@ -240,36 +240,36 @@ class Reel {
     this.apply();
   }
   apply(){
-    // wrap・・..scrollH・・
+    // wrap（0..scrollH）
     if(this.pos < 0) this.pos += this.scrollH;
     if(this.pos >= this.scrollH) this.pos -= this.scrollH;
-    // 繧ｵ繝悶ヴ繧ｯ繧ｻ繝ｫ隱､蟾ｮ繧呈椛蛻ｶ・医↓縺倥∩髦ｲ豁｢・・
+    // サブピクセル誤差を抑制（にじみ防止）
     const snapped = Math.round(this.pos);
     this.strip.style.transform = `translate3d(0, ${-snapped}px, 0)`;
   }
   update(dt){
     if(!this.spin) return;
-    this.pos -= this.speed * dt;   // 荳岩・荳九∈豬√☆・・os繧呈ｸ帙ｉ縺呻ｼ・
+    this.pos -= this.speed * dt;   // 上→下へ流す（posを減らす）
     this.apply();
   }
   indexAtCenter(){
-    // 荳ｭ螟ｮ繝ｩ繧､繝ｳ菴咲ｽｮ・・trip蠎ｧ讓呻ｼ会ｼ・pos + CENTER_TOP
+    // 中央ライン位置（strip座標）＝ pos + CENTER_TOP
     const p = mod(this.pos + CENTER_TOP, this.totalH);
     const idx = Math.round(p / CELL_HEIGHT) % this.n;
     return idx < 0 ? idx + this.n : idx;
   }
   snapStop(){
-    // 謚ｼ荳狗椪髢薙・荳ｭ螟ｮ繧ｻ繝ｫ繧呈ｱゅａ縲√◎縺ｮ繧ｻ繝ｫ縺御ｸｭ螟ｮ縺ｫ繝斐ち繝・→譚･繧・pos 縺ｫ蜊ｳ蜷医ｏ縺帙※蛛懈ｭ｢
+    // 押下瞬間の中央セルを求め、そのセルが中央にピタッと来る pos に即合わせて停止
     const idx = this.indexAtCenter();
-    const base = idx * CELL_HEIGHT - CENTER_TOP; // 縺昴・譟・′荳ｭ螟ｮ縺ｫ譚･繧却os・・蜻ｨ蠎ｧ讓咏ｳｻ・・
+    const base = idx * CELL_HEIGHT - CENTER_TOP; // その柄が中央に来るpos（1周座標系）
     const baseMod = mod(base, this.totalH);
     const curMod  = mod(this.pos,  this.totalH);
 
-    // 3蛟呵｣懊・縺・■繧ｸ繝｣繝ｳ繝鈴㍼縺梧怙蟆上・菴咲ｽｮ繧呈治逕ｨ
+    // 3候補のうちジャンプ量が最小の位置を採用
     const candidates = [
-      this.pos - curMod + baseMod,                 // 蜷悟捉蝗・
-      this.pos - curMod + baseMod + this.totalH,   // +1蜻ｨ
-      this.pos - curMod + baseMod - this.totalH    // -1蜻ｨ
+      this.pos - curMod + baseMod,                 // 同周回
+      this.pos - curMod + baseMod + this.totalH,   // +1周
+      this.pos - curMod + baseMod - this.totalH    // -1周
     ];
     let best = candidates[0], bestDiff = Math.abs(candidates[0]-this.pos);
     for(const c of candidates){
@@ -286,7 +286,7 @@ class Reel {
 function renderCell(sym){
   const el = document.createElement('div'); el.className = 'cell';
   if(sym.type === 'img'){
-    const img = document.createElement('img'); img.className='char fit'; img.src = sym.src; img.alt = '螟ｧ蠖薙◆繧翫く繝｣繝ｩ';
+    const img = document.createElement('img'); img.className='char fit'; img.src = sym.src; img.alt = '大当たりキャラ';
     el.appendChild(img);
   } else {
     const span = document.createElement('span'); span.className='glyph fit'; span.textContent = sym.label;
@@ -297,14 +297,14 @@ function renderCell(sym){
 }
 const mod = (x,m)=>((x%m)+m)%m;
 
-/* ======== 蛻晄悄蛹・======== */
+/* ======== 初期化 ======== */
 const reels = [
   new Reel(document.getElementById('reel0'), BASE_STRIPS[0], 900),
   new Reel(document.getElementById('reel1'), BASE_STRIPS[1], 980),
   new Reel(document.getElementById('reel2'), BASE_STRIPS[2], 1060)
 ];
 
-/* ======== 繧ｳ繝ｳ繝医Ο繝ｼ繝ｫ ======== */
+/* ======== コントロール ======== */
 const btnStart = document.getElementById('btnStart');
 const btnStops  = [0,1,2].map(i=>document.getElementById('btnStop'+i));
 const btnAgain  = document.getElementById('btnAgain');
@@ -318,7 +318,7 @@ btnStops.forEach((b,i)=>b.addEventListener('click', ()=>stopReel(i)));
 btnAgain.addEventListener('click', ()=>{ resetUI(); startSpin(); });
 btnShuffleTerm.addEventListener('click', showRandomTerm);
 
-/* 繧ｭ繝ｼ謫堺ｽ懶ｼ・,2,3縺ｧSTOP縲ヾpace縺ｧSPIN・・*/
+/* キー操作（1,2,3でSTOP、SpaceでSPIN） */
 window.addEventListener('keydown', (e)=>{
   if(e.key === ' ') { e.preventDefault(); if(!btnStart.disabled) startSpin(); }
   if(e.key === '1') stopReel(0);
@@ -326,7 +326,7 @@ window.addEventListener('keydown', (e)=>{
   if(e.key === '3') stopReel(2);
 });
 
-/* ======== 繧ｲ繝ｼ繝繝ｫ繝ｼ繝・======== */
+/* ======== ゲームループ ======== */
 let last = performance.now();
 (function loop(t){
   const dt = Math.min(0.04, (t - last)/1000); // <= 40ms
@@ -342,13 +342,13 @@ function startSpin(){
   btnShuffleTerm.disabled = true;
   btnStops.forEach(b=>b.disabled=false);
 
-  luckText.textContent = '繧ｹ繝斐Φ荳ｭ窶ｦ';
+  luckText.textContent = 'スピン中…';
   luckText.className = 'luck ok';
-  desc.textContent = '豁｢繧√◆縺・ち繧､繝溘Φ繧ｰ縺ｧ STOP・井ｸｭ螟ｮ遐ｴ邱壹〒蜊ｳ蛛懈ｭ｢縺励∪縺呻ｼ峨・;
+  desc.textContent = '止めたいタイミングで STOP（中央破線で即停止します）。';
 
   reels.forEach((r,idx)=>{
     r.spin = true; r.finalIndex = null;
-    // 繧ｹ繧ｿ繝ｼ繝域凾縺ｫ蟆代＠縺縺台ｽ咲嶌繧偵★繧峨☆
+    // スタート時に少しだけ位相をずらす
     r.pos = mod(r.pos - (idx*CELL_HEIGHT/2), r.scrollH);
     r.apply();
   });
@@ -357,26 +357,26 @@ function startSpin(){
 function stopReel(i){
   const r = reels[i];
   if(!r.spin) return;
-  r.snapStop();                 // 蜊ｳ蛛懈ｭ｢・・ｸｭ螟ｮ繧ｹ繝翫ャ繝・
+  r.snapStop();                 // 即停止＆中央スナップ
   btnStops[i].disabled = true;
 
-  // 蜈ｨ驛ｨ豁｢縺ｾ縺｣縺溘ｉ隧穂ｾ｡
+  // 全部止まったら評価
   if(reels.every(R=>!R.spin)) evaluate();
 }
 
 function resetUI(){
   meterBar.style.width = '0%';
-  luckText.textContent = '窶・;
+  luckText.textContent = '—';
   luckText.className = 'luck ok';
-  desc.textContent = 'SPIN 繧呈款縺励※髢句ｧ九＠縺ｦ縺上□縺輔＞縲・;
-  document.getElementById('termWord').textContent = '窶・;
-  document.getElementById('termDesc').textContent = '邨先棡遒ｺ螳壼ｾ後↓逕ｨ隱槭′陦ｨ遉ｺ縺輔ｌ縺ｾ縺吶・;
+  desc.textContent = 'SPIN を押して開始してください。';
+  document.getElementById('termWord').textContent = '—';
+  document.getElementById('termDesc').textContent = '結果確定後に用語が表示されます。';
   btnStops.forEach(b=>b.disabled=true);
 }
 
-/* ======== 蛻､螳・======== */
+/* ======== 判定 ======== */
 function evaluate(){
-  // 荳ｭ螟ｮ縺ｫ蛛懈ｭ｢縺励◆蜷・Μ繝ｼ繝ｫ縺ｮ繧ｷ繝ｳ繝懊Ν繧貞叙蠕・
+  // 中央に停止した各リールのシンボルを取得
   const ids = reels.map((r,ri)=>{
     const idx = r.finalIndex ?? r.indexAtCenter();
     const id  = BASE_STRIPS[ri][idx % BASE_STRIPS[ri].length];
@@ -386,27 +386,27 @@ function evaluate(){
   const counts = ids.reduce((m,id)=> (m[id]=(m[id]||0)+1, m), {});
   const hasChar = ids.includes('char');
 
-  let score = 40, message='譎ｮ騾夲ｼ夂┌逅・↑縺冗ｷｴ鄙呈律蜥後・, level='ok';
+  let score = 40, message='普通：無理なく練習日和。', level='ok';
   const uniq = Object.keys(counts).length;
 
   if(uniq===1){
-    if(hasChar){ score=100; message='螟ｧ蠖薙◆繧奇ｼ∫・逋ｺ逧・ｼ壽怙鬮倥・荳譛ｬ繧堤漁縺医ｋ譌･縲・; level='good'; confetti(); }
-    else{ score=86; message='邨ｶ螂ｽ隱ｿ・壹そ繝・ヨ縺ｧ濶ｯ縺・ｳ｢縺悟ｮ牙ｮ壹・; level='good'; }
+    if(hasChar){ score=100; message='大当たり！爆発的：最高の一本を狙える日。'; level='good'; confetti(); }
+    else{ score=86; message='絶好調：セットで良い波が安定。'; level='good'; }
   }else if(uniq===2){
     const pairId = Object.entries(counts).find(([id,c])=>c===2)?.[0];
     const hasPair = !!pairId && pairId!=='char';
-    if(hasChar && hasPair){ score=78; message='縺九↑繧願憶縺・ｼ夐｢ｨ縺ｨ貎ｮ繧貞粋繧上○縺ｦ迢吶＞謦・■縲・; level='good'; }
-    else if(hasPair){ score=62; message='縺ｾ縺壹∪縺夲ｼ壽ｷｷ髮大屓驕ｿ縺ｧ蜈・ｮ溘そ繝・す繝ｧ繝ｳ縺ｸ縲・; level='ok'; }
-    else{ score=55; message='蜿ｯ繧ゅ↑縺丈ｸ榊庄繧ゅ↑縺擾ｼ壽ｽｮ蝗槭ｊ谺｡隨ｬ縲・; level='ok'; }
+    if(hasChar && hasPair){ score=78; message='かなり良い：風と潮を合わせて狙い撃ち。'; level='good'; }
+    else if(hasPair){ score=62; message='まずまず：混雑回避で充実セッションへ。'; level='ok'; }
+    else{ score=55; message='可もなく不可もなく：潮回り次第。'; level='ok'; }
   }else{
-    if(hasChar){ score=58; message='繝√Ε繝ｳ繧ｹ譛峨ｊ・壹ち繧､繝溘Φ繧ｰ谺｡隨ｬ縺ｧ蠖薙※繧峨ｌ縺昴≧縲・; level='ok'; }
-    else{ score=30; message='繧､繝槭う繝・ｼ夂┌逅・○縺夐匣繝医Ξ繧・ュ蝣ｱ蜿朱寔繧ゅ・; level='warn'; }
+    if(hasChar){ score=58; message='チャンス有り：タイミング次第で当てられそう。'; level='ok'; }
+    else{ score=30; message='イマイチ：無理せず陸トレや情報収集も。'; level='warn'; }
   }
 
   meterBar.style.width = Math.min(score,100)+'%';
   luckText.textContent = message;
   luckText.className = 'luck ' + (level==='good'?'good':level==='warn'?'warn':'ok');
-  desc.textContent = `蜃ｺ逶ｮ・・{ids.map(idToEmoji).join(' | ')}`;
+  desc.textContent = `出目：${ids.map(idToEmoji).join(' | ')}`;
 
   btnAgain.disabled = false;
   btnShuffleTerm.disabled = false;
@@ -415,30 +415,30 @@ function evaluate(){
   showRandomTerm();
 }
 function idToEmoji(id){
-  if(id==='char') return '識螟ｧ蠖薙◆繧翫く繝｣繝ｩ';
-  const f = FRUITS.find(x=>x.id===id); return f ? f.label : '・・;
+  if(id==='char') return '🎯大当たりキャラ';
+  const f = FRUITS.find(x=>x.id===id); return f ? f.label : '？';
 }
 
-/* ======== 逕ｨ隱・======== */
+/* ======== 用語 ======== */
 const TERMS = [
-  ['繧ｪ繝輔す繝ｧ繧｢','豬ｷ縺九ｉ髯ｸ縺ｸ蜷代°縺・｢ｨ縲る擇縺梧紛縺・ｄ縺吶￥縲∬憶縺・ヶ繝ｬ繧､繧ｯ繧堤函繧縲・],
-  ['繧ｪ繝ｳ繧ｷ繝ｧ繧｢','髯ｸ縺九ｉ豬ｷ縺ｸ蜷代°縺・｢ｨ縲る擇縺瑚穀繧後′縺｡縺ｧ繝医Ο繧√・蜑ｲ繧梧婿縺ｫ縺ｪ繧翫ｄ縺吶＞縲・],
-  ['繧ｻ繝・ヨ','蜻ｨ譛溽噪縺ｫ蜈･繧九し繧､繧ｺ縺ｮ螟ｧ縺阪＞豕｢縺ｮ縺ｾ縺ｨ縺ｾ繧翫る俣髫斐ｂ諢剰ｭ倥・],
-  ['繝斐・繧ｯ','豕｢縺梧怙蛻昴↓遶九■荳翫′繧矩らせ縲よ怙繧ゅヱ繝ｯ繝ｼ縺碁寔荳ｭ縺吶ｋ菴咲ｽｮ縲・],
-  ['繧ｷ繝ｧ繝ｫ繝繝ｼ','繝斐・繧ｯ縺九ｉ讓ｪ縺ｫ莨ｸ縺ｳ繧倶ｹ励ｊ縺励ｍ驛ｨ蛻・ゅΛ繧､繝ｳ縺ｩ繧翫・繧ｭ繝ｼ縲・],
-  ['繧､繝ｳ繧ｵ繧､繝・,'蟯ｸ縺ｫ霑代＞豬・ｴ縲ゅせ繝ｼ繝励′螟壹￥謌ｻ繧翫′驥阪＞縲・],
-  ['繧｢繧ｦ繝・,'豐門・縺ｮ繝ｩ繧､繝ｳ繝翫ャ繝励ょｾ・ｩ溘→繝・う繧ｯ繧ｪ繝輔・蝓ｺ轤ｹ縲・],
-  ['繝繝・け繝繧､繝・,'繝懊・繝峨ｒ豐医ａ縺ｦ豕｢縺ｮ荳九ｒ縺上＄繧九ゅす繝ｧ繝ｼ繝亥髄縺代・],
-  ['繝・う繧ｯ繧ｪ繝・,'豕｢縺ｫ謚ｼ縺輔ｌ縺ｦ遶九■荳翫′繧句虚菴懊ょ・邏夊・・譛驥崎ｦ∝渕遉弱・],
-  ['繝懊ヨ繝繧ｿ繝ｼ繝ｳ','遶九■荳翫′繧顔峩蠕後・螟ｧ縺阪↑繧ｿ繝ｼ繝ｳ縲ゆｻ･髯阪・蜍輔″縺ｮ蝨溷床縲・],
-  ['繧ｫ繝・ヨ繝舌ャ繧ｯ','襍ｰ繧翫☆縺主ｾ後↓繝悶Ξ繧､繧ｯ縺ｸ謌ｻ繧九ち繝ｼ繝ｳ縲ゅせ繝斐・繝芽ｪｿ謨ｴ縲・],
-  ['繝ｪ繝・・','豕｢縺ｮ蟠ｩ繧後ｋ荳顔ｫｯ縲ゅい繧ｯ繧ｷ繝ｧ繝ｳ縺ｮ逧・↓縺ｪ繧九・],
-  ['繧ｯ繝ｭ繝ｼ繧ｺ繧｢繧ｦ繝・,'蟯ｸ縺ｾ縺ｧ荳譁峨↓蜑ｲ繧後ｋ迥ｶ諷九りｵｰ繧倶ｽ吝慍縺悟ｰ代↑縺・・],
-  ['繝繝ｳ繝代・','諤･縺ｫ貎ｰ繧後ｋ蜉帛ｼｷ縺・牡繧後ょ絢縺輔ｊ繧・☆縺乗ｳｨ諢上・],
-  ['繝ｬ繧ｮ繝･繝ｩ繝ｼ/繧ｰ繝ｼ繝輔ぅ繝ｼ','蜿ｳ雜ｳ/蟾ｦ雜ｳ縺悟ｾ後ｍ縺ｮ繧ｹ繧ｿ繝ｳ繧ｹ縲り・蛻・・蜷代″繧呈滑謠｡縲・],
-  ['繧ｷ繝ｧ繧｢繝悶Ξ繧､繧ｯ','蟯ｸ霑代￥縺ｧ諤･縺ｫ謗倥ｌ繧区ｳ｢縲ゅし繧､繧ｺ莉･荳翫↓蜊ｱ髯ｺ蠎ｦ鬮倥ａ縲・],
-  ['繧ｯ繝ｭ繧ｹ繧ｷ繝ｧ繧｢','讓ｪ鬚ｨ縲る擇縺後ヰ繝ｩ縺代ｄ縺吶＞縺後・繧ｸ繧ｷ繝ｧ繝ｳ谺｡隨ｬ縺ｧ笳弱・],
-  ['繝輔ぉ繧､繧ｹ','豕｢縺ｮ貊題ｵｰ髱｢縲らｶｺ鮗励↑繝輔ぉ繧､繧ｹ・昜ｹ励ｊ繧・☆縺・し繧､繝ｳ縲・]
+  ['オフショア','海から陸へ向かう風。面が整いやすく、良いブレイクを生む。'],
+  ['オンショア','陸から海へ向かう風。面が荒れがちでトロめの割れ方になりやすい。'],
+  ['セット','周期的に入るサイズの大きい波のまとまり。間隔も意識。'],
+  ['ピーク','波が最初に立ち上がる頂点。最もパワーが集中する位置。'],
+  ['ショルダー','ピークから横に伸びる乗りしろ部分。ラインどりのキー。'],
+  ['インサイド','岸に近い浅場。スープが多く戻りが重い。'],
+  ['アウト','沖側のラインナップ。待機とテイクオフの基点。'],
+  ['ダックダイブ','ボードを沈めて波の下をくぐる。ショート向け。'],
+  ['テイクオフ','波に押されて立ち上がる動作。初級者の最重要基礎。'],
+  ['ボトムターン','立ち上がり直後の大きなターン。以降の動きの土台。'],
+  ['カットバック','走りすぎ後にブレイクへ戻るターン。スピード調整。'],
+  ['リップ','波の崩れる上端。アクションの的になる。'],
+  ['クローズアウト','岸まで一斉に割れる状態。走る余地が少ない。'],
+  ['ダンパー','急に潰れる力強い割れ。刺さりやすく注意。'],
+  ['レギュラー/グーフィー','右足/左足が後ろのスタンス。自分の向きを把握。'],
+  ['ショアブレイク','岸近くで急に掘れる波。サイズ以上に危険度高め。'],
+  ['クロスショア','横風。面がバラけやすいがポジション次第で◎。'],
+  ['フェイス','波の滑走面。綺麗なフェイス＝乗りやすいサイン。']
 ];
 function showRandomTerm(){
   const [w,d] = TERMS[Math.floor(Math.random()*TERMS.length)];
@@ -446,7 +446,7 @@ function showRandomTerm(){
   document.getElementById('termDesc').textContent = d;
 }
 
-/* ======== 邏吝聖髮ｪ ======== */
+/* ======== 紙吹雪 ======== */
 function confetti(){
   const n=24, root=document.body;
   for(let i=0;i<n;i++){
@@ -470,4 +470,3 @@ function confetti(){
 </script>
 </body>
 </html>
-

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
@@ -11,26 +11,26 @@
 <body>
   <header class="global-bar">
     <div class="global-bar__inner">
-      <a class="global-bar__brand" href="./index.html#top" aria-label="SLOSEA 縺ｮ繝医ャ繝励∈謌ｻ繧・>
+      <a class="global-bar__brand" href="./index.html#top" aria-label="SloSea のトップへ戻る">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 16c4 0 4-8 8-8s4 8 8 8 4-8 8-8"/></svg>
-        <span>SLOSEA</span>
+        <span>SloSea</span>
       </a>
-      <button class="global-bar__menu" type="button" aria-label="繝｡繝九Η繝ｼ繧帝幕縺・ aria-expanded="false" aria-controls="global-menu">
+      <button class="global-bar__menu" type="button" aria-label="メニューを開く" aria-expanded="false" aria-controls="global-menu">
         <svg class="global-bar__menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
           <path d="M4 6h16M4 12h16M4 18h16" />
         </svg>
       </button>
     </div>
-    <nav class="global-bar__meta" aria-label="繝代Φ縺上★繝ｪ繧ｹ繝・>
+    <nav class="global-bar__meta" aria-label="パンくずリスト">
       <ol class="global-bar__crumbs">
-        <li aria-current="page">繝溘ル繧ｲ繝ｼ繝</li>
+        <li aria-current="page">ミニゲーム</li>
       </ol>
     </nav>
   </header>
 
   <div class="wrap">
     <header class="topbar">
-      <h1>巡 Surf Mini Game</h1>
+      <h1>🏄 Surf Mini Game</h1>
       <div class="topbar-right">
         <div class="hud">
           <span id="score">Score: 0</span>
@@ -39,7 +39,7 @@
       </div>
     </header>
 
-    <canvas id="game" width="400" height="600" aria-label="繧ｵ繝ｼ繝輔ご繝ｼ繝縺ｮ繧ｭ繝｣繝ｳ繝舌せ"></canvas>
+    <canvas id="game" width="400" height="600" aria-label="サーフゲームのキャンバス"></canvas>
 
     <div class="bars">
       <div class="bar">
@@ -53,27 +53,27 @@
     </div>
 
     <div class="controls">
-      <button id="btnLeft" aria-label="蟾ｦ縺ｸ">笳・・/button>
-      <button id="btnPause" aria-label="荳譎ょ●豁｢/蜀埼幕">竢ｸ・・笆ｶ・・/button>
-      <button id="btnRight" aria-label="蜿ｳ縺ｸ">笆ｶ・・/button>
+      <button id="btnLeft" aria-label="左へ">◀︎</button>
+      <button id="btnPause" aria-label="一時停止/再開">⏸︎/▶︎</button>
+      <button id="btnRight" aria-label="右へ">▶︎</button>
     </div>
 
     <section class="help">
       <details>
-        <summary>縺ゅ◎縺ｳ縺九◆</summary>
+        <summary>あそびかた</summary>
         <ul>
-          <li>PC: 竊・竊・繧ｭ繝ｼ縺ｧ遘ｻ蜍・/ P縺ｧ荳譎ょ●豁｢</li>
-          <li>繧ｹ繝槭・: 逕ｻ髱｢蟾ｦ蜿ｳ繧ｿ繝・・・医∪縺溘・繧ｹ繝ｯ繧､繝暦ｼ峨〒遘ｻ蜍・/li>
-          <li>笘・繧ｳ繧､繝ｳ縺ｧ +10轤ｹ & 繧ｹ繧ｿ繝溘リ蝗槫ｾｩ</li>
-          <li>笆ｲ 蟯ｩ縺ｫ蠖薙◆繧九→繧ｲ繝ｼ繝繧ｪ繝ｼ繝舌・</li>
-          <li>笏・繝悶Ξ繧､繧ｯ繧ｻ繝・ヨ縺ｯ髫咎俣縺縺大ｮ牙・</li>
+          <li>PC: ← → キーで移動 / Pで一時停止</li>
+          <li>スマホ: 画面左右タップ（またはスワイプ）で移動</li>
+          <li>★ コインで +10点 & スタミナ回復</li>
+          <li>▲ 岩に当たるとゲームオーバー</li>
+          <li>━ ブレイクセットは隙間だけ安全</li>
         </ul>
       </details>
     </section>
 
   <footer class="footer">
-    <div>ﾂｩ <span id="year"></span> SLOSEA</div>
-    <div style="margin-top:6px"><a href="./about.html">驕句霧閠・ュ蝣ｱ</a>繝ｻ<a href="./policy.html">繧｢繝輔ぅ繝ｪ繧ｨ繧､繝医・繝ｪ繧ｷ繝ｼ</a></div>
+    <div>© <span id="year"></span> SloSea</div>
+    <div style="margin-top:6px"><a href="./about.html">運営者情報</a>・<a href="./policy.html">アフィリエイトポリシー</a></div>
   </footer>
 </div>
 
@@ -81,25 +81,25 @@
     <div class="global-menu__backdrop" data-menu-dismiss aria-hidden="true"></div>
   <div class="global-menu__panel" role="dialog" aria-modal="true" aria-labelledby="global-menu-title">
     <div class="global-menu__header">
-      <h2 class="global-menu__title" id="global-menu-title">繧ｳ繝ｳ繝・Φ繝・ｸ隕ｧ</h2>
-      <button class="global-menu__close" type="button" aria-label="繝｡繝九Η繝ｼ繧帝哩縺倥ｋ" data-menu-dismiss data-menu-initial>
+      <h2 class="global-menu__title" id="global-menu-title">コンテンツ一覧</h2>
+      <button class="global-menu__close" type="button" aria-label="メニューを閉じる" data-menu-dismiss data-menu-initial>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M6 6l12 12M18 6L6 18" />
         </svg>
       </button>
     </div>
     <ul class="global-menu__list">
-      <li class="global-menu__item"><a href="./index.html#apps">繝帙・繝 / 繧ｳ繝ｳ繝・Φ繝・ｸ隕ｧ</a><p>SLOSEA 縺ｮ譛譁ｰ繧ｳ繝ｳ繝・Φ繝・∪縺ｨ繧√・/p></li>
-      <li class="global-menu__item"><a href="./surfboard-guide.html">繧ｵ繝ｼ繝輔・繝ｼ繝蛾∈縺ｳ縲蝉ｿ晏ｭ倡沿縲・/a><p>逶ｮ逧・↓蜷医ｏ縺帙◆繝懊・繝峨・驕ｸ縺ｳ譁ｹ繧ｬ繧､繝峨・/p></li>
-      <li class="global-menu__item"><a href="./beginner-gear.html">蛻晏ｿ・・′謠・∴繧九∋縺埼％蜈ｷ荳蠑・/a><p>逹譖ｿ縺医・繝ｳ繝√Ι繝ｻ繝舌こ繝・↑縺ｩ蠢・声蟆冗黄縺ｾ縺ｨ繧√・/p></li>
-      <li class="global-menu__item"><a href="./game.html">Surf Mini Game</a><p>豕｢繧帝∩縺代※繧ｳ繧､繝ｳ繧帝寔繧√ｋ繧ｫ繧ｸ繝･繧｢繝ｫ繧ｲ繝ｼ繝縲・/p></li>
-      <li class="global-menu__item"><a href="./stickers.html">繧ｵ繝ｼ繝輔せ繝・ャ繧ｫ繝ｼ驟榊ｸ・/a><p>繝懊・繝峨ｄSNS縺ｧ菴ｿ縺医ｋ繝・ず繧ｿ繝ｫ繧ｹ繝・ャ繧ｫ繝ｼ縲・/p></li>
-      <li class="global-menu__item"><a href="./about.html">SLOSEA 縺ｫ縺､縺・※</a><p>繧ｵ繧､繝医・繧ｳ繝ｳ繧ｻ繝励ヨ繧・宛菴懆レ譎ｯ繧堤ｴｹ莉九・/p></li>
-      <li class="global-menu__item"><a href="./policy.html">繝励Λ繧､繝舌す繝ｼ繝昴Μ繧ｷ繝ｼ</a><p>蛻ｩ逕ｨ閠・・縺ｿ縺ｪ縺輔∪縺ｫ螳牙ｿ・＠縺ｦ菴ｿ縺｣縺ｦ縺・◆縺縺上◆繧√↓縲・/p></li>
+      <li class="global-menu__item"><a href="./index.html#apps">ホーム / コンテンツ一覧</a><p>SloSea の最新コンテンツまとめ。</p></li>
+      <li class="global-menu__item"><a href="./surfboard-guide.html">サーフボード選び【保存版】</a><p>目的に合わせたボードの選び方ガイド。</p></li>
+      <li class="global-menu__item"><a href="./beginner-gear.html">初心者が揃えるべき道具一式</a><p>着替えポンチョ・バケツなど必携小物まとめ。</p></li>
+      <li class="global-menu__item"><a href="./game.html">Surf Mini Game</a><p>波を避けてコインを集めるカジュアルゲーム。</p></li>
+      <li class="global-menu__item"><a href="./stickers.html">サーフステッカー配布</a><p>ボードやSNSで使えるデジタルステッカー。</p></li>
+      <li class="global-menu__item"><a href="./about.html">SloSea について</a><p>サイトのコンセプトや制作背景を紹介。</p></li>
+      <li class="global-menu__item"><a href="./policy.html">プライバシーポリシー</a><p>利用者のみなさまに安心して使っていただくために。</p></li>
     </ul>
-    <p class="global-menu__footer">縺泌ｸ梧悍縺ｮ繧ｳ繝ｳ繝・Φ繝・ｒ驕ｸ謚槭＠縺ｦ縺上□縺輔＞縲・/p>
+    <p class="global-menu__footer">ご希望のコンテンツを選択してください。</p>
     <button class="global-menu__close" type="button" data-menu-dismiss>
-      繝｡繝九Η繝ｼ繧帝哩縺倥ｋ
+      メニューを閉じる
     </button>
   </div>
 </nav>
@@ -107,4 +107,3 @@
 <script src="./game.js" defer></script>
 </body>
 </html>
-
