@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>湘南の予報｜SloSea</title>
+  <meta name="description" content="湘南（鎌倉〜平塚）エリアの波予報を、毎日のツイートと同じ内容でアーカイブするページです。朝・昼・夕方のコンディションと一言メモを掲載します。" />
+  <link rel="stylesheet" href="./nav.css" />
+  <script src="./nav.js" defer></script>
+  <style>
+    :root{
+      --bg:#ffffff;--fg:#0f172a;--muted:#475569;--brand:#0ea5e9;--line:#e2e8f0;--chip:#f1f5f9;
+    }
+    html{scroll-behavior:smooth;scroll-padding-top:72px}
+    body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic UI",sans-serif;line-height:1.75}
+    a{color:var(--brand);text-decoration:none}
+    a:hover{text-decoration:underline}
+    .wrap{max-width:1080px;margin:0 auto;padding:0 16px}
+    main{padding:24px 0}
+    h1{font-size:clamp(24px,3vw,36px);line-height:1.3;margin:8px 0 16px}
+    h2{font-size:clamp(18px,2.2vw,24px);margin:24px 0 12px}
+    h3{margin:18px 0 8px;font-size:clamp(16px,2vw,20px)}
+    .lead{color:var(--muted);font-size:16px}
+    .breadcrumbs{font-size:13px;color:var(--muted);margin:8px 0 16px}
+    .meta{font-size:13px;color:var(--muted)}
+    .chip{display:inline-block;background:var(--chip);border:1px solid var(--line);padding:2px 8px;border-radius:999px;font-size:12px;margin-right:6px}
+    .forecast-list{display:flex;flex-direction:column;gap:18px;margin:24px 0}
+    .forecast-entry{border:1px solid var(--line);border-radius:14px;padding:16px;background:#ffffff}
+    .forecast-header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+    .forecast-header h2{margin:0;font-size:18px}
+    .forecast-body{display:grid;grid-template-columns:2fr 1.2fr;gap:16px;margin-top:8px}
+    .forecast-text p{margin:0 0 8px}
+    .summary-list{margin:0;padding-left:18px;font-size:14px;color:var(--muted)}
+    .summary-list li{margin:4px 0}
+    footer{border-top:1px solid var(--line);margin-top:32px}
+    .foot{display:flex;justify-content:space-between;gap:12px;padding:24px 0;color:var(--muted);font-size:14px}
+
+    @media (max-width:800px){
+      .forecast-body{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <header class="global-bar">
+    <div class="global-bar__inner">
+      <a class="global-bar__brand" href="./index.html#top" aria-label="SloSea のトップへ戻る">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 16c4 0 4-8 8-8s4 8 8 8 4-8 8-8"/></svg>
+        <span>SloSea</span>
+      </a>
+      <button class="global-bar__menu" type="button" aria-label="メニューを開く" aria-expanded="false" aria-controls="global-menu">
+        <svg class="global-bar__menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+          <path d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    </div>
+    <nav class="global-bar__meta" aria-label="パンくずリスト">
+      <ol class="global-bar__crumbs">
+        <li><a href="./index.html#apps">記事</a></li>
+        <li aria-current="page">湘南の予報</li>
+      </ol>
+    </nav>
+  </header>
+
+  <main class="wrap">
+    <div class="breadcrumbs">ホーム › 記事 › 湘南の予報</div>
+
+    <article>
+      <h1>湘南の予報</h1>
+      <p class="lead">
+        このページでは、n8n から生成した「tweet_text」「longer_caption」「data_brief」をもとに、
+        湘南（鎌倉〜平塚）エリアの波予報を日別にアーカイブします。X への自動投稿と同じ内容を、
+        後から見返しやすい形でまとめることを想定しています。
+      </p>
+
+      <section id="forecast-list" class="forecast-list" aria-label="日別の波予報一覧">
+        <!-- ▼ 初期サンプル。毎日投稿する際は .forecast-entry を複製して追記／n8nから差し替えます -->
+        <article class="forecast-entry">
+          <header class="forecast-header">
+            <h2>2025年11月14日（金） 鎌倉〜平塚</h2>
+            <p class="meta">
+              <span class="chip">湘南の予報</span>
+              自動配信テスト
+            </p>
+          </header>
+
+          <div class="forecast-body">
+            <div class="forecast-text">
+              <h3>概要（tweet_text）</h3>
+              <p>
+                明日（11月14日（金））湘南の湘南は、朝は腰サイズ、風は北東のやや強め。
+                昼は腰腹サイズで北北東の強めの風。夕方も腰腹サイズで北北東のやや強め。
+                高気圧に覆われたコンディションです。#湘南 #波予報 #サーフィン
+              </p>
+
+              <h3>詳細（longer_caption）</h3>
+              <p>
+                明日（11月14日（金））全体として腰腹前後のサイズが見込まれています。
+                うねりの向きは南から南東へ変わり、風は朝から北よりの風が入りやすい見込みです。
+                コンディションはまずまずで、初心者〜中級者でも楽しめる１日になりそうです。
+              </p>
+            </div>
+
+            <aside>
+              <h3>コンディションメモ（data_brief）</h3>
+              <ul class="summary-list">
+                <li>朝：腰／風：北東のやや強め</li>
+                <li>昼：腰腹／風：北北東の強め</li>
+                <li>夕方：腰腹／風：北北東のやや強め</li>
+                <li>概況：高気圧に覆われた落ち着いたコンディション</li>
+              </ul>
+              <p class="meta">※ 実際の数値は各種気象情報を必ずご確認ください。</p>
+            </aside>
+          </div>
+        </article>
+        <!-- ▲ ここまでサンプル。以降、このブロックを日付ごとに追加 -->
+      </section>
+    </article>
+
+    <footer>
+      <div class="foot">
+        <div>© <span id="year"></span> SloSea</div>
+        <div><a href="/about.html">運営者情報</a> · <a href="/policy.html">アフィリエイトポリシー</a></div>
+      </div>
+    </footer>
+  </main>
+
+  <nav class="global-menu" id="global-menu" data-global-menu aria-hidden="true">
+    <div class="global-menu__backdrop" data-menu-dismiss aria-hidden="true"></div>
+    <div class="global-menu__panel" role="dialog" aria-modal="true" aria-labelledby="global-menu-title">
+      <div class="global-menu__header">
+        <h2 class="global-menu__title" id="global-menu-title">コンテンツ一覧</h2>
+        <button class="global-menu__close" type="button" aria-label="メニューを閉じる" data-menu-dismiss data-menu-initial>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M6 6l12 12M18 6L6 18" />
+          </svg>
+        </button>
+      </div>
+      <ul class="global-menu__list">
+        <li class="global-menu__item"><a href="./index.html#apps">ホーム / コンテンツ一覧</a><p>SloSea の最新コンテンツまとめ。</p></li>
+        <li class="global-menu__item"><a href="surfboard-guide.html">サーフボード選び【保存版】</a><p>目的に合わせたボードの選び方ガイド。</p></li>
+        <li class="global-menu__item"><a href="beginner-gear.html">初心者が揃えるべき道具一式</a><p>着替えポンチョ・バケツなど必携小物まとめ。</p></li>
+        <li class="global-menu__item"><a href="./shonanforecast.html">湘南の予報</a><p>鎌倉〜平塚エリアの波予報アーカイブ。</p></li>
+        <li class="global-menu__item"><a href="./game.html">Surf Mini Game</a><p>波を避けてコインを集めるカジュアルゲーム。</p></li>
+        <li class="global-menu__item"><a href="./stickers.html">サーフステッカー配布</a><p>ボードやSNSで使えるデジタルステッカー。</p></li>
+        <li class="global-menu__item"><a href="./about.html">SloSea について</a><p>サイトのコンセプトや制作背景を紹介。</p></li>
+        <li class="global-menu__item"><a href="./policy.html">プライバシーポリシー</a><p>利用者のみなさまに安心して使っていただくために。</p></li>
+      </ul>
+      <p class="global-menu__footer">ご希望のコンテンツを選択してください。</p>
+      <button class="global-menu__close" type="button" data-menu-dismiss>
+        メニューを閉じる
+      </button>
+    </div>
+  </nav>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
