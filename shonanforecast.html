@@ -38,6 +38,11 @@
     @media (max-width:800px){
       .forecast-body{grid-template-columns:1fr}
     }
+    .archive-section{margin-top:32px;}
+    .archive-section details{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:#fff;}
+    .archive-section summary{cursor:pointer;font-weight:600;list-style:none;}
+    .archive-section summary::-webkit-details-marker{display:none;}
+
   </style>
 </head>
 <body>
@@ -336,5 +341,24 @@
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
   </script>
+<script>
+  (function () {
+    var list = document.getElementById('forecast-list');
+    var archiveSection = document.getElementById('forecast-archive');
+    var archiveContainer = document.getElementById('archive-entries');
+
+    if (!list || !archiveSection || !archiveContainer) return;
+
+    // forecast-entry を全部集める
+    var entries = Array.from(list.querySelectorAll('.forecast-entry'));
+    if (entries.length <= 7) return; // 7件以下なら何もしない
+
+    // 8件目以降をアーカイブ側へ移動
+    entries.slice(7).forEach(function (el) {
+      archiveContainer.appendChild(el);
+    });
+  })();
+</script>
+
 </body>
 </html>
