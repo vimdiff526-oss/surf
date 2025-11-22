@@ -54,10 +54,10 @@
         .wave-circle:hover { transform: scale(1.3); cursor: pointer; z-index: 10000; }
         
         /* 色定義 */
-        .c-calm { background: #3498db; } /* 青: 小 */
-        .c-mod { background: #f1c40f; }  /* 黄: 中 */
-        .c-high { background: #e74c3c; } /* 赤: 大 */
-        .c-none { background: #b0b0b0; } /* グレー: データなし */
+        .c-calm { background: #3498db; } /* 青 */
+        .c-mod { background: #f1c40f; }  /* 黄 */
+        .c-high { background: #e74c3c; } /* 赤 */
+        .c-none { background: #b0b0b0; } /* グレー */
 
         /* 風矢印 */
         .wind-arrow-icon {
@@ -161,31 +161,30 @@
 
         // ■ ポイント定義
         const spots = [
-            // --- 北海道・東北 ---
+            // 北海道・東北
             { name: "北海道 - 浜厚真", lat: 42.58, lon: 141.83 },
             { name: "北海道 - 室蘭イタンキ", lat: 42.31, lon: 141.03 },
             { name: "青森 - 三沢", lat: 40.70, lon: 141.45 },
-            { name: "岩手 - 浪板", lat: 39.36, lon: 141.93 }, // ★追加
+            { name: "岩手 - 浪板", lat: 39.36, lon: 141.93 },
             { name: "秋田 - 男鹿", lat: 39.88, lon: 139.80 }, 
             { name: "宮城 - 仙台新港", lat: 38.27, lon: 141.05 }, 
             { name: "福島 - 北泉", lat: 37.64, lon: 141.15 }, 
             { name: "福島 - 岩沢", lat: 37.27, lon: 141.15 }, 
-            
             { name: "日本海 - 新潟", lat: 37.90, lon: 138.95 },
             { name: "石川 - 柴垣", lat: 36.90, lon: 136.65 },
             
-            // --- 茨城 ---
+            // 茨城
             { name: "茨城 - 大洗", lat: 36.30, lon: 140.60 },
             { name: "茨城 - トップサンテ", lat: 36.19, lon: 140.58 },
 
-            // --- 千葉 ---
+            // 千葉
             { name: "千葉 - 片貝", lat: 35.53, lon: 140.48 },
             { name: "千葉 - 一宮", lat: 35.36, lon: 140.42 },
             { name: "千葉 - 御宿", lat: 35.18, lon: 140.37 },
             { name: "千葉 - 和田", lat: 35.03, lon: 140.04 },
             { name: "千葉 - 鴨川", lat: 35.10, lon: 140.14 },
             
-            // --- 神奈川 (湘南・西湘) ---
+            // 神奈川
             { name: "湘南 - 由比ガ浜", lat: 35.305, lon: 139.543 },
             { name: "湘南 - 七里ヶ浜", lat: 35.300, lon: 139.510 },
             { name: "湘南 - 鵠沼", lat: 35.310, lon: 139.469 }, 
@@ -193,19 +192,19 @@
             { name: "湘南 - 平塚", lat: 35.310, lon: 139.355 },
             { name: "西湘 - 吉浜", lat: 35.145, lon: 139.110 },
             
-            // --- 静岡・愛知 ---
+            // 静岡・愛知
             { name: "静岡 - 白浜", lat: 34.68, lon: 138.99 },
             { name: "静岡 - 静波", lat: 34.75, lon: 138.28 },
             { name: "静岡 - 御前崎", lat: 34.59, lon: 138.24 },
             { name: "愛知 - 伊良湖", lat: 34.58, lon: 137.08 },
             
-            // --- 西日本 ---
+            // 西日本
             { name: "京都 - 八丁浜", lat: 35.69, lon: 135.06 },
             { name: "和歌山 - 磯の浦", lat: 34.25, lon: 135.07 }, 
             { name: "高知 - 生見", lat: 33.54, lon: 134.31 },
             { name: "高知 - 入野", lat: 33.01, lon: 133.01 },
 
-            // --- 九州・沖縄 ---
+            // 九州・沖縄
             { name: "福岡 - 釣川", lat: 33.87, lon: 130.54 },
             { name: "福岡 - 三苫", lat: 33.70, lon: 130.40 }, 
             { name: "福岡 - 芥屋", lat: 33.61, lon: 130.11 },
@@ -231,8 +230,10 @@
             return "頭オーバー"; 
         }
 
+        // ■■■ 修正版：潮汐ロジック（気象庁・サーフィン定義準拠） ■■■
         function getTideInfo() {
             const now = new Date();
+            // 最新の基準日設定
             const knownNewMoon = new Date(2024, 0, 11, 20, 57); 
             const cycle = 29.53059;
             const diffTime = now.getTime() - knownNewMoon.getTime();
@@ -240,22 +241,28 @@
             let moonAge = diffDays % cycle;
             if (moonAge < 0) moonAge += cycle;
 
-            const ageInt = Math.floor(moonAge);
+            // 旧暦日付に近似（月齢 + 1）
+            const lunarDate = Math.floor(moonAge) + 1;
             let name = "中潮";
-            if (ageInt >= 0 && ageInt <= 2) name = "大潮";
-            else if (ageInt >= 3 && ageInt <= 6) name = "中潮";
-            else if (ageInt >= 7 && ageInt <= 9) name = "小潮";
-            else if (ageInt == 10) name = "長潮";
-            else if (ageInt >= 11 && ageInt <= 13) name = "若潮";
-            else if (ageInt >= 14 && ageInt <= 16) name = "大潮";
-            else if (ageInt >= 17 && ageInt <= 21) name = "中潮";
-            else if (ageInt >= 22 && ageInt <= 23) name = "小潮";
-            else if (ageInt == 24) name = "長潮";
-            else if (ageInt >= 25) name = "若潮";
-            if (ageInt >= 29) name = "大潮";
+            
+            // 気象庁・一般的定義に基づく潮名判定
+            if ([1, 2, 15, 16, 17, 30].includes(lunarDate)) name = "大潮";
+            else if ([3, 4, 5, 18, 19, 20, 21].includes(lunarDate)) name = "中潮";
+            else if ([6, 7, 8, 22, 23, 24].includes(lunarDate)) name = "小潮";
+            else if ([9, 25].includes(lunarDate)) name = "長潮";
+            else if ([10, 11, 12, 13, 14, 26, 27, 28, 29].includes(lunarDate)) name = "若潮〜中潮";
+            
+            // 微調整: サーフィン・釣りで一般的な「若潮」
+            if (lunarDate === 10 || lunarDate === 25) name = "長潮";
+            else if (lunarDate === 11 || lunarDate === 26) name = "若潮";
+            else if ([12, 13, 14, 27, 28, 29].includes(lunarDate)) name = "中潮";
 
-            const highTide1 = (moonAge * 0.8) % 24;
-            const highTide2 = (highTide1 + 12.4) % 24;
+            // 満潮時刻の計算（太平洋側平均：大潮満潮 6時/18時基準）
+            // 基準オフセット +6時間 (日本の標準的な遅角)
+            const baseOffset = 6.0; 
+            const highTide1 = (moonAge * (24 / 29.53) + baseOffset) % 24;
+            const highTide2 = (highTide1 + 12.42) % 24;
+            
             const currentHour = now.getHours() + now.getMinutes()/60;
             let targetHT = highTide1;
             if (Math.abs(currentHour - highTide2) < Math.abs(currentHour - highTide1)) targetHT = highTide2;
@@ -264,21 +271,30 @@
 
             const diff = targetHT - currentHour;
             let trendText = "", trendClass = "";
+
             if (diff > 0) {
-                if (diff < 1.5) { trendText = "満潮付近"; trendClass = "tide-trend"; }
+                if (diff < 1.5) { trendText = "満潮付近 (止まり)"; trendClass = "tide-trend"; }
                 else { trendText = "上げ潮 ↗"; trendClass = "tide-trend"; }
             } else {
-                if (Math.abs(diff) < 1.5) { trendText = "満潮付近"; trendClass = "tide-trend down"; }
+                if (Math.abs(diff) < 1.5) { trendText = "満潮付近 (止まり)"; trendClass = "tide-trend down"; }
                 else { trendText = "下げ潮 ↘"; trendClass = "tide-trend down"; }
             }
-            return { name, moonAge: moonAge.toFixed(1), trendText, trendClass, highTide1 };
+
+            // 潮の大きさ（振幅係数）: 大潮=1.2, 小潮=0.8
+            // 月齢0,15で最大、7,22で最小
+            // cos波で近似
+            const amp = 1.0 + 0.3 * Math.cos((moonAge / 14.76) * Math.PI * 2);
+
+            return { name, moonAge: moonAge.toFixed(1), trendText, trendClass, highTide1, amp };
         }
 
+        // タイドグラフ描画（振幅反映版）
         function drawTideGraph(tideInfo) {
             const canvas = document.getElementById('tideCanvas');
             const ctx = canvas.getContext('2d');
             const w = canvas.width;
             const h = canvas.height;
+
             ctx.clearRect(0, 0, w, h);
 
             const gradient = ctx.createLinearGradient(0, 0, 0, h);
@@ -286,14 +302,20 @@
             gradient.addColorStop(1, "rgba(52, 152, 219, 0.05)");
 
             const ht = tideInfo.highTide1;
+            const amp = tideInfo.amp; // 振幅係数
+            
             ctx.beginPath();
             ctx.moveTo(0, h);
+
             for (let x = 0; x <= w; x++) {
                 const time = (x / w) * 24;
-                const wave = Math.cos(2 * Math.PI * (time - ht) / 12.4);
-                const y = (h / 2) + (wave * -1 * (h * 0.35));
+                // 12.42時間周期
+                const wave = Math.cos(2 * Math.PI * (time - ht) / 12.42);
+                // 振幅(amp)を反映。基本振幅30% * amp
+                const y = (h / 2) + (wave * -1 * (h * 0.30 * amp));
                 ctx.lineTo(x, y);
             }
+
             ctx.lineTo(w, h);
             ctx.closePath();
             ctx.fillStyle = gradient;
@@ -302,9 +324,11 @@
             ctx.lineWidth = 2;
             ctx.stroke();
 
+            // 現在時刻ライン
             const now = new Date();
             const currentH = now.getHours() + now.getMinutes() / 60;
             const currentX = (currentH / 24) * w;
+
             ctx.beginPath();
             ctx.moveTo(currentX, 0);
             ctx.lineTo(currentX, h);
@@ -314,8 +338,10 @@
             ctx.stroke();
             ctx.setLineDash([]);
 
-            const currentWave = Math.cos(2 * Math.PI * (currentH - ht) / 12.4);
-            const currentY = (h / 2) + (currentWave * -1 * (h * 0.35));
+            // 現在位置の丸
+            const currentWave = Math.cos(2 * Math.PI * (currentH - ht) / 12.42);
+            const currentY = (h / 2) + (currentWave * -1 * (h * 0.30 * amp));
+            
             ctx.beginPath();
             ctx.arc(currentX, currentY, 5, 0, Math.PI * 2);
             ctx.fillStyle = "#e74c3c";
@@ -345,10 +371,11 @@
                 const mData = Array.isArray(mRes) ? mRes : [mRes];
                 const wData = Array.isArray(wRes) ? wRes : [wRes];
                 const windVectors = [];
+                
+                // 潮汐情報の計算
                 const tideInfo = getTideInfo();
 
                 spots.forEach((spot, i) => {
-                    // データ有無にかかわらずマーカー作成
                     let wh = null, swellDir = 0, ws = 0, wd = 0;
                     let hasData = false;
 
@@ -362,7 +389,7 @@
                         }
                     }
 
-                    let cClass = 'c-none'; // デフォルトはグレー
+                    let cClass = 'c-none'; 
                     if (hasData) {
                         if(wh < 0.5) cClass = 'c-calm';
                         else if(wh < 1.5) cClass = 'c-mod';
