@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Japan Surf Condition Map (Tide Added)</title>
+    <title>Japan Surf Condition Map (Final Layout)</title>
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     
@@ -80,17 +80,6 @@
     <div id="info-panel">
         <h3 id="p-name" style="margin-top:0; margin-bottom:15px; font-size:1.2rem;">-</h3>
         
-        <div class="row" style="background: #f9f9f9; padding: 8px; border-radius: 6px; border: none;">
-            <span class="label">潮回り</span>
-            <div style="text-align:right;">
-                <div style="margin-bottom:4px;">
-                    <span id="p-tide-name" class="tide-tag">-</span>
-                    <span id="p-moon-age" style="font-size:0.8rem; color:#999;">(月齢 -)</span>
-                </div>
-                <div id="p-tide-trend" class="val">-</div>
-            </div>
-        </div>
-
         <div class="row">
             <span class="label">波高 (サイズ)</span>
             <div style="text-align:right;">
@@ -117,6 +106,17 @@
             <span class="label">風向</span>
             <div style="text-align:right;">
                 <span id="p-wdir" class="val">-</span>
+            </div>
+        </div>
+
+        <div class="row" style="background: #f9f9f9; padding: 8px; border-radius: 6px; border: none; margin-bottom: 0;">
+            <span class="label">潮回り</span>
+            <div style="text-align:right;">
+                <div style="margin-bottom:4px;">
+                    <span id="p-tide-name" class="tide-tag">-</span>
+                    <span id="p-moon-age" style="font-size:0.8rem; color:#999;">(月齢 -)</span>
+                </div>
+                <div id="p-tide-trend" class="val">-</div>
             </div>
         </div>
     </div>
@@ -177,27 +177,18 @@
             return "頭オーバー";
         }
 
-        // ■■■ 潮汐計算ロジック (月齢計算) ■■■
+        // 潮汐計算ロジック
         function getTideInfo() {
             const now = new Date();
-            // 簡易月齢計算 (2000年基準)
-            const knownNewMoon = new Date(2000, 0, 6, 18, 14); // 2000-01-06 新月
+            const knownNewMoon = new Date(2000, 0, 6, 18, 14);
             const cycle = 29.53059;
             const diffTime = now.getTime() - knownNewMoon.getTime();
             const diffDays = diffTime / (1000 * 60 * 60 * 24);
             let moonAge = diffDays % cycle;
             if (moonAge < 0) moonAge += cycle;
 
-            // 日本式の潮名判定 (気象庁方式の近似)
             const ageInt = Math.round(moonAge);
             let name = "中潮";
-            
-            // 一般的な定義:
-            // 大潮: 月齢 0-2, 14-16
-            // 中潮: 月齢 3-6, 17-20
-            // 小潮: 月齢 7-9, 21-23
-            // 長潮: 月齢 10, 24
-            // 若潮: 月齢 11-13, 25- (周期ズレ補正含む)
             
             if (ageInt >= 0 && ageInt <= 2) name = "大潮";
             else if (ageInt >= 3 && ageInt <= 6) name = "中潮";
@@ -210,35 +201,22 @@
             else if (ageInt == 24) name = "長潮";
             else if (ageInt >= 25) name = "若潮";
 
-            // 上げ・下げ判定 (Rule of Twelfths近似)
-            // 満潮時刻 ≒ 月齢 * 0.8 (太平洋側の目安)
-            // 周期は約12.4時間
             const highTide1 = (moonAge * 0.8) % 24;
             const highTide2 = (highTide1 + 12.4) % 24;
-            
             const currentHour = now.getHours() + now.getMinutes()/60;
             
-            // 満潮時刻との差を計算し、状態を判定
-            // 満潮の前後2時間が「満潮いっぱい」、それに向かうなら「上げ」、去るなら「下げ」
-            // 単純化: 満潮の2時間前〜満潮 = 上げいっぱい
-            
-            // 現在時刻に一番近い満潮を探す
             let targetHT = highTide1;
             if (Math.abs(currentHour - highTide2) < Math.abs(currentHour - highTide1)) {
                 targetHT = highTide2;
             }
-            // 日付またぎの補正
             if (Math.abs(currentHour - (highTide1 + 24)) < Math.abs(currentHour - targetHT)) targetHT = highTide1 + 24;
             if (Math.abs(currentHour - (highTide2 - 24)) < Math.abs(currentHour - targetHT)) targetHT = highTide2 - 24;
 
             const diff = targetHT - currentHour;
-            
             let trendText = "";
             let trendClass = "";
 
-            // diffがプラスなら満潮に向かっている(上げ)、マイナスなら満潮から過ぎている(下げ)
             if (diff > 0) {
-                // これから満潮へ
                 if (diff < 1.5) {
                     trendText = "満潮付近 (上げ止まり)";
                     trendClass = "tide-trend";
@@ -247,7 +225,6 @@
                     trendClass = "tide-trend";
                 }
             } else {
-                // 満潮を過ぎた
                 if (Math.abs(diff) < 1.5) {
                     trendText = "満潮付近 (下げ始め)";
                     trendClass = "tide-trend down";
@@ -281,7 +258,6 @@
                 const wData = Array.isArray(wRes) ? wRes : [wRes];
                 const windVectors = [];
                 
-                // 潮情報の取得（全ポイント共通で現在時刻ベース）
                 const tideInfo = getTideInfo();
 
                 spots.forEach((spot, i) => {
@@ -309,19 +285,17 @@
                         const panel = document.getElementById('info-panel');
                         document.getElementById('p-name').innerText = spot.name;
                         
-                        // 潮情報更新
-                        document.getElementById('p-tide-name').innerText = tideInfo.name;
-                        document.getElementById('p-moon-age').innerText = `(月齢 ${tideInfo.moonAge})`;
-                        
-                        const trendEl = document.getElementById('p-tide-trend');
-                        trendEl.innerText = tideInfo.trendText;
-                        trendEl.className = `val ${tideInfo.trendClass}`;
-
                         document.getElementById('p-wave-cond').innerText = getSurfConditionText(wh);
                         document.getElementById('p-wave').innerText = `${wh.toFixed(2)} m`;
                         document.getElementById('p-swell').innerText = `${getDirText(swellDir)} (${Math.round(swellDir)}°)`;
                         document.getElementById('p-wind').innerText = `${ws.toFixed(1)} m/s`;
                         document.getElementById('p-wdir').innerText = `${getDirText(wd)} (${Math.round(wd)}°)`;
+
+                        document.getElementById('p-tide-name').innerText = tideInfo.name;
+                        document.getElementById('p-moon-age').innerText = `(月齢 ${tideInfo.moonAge})`;
+                        const trendEl = document.getElementById('p-tide-trend');
+                        trendEl.innerText = tideInfo.trendText;
+                        trendEl.className = `val ${tideInfo.trendClass}`;
                         
                         panel.style.display = 'block';
                     });
