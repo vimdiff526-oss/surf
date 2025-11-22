@@ -147,7 +147,7 @@
             document.getElementById('status-bar').innerText = msg;
         }
 
-        const map = L.map('map', { zoomControl: false }).setView([37.5, 139.0], 6); 
+        const map = L.map('map', { zoomControl: false }).setView([37.5, 140.0], 6); 
         L.control.zoom({ position: 'topleft' }).addTo(map);
 
         L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
@@ -160,16 +160,19 @@
         const panel = document.getElementById('info-panel');
         L.DomEvent.disableClickPropagation(panel);
 
-        // ■ ポイント定義（座標を少し沖合に調整してデータ取得を確実化）
+        // ■ ポイント定義（福島をさらに沖合へ調整）
         const spots = [
             // --- 北海道・東北 ---
             { name: "北海道 - 浜厚真", lat: 42.58, lon: 141.83 },
             { name: "北海道 - 室蘭イタンキ", lat: 42.31, lon: 141.03 },
             { name: "青森 - 三沢", lat: 40.70, lon: 141.45 },
-            { name: "秋田 - 男鹿", lat: 39.88, lon: 139.80 }, // 少し西へ
-            { name: "宮城 - 仙台新港", lat: 38.27, lon: 141.05 }, // 少し東へ
-            { name: "福島 - 北泉", lat: 37.64, lon: 141.03 }, // 少し東へ調整
-            { name: "福島 - 岩沢", lat: 37.27, lon: 141.04 }, // 少し東へ調整
+            { name: "秋田 - 男鹿", lat: 39.88, lon: 139.80 }, 
+            { name: "宮城 - 仙台新港", lat: 38.27, lon: 141.05 }, 
+            
+            // ★修正: 福島の2ポイントを確実にデータが取れる沖合へ移動
+            { name: "福島 - 北泉", lat: 37.64, lon: 141.15 }, 
+            { name: "福島 - 岩沢", lat: 37.27, lon: 141.15 }, 
+            
             { name: "日本海 - 新潟", lat: 37.90, lon: 138.95 },
             { name: "石川 - 柴垣", lat: 36.90, lon: 136.65 },
             
@@ -200,13 +203,13 @@
             
             // --- 西日本 ---
             { name: "京都 - 八丁浜", lat: 35.69, lon: 135.06 },
-            { name: "和歌山 - 磯の浦", lat: 34.25, lon: 135.07 }, // 少し沖へ
+            { name: "和歌山 - 磯の浦", lat: 34.25, lon: 135.07 }, 
             { name: "高知 - 生見", lat: 33.54, lon: 134.31 },
             { name: "高知 - 入野", lat: 33.01, lon: 133.01 },
 
             // --- 九州・沖縄 ---
             { name: "福岡 - 釣川", lat: 33.87, lon: 130.54 },
-            { name: "福岡 - 三苫", lat: 33.70, lon: 130.40 }, // 少し沖へ
+            { name: "福岡 - 三苫", lat: 33.70, lon: 130.40 }, 
             { name: "福岡 - 芥屋", lat: 33.61, lon: 130.11 },
             { name: "宮崎 - お倉ヶ浜", lat: 32.40, lon: 131.69 },
             { name: "宮崎 - 木崎浜", lat: 31.82, lon: 131.45 },
@@ -360,12 +363,22 @@
                 const tideInfo = getTideInfo();
 
                 spots.forEach((spot, i) => {
-                    if(!mData[i] || !mData[i].current || !wData[i] || !wData[i].current) return;
+                    // そもそもデータが無い場合のスキップ処理
+                    if(!mData[i] || !mData[i].current || !wData[i] || !wData[i].current) {
+                        console.warn(`${spot.name}: データ取得不可 (座標が陸地判定の可能性あり)`);
+                        return;
+                    }
 
-                    const wh = mData[i].current.wave_height || 0;
-                    const swellDir = mData[i].current.swell_wave_direction || 0;
-                    const ws = wData[i].current.wind_speed_10m || 0;
-                    const wd = wData[i].current.wind_direction_10m || 0;
+                    const wh = mData[i].current.wave_height;
+                    const swellDir = mData[i].current.swell_wave_direction;
+                    const ws = wData[i].current.wind_speed_10m;
+                    const wd = wData[i].current.wind_direction_10m;
+
+                    // データがnullの場合もスキップ
+                    if(wh === null || wh === undefined) {
+                        console.warn(`${spot.name}: 波データがnull`);
+                        return;
+                    }
 
                     let cClass = 'c-calm';
                     if(wh >= 0.5) cClass = 'c-mod';
