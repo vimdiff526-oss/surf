@@ -147,7 +147,7 @@
             document.getElementById('status-bar').innerText = msg;
         }
 
-        const map = L.map('map', { zoomControl: false }).setView([35.5, 139.0], 7); // デフォルトで関東広域を表示
+        const map = L.map('map', { zoomControl: false }).setView([36.5, 138.0], 5); // 日本全体が見える位置
         L.control.zoom({ position: 'topleft' }).addTo(map);
 
         L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
@@ -160,49 +160,55 @@
         const panel = document.getElementById('info-panel');
         L.DomEvent.disableClickPropagation(panel);
 
-        // ■ ポイント定義（大幅拡充）
+        // ■ ポイント定義（全国版）
         const spots = [
-            // --- 北日本 ---
+            // --- 北海道・東北 ---
             { name: "北海道 - 浜厚真", lat: 42.60, lon: 141.83 },
+            { name: "北海道 - 室蘭イタンキ", lat: 42.33, lon: 141.03 }, // 追加
+            { name: "青森 - 三沢", lat: 40.70, lon: 141.43 }, // 追加
             { name: "秋田 - 男鹿", lat: 39.88, lon: 139.85 },
             { name: "宮城 - 仙台新港", lat: 38.278, lon: 141.023 },
-            { name: "福島 - 北泉", lat: 37.64, lon: 141.01 }, // 追加
+            { name: "福島 - 北泉", lat: 37.64, lon: 141.01 },
+            { name: "福島 - 岩沢", lat: 37.28, lon: 141.00 }, // 追加 (いわき)
             { name: "日本海 - 新潟", lat: 37.90, lon: 139.00 },
             { name: "石川 - 柴垣", lat: 36.90, lon: 136.70 },
             
             // --- 茨城 ---
             { name: "茨城 - 大洗", lat: 36.30, lon: 140.58 },
-            { name: "茨城 - トップサンテ", lat: 36.19, lon: 140.55 }, // 追加
+            { name: "茨城 - トップサンテ", lat: 36.19, lon: 140.55 },
 
             // --- 千葉 ---
             { name: "千葉 - 片貝", lat: 35.53, lon: 140.46 },
             { name: "千葉 - 一宮", lat: 35.36, lon: 140.39 },
-            { name: "千葉 - 御宿", lat: 35.18, lon: 140.35 }, // 追加
-            { name: "千葉 - 和田", lat: 35.04, lon: 140.02 }, // 追加
+            { name: "千葉 - 御宿", lat: 35.18, lon: 140.35 },
+            { name: "千葉 - 和田", lat: 35.04, lon: 140.02 },
             { name: "千葉 - 鴨川", lat: 35.11, lon: 140.12 },
             
             // --- 神奈川 (湘南・西湘) ---
-            { name: "湘南 - 由比ガ浜", lat: 35.311, lon: 139.543 }, // 追加
-            { name: "湘南 - 七里ヶ浜", lat: 35.305, lon: 139.510 }, // 追加
+            { name: "湘南 - 由比ガ浜", lat: 35.311, lon: 139.543 },
+            { name: "湘南 - 七里ヶ浜", lat: 35.305, lon: 139.510 },
             { name: "湘南 - 鵠沼", lat: 35.316, lon: 139.469 }, 
             { name: "湘南 - 茅ヶ崎", lat: 35.319, lon: 139.404 },
-            { name: "湘南 - 平塚", lat: 35.316, lon: 139.355 }, // 追加
+            { name: "湘南 - 平塚", lat: 35.316, lon: 139.355 },
             { name: "西湘 - 吉浜", lat: 35.150, lon: 139.100 },
             
             // --- 静岡・愛知 ---
             { name: "静岡 - 白浜", lat: 34.68, lon: 138.97 },
-            { name: "静岡 - 静波", lat: 34.75, lon: 138.26 }, // 追加
-            { name: "静岡 - 御前崎", lat: 34.60, lon: 138.22 }, // 追加
+            { name: "静岡 - 静波", lat: 34.75, lon: 138.26 },
+            { name: "静岡 - 御前崎", lat: 34.60, lon: 138.22 },
             { name: "愛知 - 伊良湖", lat: 34.59, lon: 137.08 },
             
             // --- 西日本 ---
             { name: "京都 - 八丁浜", lat: 35.68, lon: 135.06 },
             { name: "和歌山 - 磯の浦", lat: 34.26, lon: 135.09 },
             { name: "高知 - 生見", lat: 33.54, lon: 134.29 },
-            { name: "高知 - 入野", lat: 33.02, lon: 133.00 }, // 追加
+            { name: "高知 - 入野", lat: 33.02, lon: 133.00 },
 
             // --- 九州・沖縄 ---
-            { name: "宮崎 - お倉ヶ浜", lat: 32.40, lon: 131.67 }, // 追加
+            { name: "福岡 - 釣川", lat: 33.86, lon: 130.56 }, // 追加 (宗像)
+            { name: "福岡 - 三苫", lat: 33.69, lon: 130.42 }, // 追加 (福岡市)
+            { name: "福岡 - 芥屋", lat: 33.60, lon: 130.13 }, // 追加 (糸島)
+            { name: "宮崎 - お倉ヶ浜", lat: 32.40, lon: 131.67 },
             { name: "宮崎 - 木崎浜", lat: 31.83, lon: 131.43 },
             { name: "沖縄 - 砂辺", lat: 26.33, lon: 127.74 }
         ];
