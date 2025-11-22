@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Japan Surf Condition Map</title>
+    <title>Japan Surf Condition Map (Tide Added)</title>
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     
@@ -17,13 +17,20 @@
             background: rgba(255, 255, 255, 0.95); padding: 20px; border-radius: 12px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.15); z-index: 1000; display: none;
             backdrop-filter: blur(5px);
-            /* パネル自体のクリックで地図が反応しないようにする */
             pointer-events: auto; 
         }
         .row { display: flex; justify-content: space-between; margin-bottom: 12px; border-bottom: 1px solid #eee; padding-bottom: 6px;}
         .label { color: #666; font-size: 0.9rem; }
         .val { font-weight: bold; color: #333; text-align: right; }
         .sub-val { font-size: 0.85rem; color: #888; font-weight: normal; display: block; margin-top: 2px; }
+
+        /* 潮情報用の強調スタイル */
+        .tide-tag {
+            display: inline-block; padding: 2px 8px; border-radius: 4px; 
+            font-size: 0.85rem; color: white; background: #555; margin-right: 5px;
+        }
+        .tide-trend { font-weight: bold; color: #007bff; } /* 上げ潮色 */
+        .tide-trend.down { color: #dc3545; } /* 下げ潮色 */
 
         /* マーカー */
         .surf-marker { display: flex; align-items: center; justify-content: center; }
@@ -41,7 +48,7 @@
         /* 風のアニメーション矢印 */
         .wind-arrow-icon {
             display: flex; align-items: center; justify-content: center;
-            pointer-events: none; /* 地図操作の邪魔をしない */
+            pointer-events: none; 
         }
         
         .arrow-svg path {
@@ -57,7 +64,6 @@
             100% { opacity: 0; transform: translateY(-8px); }
         }
 
-        /* ステータスバー */
         #status-bar {
             position: absolute; bottom: 10px; left: 10px; 
             background: rgba(255, 255, 255, 0.9); color: #333; 
@@ -74,6 +80,17 @@
     <div id="info-panel">
         <h3 id="p-name" style="margin-top:0; margin-bottom:15px; font-size:1.2rem;">-</h3>
         
+        <div class="row" style="background: #f9f9f9; padding: 8px; border-radius: 6px; border: none;">
+            <span class="label">潮回り</span>
+            <div style="text-align:right;">
+                <div style="margin-bottom:4px;">
+                    <span id="p-tide-name" class="tide-tag">-</span>
+                    <span id="p-moon-age" style="font-size:0.8rem; color:#999;">(月齢 -)</span>
+                </div>
+                <div id="p-tide-trend" class="val">-</div>
+            </div>
+        </div>
+
         <div class="row">
             <span class="label">波高 (サイズ)</span>
             <div style="text-align:right;">
@@ -111,37 +128,29 @@
             document.getElementById('status-bar').innerText = msg;
         }
 
-        // マップ設定
-        const map = L.map('map', { zoomControl: false }).setView([36.0, 139.0], 6); // 関東中心に見やすく調整
+        const map = L.map('map', { zoomControl: false }).setView([36.0, 139.0], 6);
         L.control.zoom({ position: 'topleft' }).addTo(map);
 
         L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
             maxZoom: 19, attribution: '&copy; CARTO'
         }).addTo(map);
 
-        // 地図の背景をクリックしたらパネルを閉じる
         map.on('click', () => {
             document.getElementById('info-panel').style.display = 'none';
         });
         const panel = document.getElementById('info-panel');
         L.DomEvent.disableClickPropagation(panel);
 
-        // ■ ポイント定義（更新版）
         const spots = [
-            // 茨城
             { name: "茨城 - 大洗", lat: 36.30, lon: 140.58 },
-            // 千葉
             { name: "千葉 - 片貝", lat: 35.53, lon: 140.46 },
             { name: "千葉 - 一宮", lat: 35.36, lon: 140.39 },
             { name: "千葉 - 鴨川", lat: 35.11, lon: 140.12 },
-            // 湘南・神奈川
-            { name: "湘南 - 鵠沼", lat: 35.31, lon: 139.47 }, // 江ノ島から変更
+            { name: "湘南 - 鵠沼", lat: 35.31, lon: 139.47 }, 
             { name: "湘南 - 茅ヶ崎", lat: 35.32, lon: 139.41 },
-            { name: "湘南 - 吉浜", lat: 35.15, lon: 139.10 }, // 湯河原吉浜
-            // 静岡・愛知
+            { name: "湘南 - 吉浜", lat: 35.15, lon: 139.10 },
             { name: "静岡 - 白浜", lat: 34.68, lon: 138.97 },
             { name: "愛知 - 伊良湖", lat: 34.59, lon: 137.08 },
-            // その他エリア
             { name: "宮崎 - 木崎浜", lat: 31.83, lon: 131.43 },
             { name: "沖縄 - 砂辺", lat: 26.33, lon: 127.74 },
             { name: "北海道 - 浜厚真", lat: 42.60, lon: 141.83 },
@@ -168,6 +177,89 @@
             return "頭オーバー";
         }
 
+        // ■■■ 潮汐計算ロジック (月齢計算) ■■■
+        function getTideInfo() {
+            const now = new Date();
+            // 簡易月齢計算 (2000年基準)
+            const knownNewMoon = new Date(2000, 0, 6, 18, 14); // 2000-01-06 新月
+            const cycle = 29.53059;
+            const diffTime = now.getTime() - knownNewMoon.getTime();
+            const diffDays = diffTime / (1000 * 60 * 60 * 24);
+            let moonAge = diffDays % cycle;
+            if (moonAge < 0) moonAge += cycle;
+
+            // 日本式の潮名判定 (気象庁方式の近似)
+            const ageInt = Math.round(moonAge);
+            let name = "中潮";
+            
+            // 一般的な定義:
+            // 大潮: 月齢 0-2, 14-16
+            // 中潮: 月齢 3-6, 17-20
+            // 小潮: 月齢 7-9, 21-23
+            // 長潮: 月齢 10, 24
+            // 若潮: 月齢 11-13, 25- (周期ズレ補正含む)
+            
+            if (ageInt >= 0 && ageInt <= 2) name = "大潮";
+            else if (ageInt >= 3 && ageInt <= 6) name = "中潮";
+            else if (ageInt >= 7 && ageInt <= 9) name = "小潮";
+            else if (ageInt == 10) name = "長潮";
+            else if (ageInt >= 11 && ageInt <= 13) name = "若潮";
+            else if (ageInt >= 14 && ageInt <= 16) name = "大潮";
+            else if (ageInt >= 17 && ageInt <= 20) name = "中潮";
+            else if (ageInt >= 21 && ageInt <= 23) name = "小潮";
+            else if (ageInt == 24) name = "長潮";
+            else if (ageInt >= 25) name = "若潮";
+
+            // 上げ・下げ判定 (Rule of Twelfths近似)
+            // 満潮時刻 ≒ 月齢 * 0.8 (太平洋側の目安)
+            // 周期は約12.4時間
+            const highTide1 = (moonAge * 0.8) % 24;
+            const highTide2 = (highTide1 + 12.4) % 24;
+            
+            const currentHour = now.getHours() + now.getMinutes()/60;
+            
+            // 満潮時刻との差を計算し、状態を判定
+            // 満潮の前後2時間が「満潮いっぱい」、それに向かうなら「上げ」、去るなら「下げ」
+            // 単純化: 満潮の2時間前〜満潮 = 上げいっぱい
+            
+            // 現在時刻に一番近い満潮を探す
+            let targetHT = highTide1;
+            if (Math.abs(currentHour - highTide2) < Math.abs(currentHour - highTide1)) {
+                targetHT = highTide2;
+            }
+            // 日付またぎの補正
+            if (Math.abs(currentHour - (highTide1 + 24)) < Math.abs(currentHour - targetHT)) targetHT = highTide1 + 24;
+            if (Math.abs(currentHour - (highTide2 - 24)) < Math.abs(currentHour - targetHT)) targetHT = highTide2 - 24;
+
+            const diff = targetHT - currentHour;
+            
+            let trendText = "";
+            let trendClass = "";
+
+            // diffがプラスなら満潮に向かっている(上げ)、マイナスなら満潮から過ぎている(下げ)
+            if (diff > 0) {
+                // これから満潮へ
+                if (diff < 1.5) {
+                    trendText = "満潮付近 (上げ止まり)";
+                    trendClass = "tide-trend";
+                } else {
+                    trendText = "上げ潮 ↗ (満潮へ)";
+                    trendClass = "tide-trend";
+                }
+            } else {
+                // 満潮を過ぎた
+                if (Math.abs(diff) < 1.5) {
+                    trendText = "満潮付近 (下げ始め)";
+                    trendClass = "tide-trend down";
+                } else {
+                    trendText = "下げ潮 ↘ (干潮へ)";
+                    trendClass = "tide-trend down";
+                }
+            }
+
+            return { name, moonAge: moonAge.toFixed(1), trendText, trendClass };
+        }
+
         async function init() {
             setStatus("気象データ取得中...");
             
@@ -188,6 +280,9 @@
                 const mData = Array.isArray(mRes) ? mRes : [mRes];
                 const wData = Array.isArray(wRes) ? wRes : [wRes];
                 const windVectors = [];
+                
+                // 潮情報の取得（全ポイント共通で現在時刻ベース）
+                const tideInfo = getTideInfo();
 
                 spots.forEach((spot, i) => {
                     if(!mData[i] || !mData[i].current || !wData[i] || !wData[i].current) return;
@@ -213,11 +308,21 @@
                         L.DomEvent.stopPropagation(e);
                         const panel = document.getElementById('info-panel');
                         document.getElementById('p-name').innerText = spot.name;
+                        
+                        // 潮情報更新
+                        document.getElementById('p-tide-name').innerText = tideInfo.name;
+                        document.getElementById('p-moon-age').innerText = `(月齢 ${tideInfo.moonAge})`;
+                        
+                        const trendEl = document.getElementById('p-tide-trend');
+                        trendEl.innerText = tideInfo.trendText;
+                        trendEl.className = `val ${tideInfo.trendClass}`;
+
                         document.getElementById('p-wave-cond').innerText = getSurfConditionText(wh);
                         document.getElementById('p-wave').innerText = `${wh.toFixed(2)} m`;
                         document.getElementById('p-swell').innerText = `${getDirText(swellDir)} (${Math.round(swellDir)}°)`;
                         document.getElementById('p-wind').innerText = `${ws.toFixed(1)} m/s`;
                         document.getElementById('p-wdir').innerText = `${getDirText(wd)} (${Math.round(wd)}°)`;
+                        
                         panel.style.display = 'block';
                     });
 
@@ -241,36 +346,29 @@
 
         function drawAnimatedWind(vectors) {
             windLayerGroup.clearLayers();
-
             const gridStep = 0.7; 
             const latTop = 46.0, latBottom = 24.0;
             const lonLeft = 122.0, lonRight = 148.0;
 
             for(let lat = latTop; lat >= latBottom; lat -= gridStep) {
                 for(let lon = lonLeft; lon <= lonRight; lon += gridStep) {
-                    
                     let sumU = 0, sumV = 0, sumW = 0;
                     let minDistance = 9999;
-
                     for(const vec of vectors) {
                         const d2 = Math.pow(lat - vec.lat, 2) + Math.pow(lon - vec.lon, 2);
                         const d = Math.sqrt(d2);
                         if(d < minDistance) minDistance = d;
-                        
                         const w = 1.0 / (d2 + 0.05); 
                         sumU += vec.u * w;
                         sumV += vec.v * w;
                         sumW += w;
                     }
-
                     if(minDistance > 4.5) continue;
-
                     if(sumW > 0) {
                         const u = sumU / sumW;
                         const v = sumV / sumW;
                         const speed = Math.sqrt(u*u + v*v);
                         let degree = (Math.atan2(-u, -v) * 180 / Math.PI) + 180; 
-                        
                         addAnimatedArrow(lat, lon, degree, speed);
                     }
                 }
@@ -282,38 +380,23 @@
             let opacity = 0.5;
             if(speed > 5) { scale = 1.0; opacity = 0.7; }
             if(speed > 10) { scale = 1.2; opacity = 0.9; }
-
             let animDuration = Math.max(0.5, 2.0 - (speed * 0.1));
             let animDelay = -Math.random() * 2;
-
             const svgArrow = `
-                <svg width="30" height="30" viewBox="0 0 24 24" class="arrow-svg" style="
-                    transform: rotate(${degree}deg) scale(${scale}); 
-                    opacity: ${opacity};
-                ">
-                    <path d="M12 2 L6 18 L12 14 L18 18 Z" fill="#555" stroke="none" style="
-                        animation-duration: ${animDuration}s;
-                        animation-delay: ${animDelay}s;
-                    "/>
+                <svg width="30" height="30" viewBox="0 0 24 24" class="arrow-svg" style="transform: rotate(${degree}deg) scale(${scale}); opacity: ${opacity};">
+                    <path d="M12 2 L6 18 L12 14 L18 18 Z" fill="#555" stroke="none" style="animation-duration: ${animDuration}s; animation-delay: ${animDelay}s;"/>
                 </svg>
             `;
-
             const icon = L.divIcon({
                 className: 'wind-arrow-icon',
                 html: svgArrow,
                 iconSize: [30, 30],
                 iconAnchor: [15, 15]
             });
-
-            L.marker([lat, lon], { 
-                icon: icon, 
-                interactive: false, 
-                zIndexOffset: -100 
-            }).addTo(windLayerGroup);
+            L.marker([lat, lon], { icon: icon, interactive: false, zIndexOffset: -100 }).addTo(windLayerGroup);
         }
 
         init();
-
     </script>
 </body>
 </html>
