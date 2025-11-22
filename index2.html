@@ -23,6 +23,11 @@
         .label { color: #666; font-size: 0.85rem; }
         .val { font-weight: bold; color: #333; text-align: right; font-size: 0.95rem;}
         .sub-val { font-size: 0.8rem; color: #888; font-weight: normal; display: block; }
+        
+        /* 注釈テキスト */
+        .note-text {
+            font-size: 0.7rem; color: #999; margin-top: 4px; line-height: 1.2; text-align: right;
+        }
 
         /* 潮回りタグ */
         .tide-tag {
@@ -34,15 +39,14 @@
 
         /* タイドグラフ用キャンバス */
         #tide-graph-container {
-            margin-top: 15px;
-            margin-bottom: 15px;
+            margin-top: 5px;
             text-align: center;
             background: linear-gradient(to bottom, #fcfcfc, #f0f8ff);
             border-radius: 8px;
             padding: 10px 0;
             border: 1px solid #e0e0e0;
         }
-        canvas { width: 100%; height: 100px; }
+        canvas { width: 100%; height: 80px; }
 
         /* マーカー */
         .surf-marker { display: flex; align-items: center; justify-content: center; }
@@ -89,29 +93,15 @@
     <div id="info-panel">
         <h3 id="p-name" style="margin-top:0; margin-bottom:10px; font-size:1.2rem;">-</h3>
         
-        <div id="tide-graph-container">
-            <canvas id="tideCanvas" width="280" height="100"></canvas>
-            <div style="font-size:0.7rem; color:#999; display:flex; justify-content:space-between; padding:0 10px;">
-                <span>0</span><span>6</span><span>12</span><span>18</span><span>24</span>
-            </div>
-        </div>
-
-        <div class="row" style="border:none; margin-bottom:5px;">
-            <span class="label">潮回り</span>
-            <div style="text-align:right;">
-                <span id="p-tide-name" class="tide-tag">-</span>
-                <span id="p-tide-trend" class="val">-</span>
-            </div>
-        </div>
-
-        <hr style="border:0; border-top:1px solid #eee; margin: 5px 0 10px 0;">
-
-        <div class="row">
+        <div class="row" style="border-bottom: none; margin-bottom: 0;">
             <span class="label">波高 (目安)</span>
             <div style="text-align:right;">
                 <div id="p-wave-cond" class="val">-</div>
                 <div id="p-wave" class="sub-val">- m</div>
             </div>
+        </div>
+        <div class="note-text" style="margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1px solid #eee;">
+            ※地形や潮回りにより、実際に<br>ブレイクするサイズは前後します
         </div>
 
         <div class="row">
@@ -126,6 +116,26 @@
             <div style="text-align:right;">
                 <span id="p-wind" class="val">-</span>
                 <div id="p-wdir" class="sub-val">-</div>
+            </div>
+        </div>
+
+        <hr style="border:0; border-top:1px solid #eee; margin: 5px 0 10px 0;">
+
+        <div class="row" style="background: #f9f9f9; padding: 8px; border-radius: 6px; border: none; margin-bottom: 5px;">
+            <span class="label">潮回り</span>
+            <div style="text-align:right;">
+                <div style="margin-bottom:4px;">
+                    <span id="p-tide-name" class="tide-tag">-</span>
+                    <span id="p-moon-age" style="font-size:0.8rem; color:#999;">(月齢 -)</span>
+                </div>
+                <div id="p-tide-trend" class="val">-</div>
+            </div>
+        </div>
+
+        <div id="tide-graph-container">
+            <canvas id="tideCanvas" width="280" height="80"></canvas>
+            <div style="font-size:0.7rem; color:#999; display:flex; justify-content:space-between; padding:0 10px;">
+                <span>0</span><span>6</span><span>12</span><span>18</span><span>24</span>
             </div>
         </div>
     </div>
@@ -183,15 +193,14 @@
             return dirs[Math.round(deg / 45) % 8];
         }
 
-        // ■■■ 修正版：波サイズ表記ロジック ■■■
+        // 波サイズ表記
         function getSurfConditionText(height) {
-            // 地形や潮の影響を考慮し、幅を持たせた表記に変更
-            if (height < 0.35) return "スネ 〜 ひざ前後"; // 小波
+            if (height < 0.35) return "スネ 〜 ひざ前後"; 
             if (height < 0.7)  return "ひざ 〜 腰";
             if (height < 1.1)  return "腰 〜 腹";
             if (height < 1.6)  return "腹 〜 胸";
             if (height < 2.2)  return "胸 〜 頭";
-            return "頭オーバー"; // かなり大きい
+            return "頭オーバー"; 
         }
 
         // 潮汐計算
