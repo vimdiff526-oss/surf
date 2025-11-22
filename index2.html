@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Japan Surf Map (Tide Graph)</title>
+    <title>Japan Surf Condition Map (Final Layout)</title>
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     
@@ -13,13 +13,13 @@
 
         /* 情報パネル */
         #info-panel {
-            position: absolute; top: 20px; right: 20px; width: 300px; /* グラフ用に少し幅を広げました */
+            position: absolute; top: 20px; right: 20px; width: 300px;
             background: rgba(255, 255, 255, 0.98); padding: 20px; border-radius: 12px;
             box-shadow: 0 4px 25px rgba(0,0,0,0.15); z-index: 1000; display: none;
             backdrop-filter: blur(5px);
             pointer-events: auto; 
         }
-        .row { display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px;}
+        .row { display: flex; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px solid #f0f0f0; padding-bottom: 4px;}
         .label { color: #666; font-size: 0.85rem; }
         .val { font-weight: bold; color: #333; text-align: right; font-size: 0.95rem;}
         .sub-val { font-size: 0.8rem; color: #888; font-weight: normal; display: block; }
@@ -32,17 +32,17 @@
         .tide-trend { font-weight: bold; color: #007bff; font-size: 0.9rem; }
         .tide-trend.down { color: #dc3545; }
 
-        /* ★タイドグラフ用キャンバス */
+        /* タイドグラフ用キャンバス */
         #tide-graph-container {
-            margin-top: 15px;
-            margin-bottom: 15px;
+            margin-top: 10px;
+            margin-bottom: 5px;
             text-align: center;
             background: linear-gradient(to bottom, #fcfcfc, #f0f8ff);
             border-radius: 8px;
             padding: 10px 0;
             border: 1px solid #e0e0e0;
         }
-        canvas { width: 100%; height: 100px; }
+        canvas { width: 100%; height: 80px; } /* 少しコンパクトに */
 
         /* マーカー */
         .surf-marker { display: flex; align-items: center; justify-content: center; }
@@ -87,25 +87,8 @@
     <div id="map"></div>
     
     <div id="info-panel">
-        <h3 id="p-name" style="margin-top:0; margin-bottom:10px; font-size:1.2rem;">-</h3>
+        <h3 id="p-name" style="margin-top:0; margin-bottom:15px; font-size:1.2rem;">-</h3>
         
-        <div id="tide-graph-container">
-            <canvas id="tideCanvas" width="280" height="100"></canvas>
-            <div style="font-size:0.7rem; color:#999; display:flex; justify-content:space-between; padding:0 10px;">
-                <span>0</span><span>6</span><span>12</span><span>18</span><span>24</span>
-            </div>
-        </div>
-
-        <div class="row" style="border:none; margin-bottom:5px;">
-            <span class="label">潮回り</span>
-            <div style="text-align:right;">
-                <span id="p-tide-name" class="tide-tag">-</span>
-                <span id="p-tide-trend" class="val">-</span>
-            </div>
-        </div>
-
-        <hr style="border:0; border-top:1px solid #eee; margin: 5px 0 10px 0;">
-
         <div class="row">
             <span class="label">波高</span>
             <div style="text-align:right;">
@@ -126,6 +109,23 @@
             <div style="text-align:right;">
                 <span id="p-wind" class="val">-</span>
                 <div id="p-wdir" class="sub-val">-</div>
+            </div>
+        </div>
+
+        <hr style="border:0; border-top:1px solid #eee; margin: 10px 0;">
+
+        <div class="row" style="border:none; margin-bottom:0;">
+            <span class="label">潮回り</span>
+            <div style="text-align:right;">
+                <span id="p-tide-name" class="tide-tag">-</span>
+                <span id="p-tide-trend" class="val">-</span>
+            </div>
+        </div>
+        
+        <div id="tide-graph-container">
+            <canvas id="tideCanvas" width="280" height="80"></canvas>
+            <div style="font-size:0.7rem; color:#999; display:flex; justify-content:space-between; padding:0 10px;">
+                <span>0</span><span>6</span><span>12</span><span>18</span><span>24</span>
             </div>
         </div>
     </div>
@@ -186,7 +186,7 @@
             return "頭オーバー";
         }
 
-        // ■■■ 潮汐計算ロジック ■■■
+        // 潮汐計算
         function getTideInfo() {
             const now = new Date();
             const knownNewMoon = new Date(2024, 0, 11, 20, 57); 
@@ -211,13 +211,10 @@
             else if (ageInt >= 25) name = "若潮";
             if (ageInt >= 29) name = "大潮";
 
-            // 満潮時刻の目安計算 (月齢 * 0.8)
-            // これを使ってグラフを描画する
             const highTide1 = (moonAge * 0.8) % 24;
             const highTide2 = (highTide1 + 12.4) % 24;
-            
-            // 現在の上げ下げ判定
             const currentHour = now.getHours() + now.getMinutes()/60;
+            
             let targetHT = highTide1;
             if (Math.abs(currentHour - highTide2) < Math.abs(currentHour - highTide1)) targetHT = highTide2;
             if (Math.abs(currentHour - (highTide1 + 24)) < Math.abs(currentHour - targetHT)) targetHT = highTide1 + 24;
@@ -237,58 +234,39 @@
             return { name, moonAge: moonAge.toFixed(1), trendText, trendClass, highTide1 };
         }
 
-        // ■■■ タイドグラフ描画関数 (Canvas) ■■■
+        // タイドグラフ描画
         function drawTideGraph(tideInfo) {
             const canvas = document.getElementById('tideCanvas');
             const ctx = canvas.getContext('2d');
             const w = canvas.width;
             const h = canvas.height;
 
-            // クリア
             ctx.clearRect(0, 0, w, h);
 
-            // グラデーション作成 (青系)
             const gradient = ctx.createLinearGradient(0, 0, 0, h);
-            gradient.addColorStop(0, "rgba(52, 152, 219, 0.6)"); // 上: 濃い青
-            gradient.addColorStop(1, "rgba(52, 152, 219, 0.05)"); // 下: 薄い青
+            gradient.addColorStop(0, "rgba(52, 152, 219, 0.6)");
+            gradient.addColorStop(1, "rgba(52, 152, 219, 0.05)");
 
-            // 潮位曲線計算 (y = -cos(t))
-            // 満潮時刻(highTide1)をピークとするコサインカーブを描く
-            // 周期は約12.4時間
             const ht = tideInfo.highTide1;
             
             ctx.beginPath();
-            ctx.moveTo(0, h); // 左下からスタート
+            ctx.moveTo(0, h);
 
             for (let x = 0; x <= w; x++) {
-                // x座標(0~w) を 時間(0~24) に変換
                 const time = (x / w) * 24;
-                
-                // コサイン波で潮位を近似計算
-                // (time - ht) で位相をずらす
-                // 12.4時間周期 => 2PI * t / 12.4
                 const wave = Math.cos(2 * Math.PI * (time - ht) / 12.4);
-                
-                // y座標に変換 (-1~1 を canvasの高さに合わせる)
-                // canvasは上が0なので、1-wave で反転
-                const y = (h / 2) + (wave * -1 * (h * 0.35)); // 上下35%の振幅
-                
+                const y = (h / 2) + (wave * -1 * (h * 0.35));
                 ctx.lineTo(x, y);
             }
 
-            ctx.lineTo(w, h); // 右下へ
+            ctx.lineTo(w, h);
             ctx.closePath();
-
-            // 塗りつぶし
             ctx.fillStyle = gradient;
             ctx.fill();
-
-            // 線の描画
             ctx.strokeStyle = "#3498db";
             ctx.lineWidth = 2;
             ctx.stroke();
 
-            // 現在時刻のライン
             const now = new Date();
             const currentH = now.getHours() + now.getMinutes() / 60;
             const currentX = (currentH / 24) * w;
@@ -296,14 +274,12 @@
             ctx.beginPath();
             ctx.moveTo(currentX, 0);
             ctx.lineTo(currentX, h);
-            ctx.strokeStyle = "rgba(231, 76, 60, 0.8)"; // 赤い線
+            ctx.strokeStyle = "rgba(231, 76, 60, 0.8)";
             ctx.lineWidth = 1.5;
-            ctx.setLineDash([4, 2]); // 点線
+            ctx.setLineDash([4, 2]);
             ctx.stroke();
             ctx.setLineDash([]);
 
-            // 現在位置の丸印
-            // 現在の潮位Yを再計算
             const currentWave = Math.cos(2 * Math.PI * (currentH - ht) / 12.4);
             const currentY = (h / 2) + (currentWave * -1 * (h * 0.35));
             
@@ -375,7 +351,6 @@
                         trendEl.innerText = tideInfo.trendText;
                         trendEl.className = `val ${tideInfo.trendClass}`;
                         
-                        // タイドグラフ描画
                         drawTideGraph(tideInfo);
                         
                         panel.style.display = 'block';
