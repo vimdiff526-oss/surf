@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japan Surf Condition Map (Final)</title>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <style>
+        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Helvetica Neue', Arial, sans-serif; overflow: hidden; }
+        #map { height: 100%; width: 100%; background: #e5e5e5; }
+
+        /* 情報パネル */
+        #info-panel {
+            position: absolute; top: 20px; right: 20px; width: 280px;
+            background: rgba(255, 255, 255, 0.95); padding: 20px; border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15); z-index: 1000; display: none;
+            backdrop-filter: blur(5px);
+        }
+        .row { display: flex; justify-content: space-between; margin-bottom: 12px; border-bottom: 1px solid #eee; padding-bottom: 6px;}
+        .label { color: #666; font-size: 0.9rem; }
+        .val { font-weight: bold; color: #333; text-align: right; }
+        .sub-val { font-size: 0.85rem; color: #888; font-weight: normal; display: block; margin-top: 2px; }
+
+        /* マーカー */
+        .surf-marker { display: flex; align-items: center; justify-content: center; }
+        .wave-circle {
+            width: 24px; height: 24px; border-radius: 50%; border: 2px solid white;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.4); transition: transform 0.2s;
+        }
+        .wave-circle:hover { transform: scale(1.3); cursor: pointer; z-index: 10000; }
+        
+        /* 色分け */
+        .c-calm { background: #3498db; } /* 青 */
+        .c-mod { background: #f1c40f; }  /* 黄 */
+        .c-high { background: #e74c3c; } /* 赤 */
+
+        /* 風のアニメーション矢印 */
+        .wind-arrow-icon {
+            display: flex; align-items: center; justify-content: center;
+            pointer-events: none; /* 地図操作の邪魔をしない */
+        }
+        
+        /* 矢印本体とアニメーション定義 */
+        .arrow-svg path {
+            /* 風が流れるアニメーション */
+            animation-name: flow;
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
+        }
+
+        @keyframes flow {
+            0% { opacity: 0; transform: translateY(8px); }
+            20% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { opacity: 0; transform: translateY(-8px); }
+        }
+
+        /* ステータスバー */
+        #status-bar {
+            position: absolute; bottom: 10px; left: 10px; 
+            background: rgba(255, 255, 255, 0.9); color: #333; 
+            padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold;
+            z-index: 3000; pointer-events: none; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="status-bar">システム起動中...</div>
+    <div id="map"></div>
+    
+    <div id="info-panel">
+        <h3 id="p-name" style="margin-top:0; margin-bottom:15px; font-size:1.2rem;">-</h3>
+        
+        <div class="row">
+            <span class="label">波高 (サイズ)</span>
+            <div style="text-align:right;">
+                <div id="p-wave-cond" class="val" style="font-size:1.1rem;">-</div>
+                <div id="p-wave" class="sub-val">- m</div>
+            </div>
+        </div>
+
+        <div class="row">
+            <span class="label">うねり</span>
+            <div style="text-align:right;">
+                <span id="p-swell" class="val">-</span>
+            </div>
+        </div>
+
+        <div class="row">
+            <span class="label">風速 (m/s)</span>
+            <div style="text-align:right;">
+                <span id="p-wind" class="val">-</span>
+            </div>
+        </div>
+
+        <div class="row">
+            <span class="label">風向</span>
+            <div style="text-align:right;">
+                <span id="p-wdir" class="val">-</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        function setStatus(msg) {
+            document.getElementById('status-bar').innerText = msg;
+        }
+
+        // マップ設定
+        const map = L.map('map', { zoomControl: false }).setView([38.0, 137.0], 5);
+        L.control.zoom({ position: 'topleft' }).addTo(map);
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            maxZoom: 19, attribution: '&copy; CARTO'
+        }).addTo(map);
+
+        // ポイント定義
+        const spots = [
+            { name: "千葉 - 一宮", lat: 35.36, lon: 140.39 },
+            { name: "湘南 - 江ノ島", lat: 35.30, lon: 139.48 },
+            { name: "茨城 - 大洗", lat: 36.30, lon: 140.58 },
+            { name: "静岡 - 白浜", lat: 34.68, lon: 138.97 },
+            { name: "愛知 - 伊良湖", lat: 34.59, lon: 137.08 },
+            { name: "宮崎 - 木崎浜", lat: 31.83, lon: 131.43 },
+            { name: "沖縄 - 砂辺", lat: 26.33, lon: 127.74 },
+            { name: "北海道 - 浜厚真", lat: 42.60, lon: 141.83 },
+            { name: "日本海 - 新潟", lat: 37.90, lon: 139.00 },
+            { name: "秋田 - 男鹿", lat: 39.88, lon: 139.85 },
+            { name: "京都 - 八丁浜", lat: 35.68, lon: 135.06 },
+            { name: "高知 - 生見", lat: 33.54, lon: 134.29 },
+            { name: "石川 - 柴垣", lat: 36.90, lon: 136.70 }
+        ];
+
+        // 風表示用レイヤー
+        const windLayerGroup = L.layerGroup().addTo(map);
+
+        // 方角変換
+        function getDirText(deg) {
+            const dirs = ['北', '北東', '東', '南東', '南', '南西', '西', '北西'];
+            return dirs[Math.round(deg / 45) % 8];
+        }
+
+        // 波サイズ表記変換 (画像参考)
+        function getSurfConditionText(height) {
+            if (height < 0.3) return "ひざ以下";
+            if (height < 0.6) return "ひざ〜腰";
+            if (height < 1.1) return "腰〜腹";
+            if (height < 1.6) return "胸〜肩";
+            if (height < 2.2) return "頭";
+            return "頭オーバー";
+        }
+
+        async function init() {
+            setStatus("気象データ取得中...");
+            
+            try {
+                const lats = spots.map(s => s.lat).join(',');
+                const lons = spots.map(s => s.lon).join(',');
+                
+                // Open-Meteo API
+                const mUrl = `https://marine-api.open-meteo.com/v1/marine?latitude=${lats}&longitude=${lons}&current=wave_height,swell_wave_direction&timezone=Asia%2FTokyo`;
+                // wind_speed_unit=ms で秒速を取得
+                const wUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lats}&longitude=${lons}&current=wind_speed_10m,wind_direction_10m&wind_speed_unit=ms`;
+
+                const [mRes, wRes] = await Promise.all([
+                    fetch(mUrl).then(r => r.json()),
+                    fetch(wUrl).then(r => r.json())
+                ]);
+
+                setStatus("マップ描画中...");
+
+                const mData = Array.isArray(mRes) ? mRes : [mRes];
+                const wData = Array.isArray(wRes) ? wRes : [wRes];
+                const windVectors = [];
+
+                spots.forEach((spot, i) => {
+                    if(!mData[i] || !mData[i].current || !wData[i] || !wData[i].current) return;
+
+                    const wh = mData[i].current.wave_height || 0;
+                    const swellDir = mData[i].current.swell_wave_direction || 0;
+                    const ws = wData[i].current.wind_speed_10m || 0;
+                    const wd = wData[i].current.wind_direction_10m || 0;
+
+                    // 色判定
+                    let cClass = 'c-calm';
+                    if(wh >= 0.5) cClass = 'c-mod';
+                    if(wh >= 1.5) cClass = 'c-high';
+
+                    // マーカーアイコン
+                    const icon = L.divIcon({
+                        className: 'custom-div',
+                        html: `<div class="surf-marker"><div class="wave-circle ${cClass}"></div></div>`,
+                        iconSize: [24, 24]
+                    });
+
+                    const marker = L.marker([spot.lat, spot.lon], {icon: icon, zIndexOffset: 1000}).addTo(map);
+                    
+                    // クリックイベント
+                    marker.on('click', () => {
+                        const panel = document.getElementById('info-panel');
+                        document.getElementById('p-name').innerText = spot.name;
+                        
+                        // 波情報
+                        document.getElementById('p-wave-cond').innerText = getSurfConditionText(wh);
+                        document.getElementById('p-wave').innerText = `${wh.toFixed(2)} m`;
+                        
+                        // うねり情報
+                        document.getElementById('p-swell').innerText = `${getDirText(swellDir)} (${Math.round(swellDir)}°)`;
+                        
+                        // 風情報 (m/s)
+                        document.getElementById('p-wind').innerText = `${ws.toFixed(1)} m/s`;
+                        document.getElementById('p-wdir').innerText = `${getDirText(wd)} (${Math.round(wd)}°)`;
+                        
+                        panel.style.display = 'block';
+                    });
+
+                    // 風アニメーション用データ
+                    const rad = wd * (Math.PI / 180);
+                    windVectors.push({
+                        lat: spot.lat, lon: spot.lon,
+                        u: -ws * Math.sin(rad),
+                        v: -ws * Math.cos(rad),
+                        speed: ws
+                    });
+                });
+
+                // 風アニメーションの描画
+                drawAnimatedWind(windVectors);
+                setStatus("表示完了");
+
+            } catch(e) {
+                console.error(e);
+                setStatus("データ取得エラー");
+            }
+        }
+
+        function drawAnimatedWind(vectors) {
+            windLayerGroup.clearLayers();
+
+            // グリッド間隔 (少し広げて見やすく)
+            const gridStep = 0.7; 
+            const latTop = 46.0, latBottom = 24.0;
+            const lonLeft = 122.0, lonRight = 148.0;
+
+            for(let lat = latTop; lat >= latBottom; lat -= gridStep) {
+                for(let lon = lonLeft; lon <= lonRight; lon += gridStep) {
+                    
+                    let sumU = 0, sumV = 0, sumW = 0;
+                    let minDistance = 9999;
+
+                    for(const vec of vectors) {
+                        const d2 = Math.pow(lat - vec.lat, 2) + Math.pow(lon - vec.lon, 2);
+                        const d = Math.sqrt(d2);
+                        if(d < minDistance) minDistance = d;
+                        
+                        // 距離による重み付け (近い観測点の影響を強く)
+                        const w = 1.0 / (d2 + 0.05); 
+                        sumU += vec.u * w;
+                        sumV += vec.v * w;
+                        sumW += w;
+                    }
+
+                    // 観測点から遠すぎる海域は描画しない
+                    if(minDistance > 4.5) continue;
+
+                    if(sumW > 0) {
+                        const u = sumU / sumW;
+                        const v = sumV / sumW;
+                        const speed = Math.sqrt(u*u + v*v);
+                        
+                        // 角度計算 (風の吹いていく方向へ 180度反転)
+                        let degree = (Math.atan2(-u, -v) * 180 / Math.PI) + 180; 
+                        
+                        addAnimatedArrow(lat, lon, degree, speed);
+                    }
+                }
+            }
+        }
+
+        function addAnimatedArrow(lat, lon, degree, speed) {
+            // 風速に応じて透明度と大きさを変える
+            let scale = 0.8;
+            let opacity = 0.5;
+            if(speed > 5) { scale = 1.0; opacity = 0.7; }
+            if(speed > 10) { scale = 1.2; opacity = 0.9; }
+
+            // 風速に応じてアニメーション速度を変える (速い風 = animation-durationを短く)
+            // 基本2秒, 風速10m/sで1秒にする計算
+            let animDuration = Math.max(0.5, 2.0 - (speed * 0.1));
+            
+            // ランダムな遅延を入れて、全体の動きをバラけさせる
+            let animDelay = -Math.random() * 2;
+
+            // SVG定義 (pathにanimationを適用)
+            const svgArrow = `
+                <svg width="30" height="30" viewBox="0 0 24 24" class="arrow-svg" style="
+                    transform: rotate(${degree}deg) scale(${scale}); 
+                    opacity: ${opacity};
+                ">
+                    <path d="M12 2 L6 18 L12 14 L18 18 Z" fill="#555" stroke="none" style="
+                        animation-duration: ${animDuration}s;
+                        animation-delay: ${animDelay}s;
+                    "/>
+                </svg>
+            `;
+
+            const icon = L.divIcon({
+                className: 'wind-arrow-icon',
+                html: svgArrow,
+                iconSize: [30, 30],
+                iconAnchor: [15, 15]
+            });
+
+            L.marker([lat, lon], { 
+                icon: icon, 
+                interactive: false, 
+                zIndexOffset: -100 
+            }).addTo(windLayerGroup);
+        }
+
+        init();
+
+    </script>
+</body>
+</html>
