@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Japan Surf Condition Map (Final Layout)</title>
+    <title>Japan Surf Condition Map</title>
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     
@@ -19,7 +19,7 @@
             backdrop-filter: blur(5px);
             pointer-events: auto; 
         }
-        .row { display: flex; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px solid #f0f0f0; padding-bottom: 4px;}
+        .row { display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px;}
         .label { color: #666; font-size: 0.85rem; }
         .val { font-weight: bold; color: #333; text-align: right; font-size: 0.95rem;}
         .sub-val { font-size: 0.8rem; color: #888; font-weight: normal; display: block; }
@@ -34,15 +34,15 @@
 
         /* タイドグラフ用キャンバス */
         #tide-graph-container {
-            margin-top: 10px;
-            margin-bottom: 5px;
+            margin-top: 15px;
+            margin-bottom: 15px;
             text-align: center;
             background: linear-gradient(to bottom, #fcfcfc, #f0f8ff);
             border-radius: 8px;
             padding: 10px 0;
             border: 1px solid #e0e0e0;
         }
-        canvas { width: 100%; height: 80px; } /* 少しコンパクトに */
+        canvas { width: 100%; height: 100px; }
 
         /* マーカー */
         .surf-marker { display: flex; align-items: center; justify-content: center; }
@@ -87,10 +87,27 @@
     <div id="map"></div>
     
     <div id="info-panel">
-        <h3 id="p-name" style="margin-top:0; margin-bottom:15px; font-size:1.2rem;">-</h3>
+        <h3 id="p-name" style="margin-top:0; margin-bottom:10px; font-size:1.2rem;">-</h3>
         
+        <div id="tide-graph-container">
+            <canvas id="tideCanvas" width="280" height="100"></canvas>
+            <div style="font-size:0.7rem; color:#999; display:flex; justify-content:space-between; padding:0 10px;">
+                <span>0</span><span>6</span><span>12</span><span>18</span><span>24</span>
+            </div>
+        </div>
+
+        <div class="row" style="border:none; margin-bottom:5px;">
+            <span class="label">潮回り</span>
+            <div style="text-align:right;">
+                <span id="p-tide-name" class="tide-tag">-</span>
+                <span id="p-tide-trend" class="val">-</span>
+            </div>
+        </div>
+
+        <hr style="border:0; border-top:1px solid #eee; margin: 5px 0 10px 0;">
+
         <div class="row">
-            <span class="label">波高</span>
+            <span class="label">波高 (目安)</span>
             <div style="text-align:right;">
                 <div id="p-wave-cond" class="val">-</div>
                 <div id="p-wave" class="sub-val">- m</div>
@@ -111,23 +128,6 @@
                 <div id="p-wdir" class="sub-val">-</div>
             </div>
         </div>
-
-        <hr style="border:0; border-top:1px solid #eee; margin: 10px 0;">
-
-        <div class="row" style="border:none; margin-bottom:0;">
-            <span class="label">潮回り</span>
-            <div style="text-align:right;">
-                <span id="p-tide-name" class="tide-tag">-</span>
-                <span id="p-tide-trend" class="val">-</span>
-            </div>
-        </div>
-        
-        <div id="tide-graph-container">
-            <canvas id="tideCanvas" width="280" height="80"></canvas>
-            <div style="font-size:0.7rem; color:#999; display:flex; justify-content:space-between; padding:0 10px;">
-                <span>0</span><span>6</span><span>12</span><span>18</span><span>24</span>
-            </div>
-        </div>
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -137,7 +137,7 @@
             document.getElementById('status-bar').innerText = msg;
         }
 
-        const map = L.map('map', { zoomControl: false }).setView([36.0, 139.0], 6);
+        const map = L.map('map', { zoomControl: false }).setView([36.0, 138.0], 5);
         L.control.zoom({ position: 'topleft' }).addTo(map);
 
         L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
@@ -151,23 +151,29 @@
         L.DomEvent.disableClickPropagation(panel);
 
         const spots = [
+            // 北日本
+            { name: "北海道 - 浜厚真", lat: 42.60, lon: 141.83 },
+            { name: "秋田 - 男鹿", lat: 39.88, lon: 139.85 },
+            { name: "宮城 - 仙台新港", lat: 38.278, lon: 141.023 },
+            { name: "日本海 - 新潟", lat: 37.90, lon: 139.00 },
+            { name: "石川 - 柴垣", lat: 36.90, lon: 136.70 },
+            // 茨城・千葉
             { name: "茨城 - 大洗", lat: 36.30, lon: 140.58 },
             { name: "千葉 - 片貝", lat: 35.53, lon: 140.46 },
             { name: "千葉 - 一宮", lat: 35.36, lon: 140.39 },
             { name: "千葉 - 鴨川", lat: 35.11, lon: 140.12 },
+            // 湘南・東海
             { name: "湘南 - 鵠沼", lat: 35.31, lon: 139.47 }, 
             { name: "湘南 - 茅ヶ崎", lat: 35.32, lon: 139.41 },
             { name: "湘南 - 吉浜", lat: 35.15, lon: 139.10 },
             { name: "静岡 - 白浜", lat: 34.68, lon: 138.97 },
             { name: "愛知 - 伊良湖", lat: 34.59, lon: 137.08 },
-            { name: "宮崎 - 木崎浜", lat: 31.83, lon: 131.43 },
-            { name: "沖縄 - 砂辺", lat: 26.33, lon: 127.74 },
-            { name: "北海道 - 浜厚真", lat: 42.60, lon: 141.83 },
-            { name: "日本海 - 新潟", lat: 37.90, lon: 139.00 },
-            { name: "秋田 - 男鹿", lat: 39.88, lon: 139.85 },
+            // 西日本
             { name: "京都 - 八丁浜", lat: 35.68, lon: 135.06 },
+            { name: "和歌山 - 磯の浦", lat: 34.260, lon: 135.094 },
             { name: "高知 - 生見", lat: 33.54, lon: 134.29 },
-            { name: "石川 - 柴垣", lat: 36.90, lon: 136.70 }
+            { name: "宮崎 - 木崎浜", lat: 31.83, lon: 131.43 },
+            { name: "沖縄 - 砂辺", lat: 26.33, lon: 127.74 }
         ];
 
         const windLayerGroup = L.layerGroup().addTo(map);
@@ -177,13 +183,15 @@
             return dirs[Math.round(deg / 45) % 8];
         }
 
+        // ■■■ 修正版：波サイズ表記ロジック ■■■
         function getSurfConditionText(height) {
-            if (height < 0.3) return "ひざ以下";
-            if (height < 0.6) return "ひざ〜腰";
-            if (height < 1.1) return "腰〜腹";
-            if (height < 1.6) return "胸〜肩";
-            if (height < 2.2) return "頭";
-            return "頭オーバー";
+            // 地形や潮の影響を考慮し、幅を持たせた表記に変更
+            if (height < 0.35) return "スネ 〜 ひざ前後"; // 小波
+            if (height < 0.7)  return "ひざ 〜 腰";
+            if (height < 1.1)  return "腰 〜 腹";
+            if (height < 1.6)  return "腹 〜 胸";
+            if (height < 2.2)  return "胸 〜 頭";
+            return "頭オーバー"; // かなり大きい
         }
 
         // 潮汐計算
@@ -213,8 +221,8 @@
 
             const highTide1 = (moonAge * 0.8) % 24;
             const highTide2 = (highTide1 + 12.4) % 24;
-            const currentHour = now.getHours() + now.getMinutes()/60;
             
+            const currentHour = now.getHours() + now.getMinutes()/60;
             let targetHT = highTide1;
             if (Math.abs(currentHour - highTide2) < Math.abs(currentHour - highTide1)) targetHT = highTide2;
             if (Math.abs(currentHour - (highTide1 + 24)) < Math.abs(currentHour - targetHT)) targetHT = highTide1 + 24;
