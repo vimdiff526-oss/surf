@@ -146,7 +146,7 @@
             document.getElementById('status-bar').innerText = msg;
         }
 
-        const map = L.map('map', { zoomControl: false }).setView([37.5, 140.0], 6); 
+        const map = L.map('map', { zoomControl: false }).setView([37.0, 139.0], 6); 
         L.control.zoom({ position: 'topleft' }).addTo(map);
 
         L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
@@ -159,19 +159,20 @@
         const panel = document.getElementById('info-panel');
         L.DomEvent.disableClickPropagation(panel);
 
-        // ■ ポイント定義
+        // ■ ポイント定義（岩手を追加）
         const spots = [
             // --- 北海道・東北 ---
             { name: "北海道 - 浜厚真", lat: 42.58, lon: 141.83 },
             { name: "北海道 - 室蘭イタンキ", lat: 42.31, lon: 141.03 },
             { name: "青森 - 三沢", lat: 40.70, lon: 141.45 },
             
-            // ★追加: 岩手 (リアス式海岸のため少し沖合に設定)
-            { name: "岩手 - 久慈", lat: 40.20, lon: 141.95 }, 
-            { name: "岩手 - 浪板", lat: 39.35, lon: 142.05 }, 
+            // ★追加: 岩手 (少し沖合に設定)
+            { name: "岩手 - 久慈", lat: 40.20, lon: 141.85 },
+            { name: "岩手 - 浪板", lat: 39.36, lon: 141.98 },
 
             { name: "秋田 - 男鹿", lat: 39.88, lon: 139.80 }, 
             { name: "宮城 - 仙台新港", lat: 38.27, lon: 141.05 }, 
+            
             { name: "福島 - 北泉", lat: 37.64, lon: 141.40 }, 
             { name: "福島 - 岩沢", lat: 37.27, lon: 141.40 }, 
             
@@ -352,6 +353,7 @@
                 const tideInfo = getTideInfo();
 
                 spots.forEach((spot, i) => {
+                    // データがない場合でもマーカーを表示する（c-noneクラスでグレー表示）
                     let wh = null, swellDir = 0, ws = 0, wd = 0;
                     let hasData = false;
 
@@ -365,7 +367,7 @@
                         }
                     }
 
-                    let cClass = 'c-none'; // デフォルトはグレー
+                    let cClass = 'c-none'; 
                     if (hasData) {
                         if(wh < 0.5) cClass = 'c-calm';
                         else if(wh < 1.5) cClass = 'c-mod';
