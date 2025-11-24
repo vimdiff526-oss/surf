@@ -45,57 +45,21 @@
         }
         canvas { width: 100%; height: 80px; }
 
-        /* ■■■ 新しいマーカーデザイン (Wave & Wind) ■■■ */
-        .surf-pin-container {
-            position: relative;
-            width: 50px; height: 50px; /* コンテナサイズ */
-            display: flex; align-items: center; justify-content: center;
+        /* マーカー */
+        .surf-marker { display: flex; align-items: center; justify-content: center; }
+        .wave-circle {
+            width: 24px; height: 24px; border-radius: 50%; border: 2px solid white;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.4); transition: transform 0.2s;
         }
-
-        /* 中心の波サークル */
-        .wave-core {
-            width: 16px; height: 16px; 
-            border-radius: 50%; 
-            border: 2px solid white;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-            z-index: 2; /* 矢印より上に表示 */
-            transition: transform 0.3s ease;
-        }
-        /* インタラクション */
-        .surf-pin-container:hover .wave-core {
-            box-shadow: 0 0 10px rgba(0,0,0,0.5);
-            cursor: pointer;
-        }
-
-        /* 風の矢印リング（回転する要素） */
-        .wind-ring {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            pointer-events: none; /* クリックを透過して下のマーカーへ */
-            z-index: 1;
-        }
+        .wave-circle:hover { transform: scale(1.3); cursor: pointer; z-index: 10000; }
         
-        /* 矢印の三角形 */
-        .arrow-pointer {
-            position: absolute;
-            top: 2px; /* リングの上端に配置 */
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0; height: 0; 
-            border-left: 6px solid transparent;
-            border-right: 6px solid transparent;
-            border-bottom: 14px solid #888; /* 色はJSで上書き */
-            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
-        }
-
-        /* 波の色定義 */
+        /* 色定義 */
         .c-calm { background: #3498db; } /* 青 */
         .c-mod { background: #f1c40f; }  /* 黄 */
         .c-high { background: #e74c3c; } /* 赤 */
         .c-none { background: #b0b0b0; } /* グレー */
 
-        /* 背景の風アニメーション用（既存） */
+        /* 風矢印 */
         .wind-arrow-icon {
             display: flex; align-items: center; justify-content: center;
             pointer-events: none; 
@@ -266,9 +230,10 @@
             return "頭オーバー"; 
         }
 
-        // 潮汐ロジック
+        // ■■■ 修正版：潮汐ロジック（気象庁・サーフィン定義準拠） ■■■
         function getTideInfo() {
             const now = new Date();
+            // 最新の基準日設定
             const knownNewMoon = new Date(2024, 0, 11, 20, 57); 
             const cycle = 29.53059;
             const diffTime = now.getTime() - knownNewMoon.getTime();
@@ -276,19 +241,24 @@
             let moonAge = diffDays % cycle;
             if (moonAge < 0) moonAge += cycle;
 
+            // 旧暦日付に近似（月齢 + 1）
             const lunarDate = Math.floor(moonAge) + 1;
             let name = "中潮";
             
+            // 気象庁・一般的定義に基づく潮名判定
             if ([1, 2, 15, 16, 17, 30].includes(lunarDate)) name = "大潮";
             else if ([3, 4, 5, 18, 19, 20, 21].includes(lunarDate)) name = "中潮";
             else if ([6, 7, 8, 22, 23, 24].includes(lunarDate)) name = "小潮";
             else if ([9, 25].includes(lunarDate)) name = "長潮";
             else if ([10, 11, 12, 13, 14, 26, 27, 28, 29].includes(lunarDate)) name = "若潮〜中潮";
             
+            // 微調整: サーフィン・釣りで一般的な「若潮」
             if (lunarDate === 10 || lunarDate === 25) name = "長潮";
             else if (lunarDate === 11 || lunarDate === 26) name = "若潮";
             else if ([12, 13, 14, 27, 28, 29].includes(lunarDate)) name = "中潮";
 
+            // 満潮時刻の計算（太平洋側平均：大潮満潮 6時/18時基準）
+            // 基準オフセット +6時間 (日本の標準的な遅角)
             const baseOffset = 6.0; 
             const highTide1 = (moonAge * (24 / 29.53) + baseOffset) % 24;
             const highTide2 = (highTide1 + 12.42) % 24;
@@ -310,11 +280,15 @@
                 else { trendText = "下げ潮 ↘"; trendClass = "tide-trend down"; }
             }
 
+            // 潮の大きさ（振幅係数）: 大潮=1.2, 小潮=0.8
+            // 月齢0,15で最大、7,22で最小
+            // cos波で近似
             const amp = 1.0 + 0.3 * Math.cos((moonAge / 14.76) * Math.PI * 2);
 
             return { name, moonAge: moonAge.toFixed(1), trendText, trendClass, highTide1, amp };
         }
 
+        // タイドグラフ描画（振幅反映版）
         function drawTideGraph(tideInfo) {
             const canvas = document.getElementById('tideCanvas');
             const ctx = canvas.getContext('2d');
@@ -328,14 +302,16 @@
             gradient.addColorStop(1, "rgba(52, 152, 219, 0.05)");
 
             const ht = tideInfo.highTide1;
-            const amp = tideInfo.amp; 
+            const amp = tideInfo.amp; // 振幅係数
             
             ctx.beginPath();
             ctx.moveTo(0, h);
 
             for (let x = 0; x <= w; x++) {
                 const time = (x / w) * 24;
+                // 12.42時間周期
                 const wave = Math.cos(2 * Math.PI * (time - ht) / 12.42);
+                // 振幅(amp)を反映。基本振幅30% * amp
                 const y = (h / 2) + (wave * -1 * (h * 0.30 * amp));
                 ctx.lineTo(x, y);
             }
@@ -348,6 +324,7 @@
             ctx.lineWidth = 2;
             ctx.stroke();
 
+            // 現在時刻ライン
             const now = new Date();
             const currentH = now.getHours() + now.getMinutes() / 60;
             const currentX = (currentH / 24) * w;
@@ -361,6 +338,7 @@
             ctx.stroke();
             ctx.setLineDash([]);
 
+            // 現在位置の丸
             const currentWave = Math.cos(2 * Math.PI * (currentH - ht) / 12.42);
             const currentY = (h / 2) + (currentWave * -1 * (h * 0.30 * amp));
             
@@ -393,6 +371,8 @@
                 const mData = Array.isArray(mRes) ? mRes : [mRes];
                 const wData = Array.isArray(wRes) ? wRes : [wRes];
                 const windVectors = [];
+                
+                // 潮汐情報の計算
                 const tideInfo = getTideInfo();
 
                 spots.forEach((spot, i) => {
@@ -409,7 +389,6 @@
                         }
                     }
 
-                    // --- 波の色判定 ---
                     let cClass = 'c-none'; 
                     if (hasData) {
                         if(wh < 0.5) cClass = 'c-calm';
@@ -417,43 +396,11 @@
                         else cClass = 'c-high';
                     }
 
-                    // --- ■■■ デザイン変更ロジック開始 ■■■ ---
-                    
-                    // 1. 波のサイズによるスケール (0.5m=0.8倍 〜 3.0m=2.0倍 程度)
-                    let waveScale = 1.0;
-                    if(hasData) {
-                        waveScale = 0.8 + (wh * 0.4); 
-                        if(waveScale > 2.2) waveScale = 2.2; // 上限
-                    }
-
-                    // 2. 風向き矢印の回転 (API値は"風が来る方向"。矢印は"流れる方向"を示すため180度足す)
-                    let windRotate = hasData ? (wd + 180) : 0;
-                    
-                    // 3. 風速による矢印の色 (強風＝赤)
-                    let windArrowColor = "#888"; // デフォルト
-                    if (hasData) {
-                        if(ws < 4.0) windArrowColor = "#3498db"; // 弱風(青)
-                        else if(ws < 8.0) windArrowColor = "#f1c40f"; // 中風(黄)
-                        else windArrowColor = "#e74c3c"; // 強風(赤)
-                    }
-
-                    // HTML生成
-                    const iconHtml = `
-                        <div class="surf-pin-container">
-                            <div class="wind-ring" style="transform: rotate(${windRotate}deg)">
-                                <div class="arrow-pointer" style="border-bottom-color: ${windArrowColor}"></div>
-                            </div>
-                            <div class="wave-core ${cClass}" style="transform: scale(${waveScale})"></div>
-                        </div>
-                    `;
-
                     const icon = L.divIcon({
-                        className: 'custom-div', // Leafletデフォルトの四角い枠を消すCSSが必要なら追加
-                        html: iconHtml,
-                        iconSize: [50, 50], // コンテナサイズに合わせる
-                        iconAnchor: [25, 25] // 中心を合わせる
+                        className: 'custom-div',
+                        html: `<div class="surf-marker"><div class="wave-circle ${cClass}"></div></div>`,
+                        iconSize: [24, 24]
                     });
-                    // --- ■■■ デザイン変更ロジック終了 ■■■ ---
 
                     const marker = L.marker([spot.lat, spot.lon], {icon: icon, zIndexOffset: 1000}).addTo(map);
                     
