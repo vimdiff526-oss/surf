@@ -19,6 +19,18 @@
             backdrop-filter: blur(5px);
             pointer-events: auto; 
         }
+        
+        /* ▼▼▼ 追加: 取得時間の表示スタイル ▼▼▼ */
+        #p-update-time {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 0.7rem;
+            color: #aaa;
+            font-weight: normal;
+        }
+        /* ▲▲▲ 追加終わり ▲▲▲ */
+
         .row { display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px;}
         .label { color: #666; font-size: 0.85rem; }
         .val { font-weight: bold; color: #333; text-align: right; font-size: 0.95rem;}
@@ -126,6 +138,7 @@
     <div id="map"></div>
     
     <div id="info-panel">
+        <div id="p-update-time"></div>
         <h3 id="p-name" style="margin-top:0; margin-bottom:10px; font-size:1.2rem;">-</h3>
         
         <div class="row" style="border-bottom: none; margin-bottom: 0;">
@@ -195,7 +208,7 @@
         const panel = document.getElementById('info-panel');
         L.DomEvent.disableClickPropagation(panel);
 
-// ■ ポイント定義（岸・ブレイクポイント寄りに修正）
+        // ■ ポイント定義
         const spots = [
             // 北海道・東北
             { name: "北海道 - 浜厚真", lat: 42.605, lon: 141.832 },
@@ -213,26 +226,26 @@
             { name: "茨城 - 大洗", lat: 36.307, lon: 140.575 },
             { name: "茨城 - トップサンテ", lat: 36.195, lon: 140.575 },
 
-            // 千葉（かなり陸に寄せました）
+            // 千葉
             { name: "千葉 - 片貝", lat: 35.538, lon: 140.460 },
             { name: "千葉 - 一宮", lat: 35.365, lon: 140.395 },
             { name: "千葉 - 御宿", lat: 35.182, lon: 140.355 },
             { name: "千葉 - 和田", lat: 35.038, lon: 140.023 },
             { name: "千葉 - 鴨川", lat: 35.105, lon: 140.115 },
             
-            // 神奈川（ビーチ・ヘッドランドの先端ギリギリに修正）
-            { name: "湘南 - 由比ガ浜", lat: 35.3120, lon: 139.5415 }, // 湾の中央寄りへ
-            { name: "湘南 - 七里ヶ浜", lat: 35.3058, lon: 139.5105 }, // 駐車場の目の前へ接近
-            { name: "湘南 - 鵠沼", lat: 35.3165, lon: 139.4685 },     // スケートパーク前のブレイクラインへ
-            { name: "湘南 - 茅ヶ崎", lat: 35.3168, lon: 139.4045 },   // ヘッドランド(Tバー)の先端脇へ
-            { name: "湘南 - 平塚", lat: 35.3155, lon: 139.3615 },     // 生コンポイントの海側へ修正
-            { name: "西湘 - 吉浜", lat: 35.1505, lon: 139.1125 },     // ビーチの中央寄りへ
+            // 神奈川
+            { name: "湘南 - 由比ガ浜", lat: 35.3120, lon: 139.5415 }, 
+            { name: "湘南 - 七里ヶ浜", lat: 35.3058, lon: 139.5105 }, 
+            { name: "湘南 - 鵠沼", lat: 35.3165, lon: 139.4685 },     
+            { name: "湘南 - 茅ヶ崎", lat: 35.3168, lon: 139.4045 },   
+            { name: "湘南 - 平塚", lat: 35.3155, lon: 139.3615 },     
+            { name: "西湘 - 吉浜", lat: 35.1505, lon: 139.1125 },     
             
             // 静岡・愛知
             { name: "静岡 - 白浜", lat: 34.688, lon: 138.975 },
             { name: "静岡 - 静波", lat: 34.752, lon: 138.275 },
             { name: "静岡 - 御前崎", lat: 34.595, lon: 138.225 },
-            { name: "愛知 - 伊良湖", lat: 34.598, lon: 137.150 }, // ロングビーチ周辺
+            { name: "愛知 - 伊良湖", lat: 34.598, lon: 137.150 }, 
             
             // 西日本
             { name: "京都 - 八丁浜", lat: 35.688, lon: 135.062 },
@@ -250,13 +263,15 @@
         ];
 
         const windLayerGroup = L.layerGroup().addTo(map);
+        
+        // ▼▼▼ 追加: データ取得時間を保持する変数 ▼▼▼
+        let dataFetchTimeStr = "--/-- --:--"; 
 
         function getDirText(deg) {
             const dirs = ['北', '北東', '東', '南東', '南', '南西', '西', '北西'];
             return dirs[Math.round(deg / 45) % 8];
         }
 
-        // ▼▼▼ 修正箇所: 波のサイズ定義を更新しました ▼▼▼
         function getSurfConditionText(height) {
             if (height === null || height === undefined) return "データなし";
             if (height < 0.30) return "ひざ";
@@ -270,7 +285,6 @@
             if (height < 1.80) return "頭";
             return "頭オーバー"; 
         }
-        // ▲▲▲ 修正完了 ▲▲▲
 
         // 潮汐ロジック
         function getTideInfo() {
@@ -394,6 +408,15 @@
                     fetch(wUrl).then(r => r.json())
                 ]);
 
+                // ▼▼▼ 追加: 取得時間の保存処理 ▼▼▼
+                const now = new Date();
+                const mm = now.getMonth() + 1;
+                const dd = now.getDate();
+                const hh = now.getHours();
+                const min = String(now.getMinutes()).padStart(2, '0');
+                dataFetchTimeStr = `${mm}/${dd} ${hh}:${min}時点`;
+                // ▲▲▲ 追加終わり ▲▲▲
+
                 setStatus("マップ描画中...");
 
                 const mData = Array.isArray(mRes) ? mRes : [mRes];
@@ -423,24 +446,20 @@
                         else cClass = 'c-high';
                     }
 
-                    // --- ■■■ デザイン変更ロジック開始 ■■■ ---
-                    
-                    // 1. 波のサイズによるスケール (0.5m=0.8倍 〜 3.0m=2.0倍 程度)
+                    // デザイン変更ロジック
                     let waveScale = 1.0;
                     if(hasData) {
                         waveScale = 0.8 + (wh * 0.4); 
-                        if(waveScale > 2.2) waveScale = 2.2; // 上限
+                        if(waveScale > 2.2) waveScale = 2.2; 
                     }
 
-                    // 2. 風向き矢印の回転 (API値は"風が来る方向"。矢印は"流れる方向"を示すため180度足す)
                     let windRotate = hasData ? (wd + 180) : 0;
                     
-                    // 3. 風速による矢印の色 (強風＝赤)
-                    let windArrowColor = "#888"; // デフォルト
+                    let windArrowColor = "#888"; 
                     if (hasData) {
-                        if(ws < 4.0) windArrowColor = "#3498db"; // 弱風(青)
-                        else if(ws < 8.0) windArrowColor = "#f1c40f"; // 中風(黄)
-                        else windArrowColor = "#e74c3c"; // 強風(赤)
+                        if(ws < 4.0) windArrowColor = "#3498db"; 
+                        else if(ws < 8.0) windArrowColor = "#f1c40f"; 
+                        else windArrowColor = "#e74c3c"; 
                     }
 
                     // HTML生成
@@ -454,12 +473,11 @@
                     `;
 
                     const icon = L.divIcon({
-                        className: 'custom-div', // Leafletデフォルトの四角い枠を消すCSSが必要なら追加
+                        className: 'custom-div', 
                         html: iconHtml,
-                        iconSize: [50, 50], // コンテナサイズに合わせる
-                        iconAnchor: [25, 25] // 中心を合わせる
+                        iconSize: [50, 50], 
+                        iconAnchor: [25, 25] 
                     });
-                    // --- ■■■ デザイン変更ロジック終了 ■■■ ---
 
                     const marker = L.marker([spot.lat, spot.lon], {icon: icon, zIndexOffset: 1000}).addTo(map);
                     
@@ -468,6 +486,10 @@
                         const panel = document.getElementById('info-panel');
                         document.getElementById('p-name').innerText = spot.name;
                         
+                        // ▼▼▼ 追加: パネルに取得時間を表示 ▼▼▼
+                        document.getElementById('p-update-time').innerText = "データ取得: " + dataFetchTimeStr;
+                        // ▲▲▲ 追加終わり ▲▲▲
+
                         if (hasData) {
                             document.getElementById('p-wave-cond').innerText = getSurfConditionText(wh);
                             document.getElementById('p-wave').innerText = `${wh.toFixed(2)} m`;
