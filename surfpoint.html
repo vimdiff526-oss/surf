@@ -256,15 +256,21 @@
             return dirs[Math.round(deg / 45) % 8];
         }
 
+        // ▼▼▼ 修正箇所: 波のサイズ定義を更新しました ▼▼▼
         function getSurfConditionText(height) {
             if (height === null || height === undefined) return "データなし";
-            if (height < 0.35) return "スネ 〜 ひざ前後"; 
-            if (height < 0.7)  return "ひざ 〜 腰";
-            if (height < 1.1)  return "腰 〜 腹";
-            if (height < 1.6)  return "腹 〜 胸";
-            if (height < 2.2)  return "胸 〜 頭";
+            if (height < 0.30) return "ひざ";
+            if (height < 0.40) return "ひざ前後";
+            if (height < 0.50) return "もも前後";
+            if (height < 0.60) return "腰前後";
+            if (height < 0.70) return "腰腹";
+            if (height < 0.90) return "腹胸";
+            if (height < 1.20) return "胸肩";
+            if (height < 1.50) return "肩前後";
+            if (height < 1.80) return "頭";
             return "頭オーバー"; 
         }
+        // ▲▲▲ 修正完了 ▲▲▲
 
         // 潮汐ロジック
         function getTideInfo() {
