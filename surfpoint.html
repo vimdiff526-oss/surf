@@ -195,12 +195,26 @@
             document.getElementById('status-bar').innerText = msg;
         }
 
-        const map = L.map('map', { zoomControl: false }).setView([37.5, 140.0], 6); 
+        // ▼▼▼ 修正箇所: 地図の表示範囲を日本に限定する設定 ▼▼▼
+        const southWest = L.latLng(20.0, 122.0); // 沖縄の南西
+        const northEast = L.latLng(46.0, 154.0); // 北海道の北東
+        const bounds = L.latLngBounds(southWest, northEast);
+
+        const map = L.map('map', { 
+            zoomControl: false,
+            maxBounds: bounds,      // 画面をこの範囲から出られないようにロック
+            maxBoundsViscosity: 1.0, // 引っ張っても戻らず、完全に止める
+            minZoom: 5              // これ以上ズームアウトさせない（世界地図防止）
+        }).setView([37.5, 139.0], 5); // 初期表示を少し引き気味(5)にして日本全体を見せる
+
         L.control.zoom({ position: 'topleft' }).addTo(map);
 
         L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-            maxZoom: 19, attribution: '&copy; CARTO'
+            maxZoom: 19, 
+            attribution: '&copy; CARTO',
+            bounds: bounds // タイル読み込みも制限（無駄な通信削減）
         }).addTo(map);
+        // ▲▲▲ 修正完了 ▲▲▲
 
         map.on('click', () => {
             document.getElementById('info-panel').style.display = 'none';
