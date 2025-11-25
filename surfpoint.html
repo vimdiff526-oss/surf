@@ -283,19 +283,25 @@
             return dirs[Math.round(deg / 45) % 8];
         }
 
+        // ▼▼▼ 修正箇所: 波のサイズ定義を更新しました ▼▼▼
         function getSurfConditionText(height) {
             if (height === null || height === undefined) return "データなし";
             if (height < 0.30) return "ひざ";
             if (height < 0.40) return "ひざ前後";
             if (height < 0.50) return "もも前後";
-            if (height < 0.60) return "腰前後";
-            if (height < 0.70) return "腰腹";
-            if (height < 0.90) return "腹胸";
+            if (height < 0.60) return "もも腰";
+            if (height < 0.70) return "腰前後";
+            if (height < 0.80) return "腰腹";
+            if (height < 0.90) return "腹前後";
+            if (height < 1.00) return "腹胸";
+            if (height < 1.10) return "胸前後";
             if (height < 1.20) return "胸肩";
-            if (height < 1.50) return "肩前後";
-            if (height < 1.80) return "頭";
-            return "頭オーバー"; 
+            if (height < 1.30) return "肩前後";
+            if (height < 1.50) return "頭前後";
+            if (height < 1.70) return "頭オーバー";
+            return "クローズ"; 
         }
+        // ▲▲▲ 修正完了 ▲▲▲
 
         // 潮汐ロジック
         function getTideInfo() {
@@ -456,14 +462,7 @@
                         else cClass = 'c-high';
                     }
 
-                    // ▼▼▼ 修正箇所: デザイン変更ロジック (サイズ固定) ▼▼▼
                     let waveScale = 1.3; // 一定の大きさに固定
-                    // 以前のロジック:
-                    // if(hasData) {
-                    //     waveScale = 0.8 + (wh * 0.4); 
-                    //     if(waveScale > 2.2) waveScale = 2.2; 
-                    // }
-                    // ▲▲▲ 修正完了 ▲▲▲
 
                     let windRotate = hasData ? (wd + 180) : 0;
                     
