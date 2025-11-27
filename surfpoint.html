@@ -11,7 +11,7 @@
         body, html { margin: 0; padding: 0; height: 100%; font-family: 'Helvetica Neue', Arial, sans-serif; overflow: hidden; }
         #map { height: 100%; width: 100%; background: #e5e5e5; }
 
-        /* 情報パネル */
+        /* --- Info Panel --- */
         #info-panel {
             position: absolute; top: 20px; right: 20px; width: 300px;
             background: rgba(255, 255, 255, 0.98); padding: 20px; border-radius: 12px;
@@ -20,14 +20,9 @@
             pointer-events: auto; 
         }
         
-        /* 取得時間の表示スタイル */
-        #p-update-time {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            font-size: 0.7rem;
-            color: #aaa;
-            font-weight: normal;
+        #p-data-time {
+            position: absolute; top: 15px; right: 20px;
+            font-size: 0.8rem; color: #e74c3c; font-weight: bold;
         }
 
         .row { display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px;}
@@ -37,7 +32,6 @@
         
         .note-text { font-size: 0.7rem; color: #999; margin-top: 4px; line-height: 1.2; text-align: right; }
 
-        /* 潮回りタグ */
         .tide-tag {
             display: inline-block; padding: 2px 8px; border-radius: 4px; 
             font-size: 0.8rem; color: white; background: #555; margin-right: 5px;
@@ -45,76 +39,45 @@
         .tide-trend { font-weight: bold; color: #007bff; font-size: 0.9rem; }
         .tide-trend.down { color: #dc3545; }
 
-        /* タイドグラフ */
         #tide-graph-container {
-            margin-top: 5px;
-            text-align: center;
+            margin-top: 5px; text-align: center;
             background: linear-gradient(to bottom, #fcfcfc, #f0f8ff);
-            border-radius: 8px;
-            padding: 10px 0;
-            border: 1px solid #e0e0e0;
+            border-radius: 8px; padding: 10px 0; border: 1px solid #e0e0e0;
         }
         canvas { width: 100%; height: 80px; }
 
-        /* ■■■ マーカーデザイン ■■■ */
+        /* --- Markers --- */
         .surf-pin-container {
-            position: relative;
-            width: 50px; height: 50px; /* コンテナサイズ */
+            position: relative; width: 50px; height: 50px;
             display: flex; align-items: center; justify-content: center;
         }
-
-        /* 中心の波サークル */
         .wave-core {
-            width: 16px; height: 16px; 
-            border-radius: 50%; 
-            border: 2px solid white;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-            z-index: 2; /* 矢印より上に表示 */
-            transition: transform 0.3s ease;
+            width: 16px; height: 16px; border-radius: 50%; border: 2px solid white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3); z-index: 2; transition: all 0.3s ease;
         }
-        /* インタラクション */
-        .surf-pin-container:hover .wave-core {
-            box-shadow: 0 0 10px rgba(0,0,0,0.5);
-            cursor: pointer;
-        }
+        .surf-pin-container:hover .wave-core { transform: scale(1.2); box-shadow: 0 0 15px rgba(0,0,0,0.5); cursor: pointer; }
 
-        /* 風の矢印リング */
         .wind-ring {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            pointer-events: none; /* クリックを透過して下のマーカーへ */
-            z-index: 1;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 1; transition: transform 0.5s linear;
         }
-        
-        /* 矢印の三角形 */
         .arrow-pointer {
-            position: absolute;
-            top: 2px; /* リングの上端に配置 */
-            left: 50%;
-            transform: translateX(-50%);
+            position: absolute; top: 2px; left: 50%; transform: translateX(-50%);
             width: 0; height: 0; 
-            border-left: 6px solid transparent;
-            border-right: 6px solid transparent;
-            border-bottom: 14px solid #888; /* 色はJSで上書き */
-            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
+            border-left: 6px solid transparent; border-right: 6px solid transparent;
+            border-bottom: 14px solid #888; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
         }
 
-        /* 波の色定義 */
-        .c-calm { background: #3498db; } /* 青 */
-        .c-mod { background: #f1c40f; }  /* 黄 */
-        .c-high { background: #e74c3c; } /* 赤 */
-        .c-none { background: #b0b0b0; } /* グレー */
+        .c-calm { background: #3498db; }
+        .c-mod { background: #f1c40f; }
+        .c-high { background: #e74c3c; }
+        .c-none { background: #b0b0b0; }
 
-        /* 背景の風アニメーション用 */
         .wind-arrow-icon {
-            display: flex; align-items: center; justify-content: center;
-            pointer-events: none; 
+            display: flex; align-items: center; justify-content: center; pointer-events: none; 
         }
         .arrow-svg path {
-            animation-name: flow;
-            animation-timing-function: linear;
-            animation-iteration-count: infinite;
+            animation-name: flow; animation-timing-function: linear; animation-iteration-count: infinite;
         }
         @keyframes flow {
             0% { opacity: 0; transform: translateY(8px); }
@@ -123,21 +86,133 @@
             100% { opacity: 0; transform: translateY(-8px); }
         }
 
-        #status-bar {
-            position: absolute; bottom: 10px; left: 10px; 
-            background: rgba(255, 255, 255, 0.9); color: #333; 
-            padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold;
-            z-index: 3000; pointer-events: none; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        /* --- New Time Slider UI (Matching Capture) --- */
+        #time-control-panel {
+            position: absolute; bottom: 0; left: 0; width: 100%;
+            background: linear-gradient(to bottom, #f0f0f0, #e0e0e0);
+            border-top: 1px solid #ccc;
+            padding: 10px 20px 20px 20px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            z-index: 2000;
+            display: flex; align-items: center; justify-content: center; gap: 20px;
+            box-sizing: border-box;
+        }
+
+        /* Play Button */
+        #play-btn {
+            width: 44px; height: 44px; border-radius: 50%; border: 1px solid #bbb;
+            background: linear-gradient(to bottom, #ffffff, #f2f2f2);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,1);
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; outline: none; transition: transform 0.1s;
+        }
+        #play-btn:active { transform: scale(0.95); background: #eee; }
+        /* Play Icon (Triangle) */
+        #play-icon {
+            width: 0; height: 0; 
+            border-left: 12px solid #0066cc;
+            border-top: 7px solid transparent; border-bottom: 7px solid transparent;
+            margin-left: 4px; /* Centering fix */
+        }
+        /* Pause Icon */
+        #pause-icon {
+            display: none;
+            width: 12px; height: 14px;
+            border-left: 4px solid #0066cc; border-right: 4px solid #0066cc;
+        }
+
+        /* Slider Container */
+        .slider-container {
+            flex-grow: 1; max-width: 800px; position: relative;
+            padding-bottom: 20px; /* Space for scale labels */
+        }
+
+        /* Range Input Styling */
+        input[type=range] {
+            -webkit-appearance: none; width: 100%; margin: 0; background: transparent;
+            position: relative; z-index: 2; cursor: pointer;
+        }
+        input[type=range]:focus { outline: none; }
+
+        /* Track */
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%; height: 8px; cursor: pointer;
+            background: #e0e0e0; border-radius: 4px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+            border: 1px solid #ccc;
+        }
+        
+        /* Thumb (Handle) */
+        input[type=range]::-webkit-slider-thumb {
+            height: 20px; width: 10px; border-radius: 2px;
+            background: #f8f8f8; border: 1px solid #999;
+            cursor: pointer; -webkit-appearance: none;
+            margin-top: -7px; /* Center on track */
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+
+        /* Scale (Ticks and Numbers) */
+        .slider-scale {
+            position: absolute; top: 18px; left: 2px; right: 2px; height: 20px;
+            display: flex; justify-content: space-between;
+            font-size: 0.75rem; color: #333; pointer-events: none;
+        }
+        .scale-mark {
+            position: relative; width: 0; display: flex; flex-direction: column; align-items: center;
+        }
+        .scale-tick {
+            width: 1px; height: 5px; background: #888; margin-bottom: 2px;
+        }
+        .scale-label {
+            white-space: nowrap; transform: translateX(-50%); /* Center number */
+        }
+        .scale-suffix {
+            position: absolute; right: -30px; bottom: 0; font-size: 0.75rem; color: #333;
+        }
+
+        /* Current Time Display Overlay */
+        #time-display-overlay {
+            position: absolute; top: -35px; left: 50%; transform: translateX(-50%);
+            background: rgba(0,0,0,0.7); color: white; padding: 4px 12px;
+            border-radius: 12px; font-size: 0.9rem; font-weight: bold;
+            opacity: 0; transition: opacity 0.3s; pointer-events: none;
+        }
+        .slider-container:hover #time-display-overlay { opacity: 1; }
+
+        #loading-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.8); z-index: 9999;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; font-weight: bold; color: #555;
         }
     </style>
 </head>
 <body>
 
-    <div id="status-bar">システム起動中...</div>
+    <div id="loading-overlay">データ取得中...</div>
+
     <div id="map"></div>
     
+    <div id="time-control-panel">
+        <button id="play-btn">
+            <div id="play-icon"></div>
+            <div id="pause-icon"></div>
+        </button>
+        
+        <div class="slider-container">
+            <div id="time-display-overlay">現在</div>
+            
+            <input type="range" id="time-slider" min="0" max="23" value="0" step="1">
+            
+            <div class="slider-scale" id="slider-scale">
+                </div>
+            
+            <div style="position: absolute; right: 0; bottom: -5px; font-size: 0.75rem; color: #333;">時間後</div>
+        </div>
+    </div>
+
     <div id="info-panel">
-        <div id="p-update-time"></div>
+        <div id="p-data-time">現在</div>
         <h3 id="p-name" style="margin-top:0; margin-bottom:10px; font-size:1.2rem;">-</h3>
         
         <div class="row" style="border-bottom: none; margin-bottom: 0;">
@@ -190,39 +265,75 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script>
-        function setStatus(msg) {
-            document.getElementById('status-bar').innerText = msg;
+        // --- State Management ---
+        let globalData = [];
+        let currentHourIndex = 0; // 0 to 23
+        let isPlaying = false;
+        let playInterval = null;
+        let selectedSpotIndex = null;
+        
+        // Date handling
+        const today = new Date();
+        const hourLabels = [];
+        for(let i=0; i<24; i++) {
+            const d = new Date(today.getTime());
+            d.setHours(today.getHours() + i);
+            d.setMinutes(0);
+            hourLabels.push(d);
         }
 
-        // 地図の表示範囲を日本に限定する設定
-        const southWest = L.latLng(20.0, 122.0); // 沖縄の南西
-        const northEast = L.latLng(46.0, 154.0); // 北海道の北東
+        // --- Generate Slider Scale ---
+        const scaleContainer = id => document.getElementById(id);
+        const scaleDiv = scaleContainer('slider-scale');
+        
+        // 生成する目盛り (0, 3, 6, ..., 24)
+        for (let i = 0; i <= 24; i += 3) {
+            const mark = document.createElement('div');
+            mark.className = 'scale-mark';
+            // 位置を％で指定 (23が最大なので、24時間表示のために少し調整)
+            // スライダーは0-23だが、表示は24時間後まである雰囲気を出したい
+            // ここではInputのステップに合わせて配置
+            const percent = (i / 23) * 100; 
+            if(percent > 100) continue; // 24ははみ出るのでカット、あるいは23の右に置く
+
+            mark.style.left = percent + '%';
+            mark.style.position = 'absolute';
+            
+            mark.innerHTML = `
+                <div class="scale-tick"></div>
+                <div class="scale-label">${i}</div>
+            `;
+            scaleDiv.appendChild(mark);
+        }
+
+        // --- Map Init ---
+        const southWest = L.latLng(20.0, 122.0);
+        const northEast = L.latLng(46.0, 154.0);
         const bounds = L.latLngBounds(southWest, northEast);
 
         const map = L.map('map', { 
             zoomControl: false,
-            maxBounds: bounds,      // 画面をこの範囲から出られないようにロック
-            maxBoundsViscosity: 1.0, // 引っ張っても戻らず、完全に止める
-            minZoom: 5              // これ以上ズームアウトさせない
+            maxBounds: bounds,
+            maxBoundsViscosity: 1.0,
+            minZoom: 5
         }).setView([37.5, 139.0], 5); 
 
         L.control.zoom({ position: 'topleft' }).addTo(map);
 
         L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-            maxZoom: 19, 
-            attribution: '&copy; CARTO',
-            bounds: bounds // タイル読み込みも制限
+            maxZoom: 19, attribution: '&copy; CARTO', bounds: bounds
         }).addTo(map);
 
         map.on('click', () => {
             document.getElementById('info-panel').style.display = 'none';
+            selectedSpotIndex = null;
         });
         const panel = document.getElementById('info-panel');
         L.DomEvent.disableClickPropagation(panel);
+        L.DomEvent.disableClickPropagation(document.getElementById('time-control-panel'));
 
-        // ■ ポイント定義
+        // --- Spots Definition ---
         const spots = [
-            // 北海道・東北
             { name: "北海道 - 浜厚真", lat: 42.605, lon: 141.832 },
             { name: "北海道 - 室蘭イタンキ", lat: 42.327, lon: 141.037 },
             { name: "青森 - 三沢", lat: 40.702, lon: 141.428 },
@@ -231,41 +342,29 @@
             { name: "宮城 - 仙台新港", lat: 38.276, lon: 141.026 }, 
             { name: "福島 - 北泉", lat: 37.647, lon: 141.028 }, 
             { name: "福島 - 岩沢", lat: 37.268, lon: 141.020 }, 
-            { name: "日本海 - 新潟", lat: 37.880, lon: 138.940 }, // 五十嵐周辺
+            { name: "日本海 - 新潟", lat: 37.880, lon: 138.940 },
             { name: "石川 - 柴垣", lat: 36.908, lon: 136.762 },
-            
-            // 茨城
             { name: "茨城 - 大洗", lat: 36.307, lon: 140.575 },
             { name: "茨城 - トップサンテ", lat: 36.195, lon: 140.575 },
-
-            // 千葉
             { name: "千葉 - 片貝", lat: 35.538, lon: 140.460 },
             { name: "千葉 - 一宮", lat: 35.365, lon: 140.395 },
             { name: "千葉 - 御宿", lat: 35.182, lon: 140.355 },
             { name: "千葉 - 和田", lat: 35.038, lon: 140.023 },
             { name: "千葉 - 鴨川", lat: 35.105, lon: 140.115 },
-            
-            // 神奈川
             { name: "湘南 - 由比ガ浜", lat: 35.3120, lon: 139.5415 }, 
             { name: "湘南 - 七里ヶ浜", lat: 35.3058, lon: 139.5105 }, 
             { name: "湘南 - 鵠沼", lat: 35.3165, lon: 139.4685 },     
             { name: "湘南 - 茅ヶ崎", lat: 35.3168, lon: 139.4045 },   
             { name: "湘南 - 平塚", lat: 35.3155, lon: 139.3615 },     
             { name: "西湘 - 吉浜", lat: 35.1505, lon: 139.1125 },     
-            
-            // 静岡・愛知
             { name: "静岡 - 白浜", lat: 34.688, lon: 138.975 },
             { name: "静岡 - 静波", lat: 34.752, lon: 138.275 },
             { name: "静岡 - 御前崎", lat: 34.595, lon: 138.225 },
             { name: "愛知 - 伊良湖", lat: 34.598, lon: 137.150 }, 
-            
-            // 西日本
             { name: "京都 - 八丁浜", lat: 35.688, lon: 135.062 },
             { name: "和歌山 - 磯の浦", lat: 34.257, lon: 135.075 }, 
             { name: "高知 - 生見", lat: 33.542, lon: 134.305 },
             { name: "高知 - 入野", lat: 33.020, lon: 133.005 },
-
-            // 九州・沖縄
             { name: "福岡 - 釣川", lat: 33.875, lon: 130.535 },
             { name: "福岡 - 三苫", lat: 33.705, lon: 130.422 }, 
             { name: "福岡 - 芥屋", lat: 33.615, lon: 130.130 },
@@ -274,16 +373,14 @@
             { name: "沖縄 - 砂辺", lat: 26.328, lon: 127.745 }
         ];
 
+        const spotMarkers = [];
         const windLayerGroup = L.layerGroup().addTo(map);
-        
-        let dataFetchTimeStr = "--/-- --:--"; 
 
         function getDirText(deg) {
             const dirs = ['北', '北東', '東', '南東', '南', '南西', '西', '北西'];
             return dirs[Math.round(deg / 45) % 8];
         }
 
-        // ▼▼▼ 修正箇所: 波のサイズ定義を更新しました ▼▼▼
         function getSurfConditionText(height) {
             if (height === null || height === undefined) return "データなし";
             if (height < 0.30) return "ひざ";
@@ -304,14 +401,12 @@
             if (height < 1.80) return "頭オーバー";
             return "クローズ"; 
         }
-        // ▲▲▲ 修正完了 ▲▲▲
 
-        // 潮汐ロジック
-        function getTideInfo() {
-            const now = new Date();
+        // --- Tide Logic ---
+        function getTideInfo(targetDate) {
             const knownNewMoon = new Date(2024, 0, 11, 20, 57); 
             const cycle = 29.53059;
-            const diffTime = now.getTime() - knownNewMoon.getTime();
+            const diffTime = targetDate.getTime() - knownNewMoon.getTime();
             const diffDays = diffTime / (1000 * 60 * 60 * 24);
             let moonAge = diffDays % cycle;
             if (moonAge < 0) moonAge += cycle;
@@ -333,7 +428,7 @@
             const highTide1 = (moonAge * (24 / 29.53) + baseOffset) % 24;
             const highTide2 = (highTide1 + 12.42) % 24;
             
-            const currentHour = now.getHours() + now.getMinutes()/60;
+            const currentHour = targetDate.getHours() + targetDate.getMinutes()/60;
             let targetHT = highTide1;
             if (Math.abs(currentHour - highTide2) < Math.abs(currentHour - highTide1)) targetHT = highTide2;
             if (Math.abs(currentHour - (highTide1 + 24)) < Math.abs(currentHour - targetHT)) targetHT = highTide1 + 24;
@@ -352,9 +447,10 @@
 
             const amp = 1.0 + 0.3 * Math.cos((moonAge / 14.76) * Math.PI * 2);
 
-            return { name, moonAge: moonAge.toFixed(1), trendText, trendClass, highTide1, amp };
+            return { name, moonAge: moonAge.toFixed(1), trendText, trendClass, highTide1, amp, currentHour };
         }
 
+        // --- Tide Graph ---
         function drawTideGraph(tideInfo) {
             const canvas = document.getElementById('tideCanvas');
             const ctx = canvas.getContext('2d');
@@ -372,14 +468,12 @@
             
             ctx.beginPath();
             ctx.moveTo(0, h);
-
             for (let x = 0; x <= w; x++) {
                 const time = (x / w) * 24;
                 const wave = Math.cos(2 * Math.PI * (time - ht) / 12.42);
                 const y = (h / 2) + (wave * -1 * (h * 0.30 * amp));
                 ctx.lineTo(x, y);
             }
-
             ctx.lineTo(w, h);
             ctx.closePath();
             ctx.fillStyle = gradient;
@@ -388,9 +482,13 @@
             ctx.lineWidth = 2;
             ctx.stroke();
 
-            const now = new Date();
-            const currentH = now.getHours() + now.getMinutes() / 60;
-            const currentX = (currentH / 24) * w;
+            // Current Time Line
+            const currentH = tideInfo.currentHour;
+            let displayH = currentH; 
+            if(displayH < 0) displayH += 24;
+            if(displayH > 24) displayH -= 24;
+
+            const currentX = (displayH / 24) * w;
 
             ctx.beginPath();
             ctx.moveTo(currentX, 0);
@@ -401,7 +499,7 @@
             ctx.stroke();
             ctx.setLineDash([]);
 
-            const currentWave = Math.cos(2 * Math.PI * (currentH - ht) / 12.42);
+            const currentWave = Math.cos(2 * Math.PI * (displayH - ht) / 12.42);
             const currentY = (h / 2) + (currentWave * -1 * (h * 0.30 * amp));
             
             ctx.beginPath();
@@ -413,71 +511,107 @@
             ctx.stroke();
         }
 
-        async function init() {
-            setStatus("気象データ取得中...");
+        // --- Data Fetching (Corrected for JP Time) ---
+        async function fetchForecastData() {
+            const lats = spots.map(s => s.lat).join(',');
+            const lons = spots.map(s => s.lon).join(',');
             
-            try {
-                const lats = spots.map(s => s.lat).join(',');
-                const lons = spots.map(s => s.lon).join(',');
-                
-                const mUrl = `https://marine-api.open-meteo.com/v1/marine?latitude=${lats}&longitude=${lons}&current=wave_height,swell_wave_direction&timezone=Asia%2FTokyo`;
-                const wUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lats}&longitude=${lons}&current=wind_speed_10m,wind_direction_10m&wind_speed_unit=ms`;
+            const mUrl = `https://marine-api.open-meteo.com/v1/marine?latitude=${lats}&longitude=${lons}&hourly=wave_height,swell_wave_direction&timezone=Asia%2FTokyo&forecast_days=2`;
+            const wUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lats}&longitude=${lons}&hourly=wind_speed_10m,wind_direction_10m&wind_speed_unit=ms&timezone=Asia%2FTokyo&forecast_days=2`;
 
+            try {
                 const [mRes, wRes] = await Promise.all([
                     fetch(mUrl).then(r => r.json()),
                     fetch(wUrl).then(r => r.json())
                 ]);
 
-                // 取得時間の保存処理
-                const now = new Date();
-                const mm = now.getMonth() + 1;
-                const dd = now.getDate();
-                const hh = now.getHours();
-                const min = String(now.getMinutes()).padStart(2, '0');
-                dataFetchTimeStr = `${mm}/${dd} ${hh}:${min}時点`;
+                const mDataList = Array.isArray(mRes) ? mRes : [mRes];
+                const wDataList = Array.isArray(wRes) ? wRes : [wRes];
 
-                setStatus("マップ描画中...");
+                globalData = [];
 
-                const mData = Array.isArray(mRes) ? mRes : [mRes];
-                const wData = Array.isArray(wRes) ? wRes : [wRes];
-                const windVectors = [];
-                const tideInfo = getTideInfo();
+                // Create YYYY-MM-DDTHH string for matching Japan Time
+                const y = hourLabels[0].getFullYear();
+                const m = String(hourLabels[0].getMonth() + 1).padStart(2, '0');
+                const d = String(hourLabels[0].getDate()).padStart(2, '0');
+                const h = String(hourLabels[0].getHours()).padStart(2, '0');
+                const currentHourStr = `${y}-${m}-${d}T${h}`; 
 
                 spots.forEach((spot, i) => {
-                    let wh = null, swellDir = 0, ws = 0, wd = 0;
-                    let hasData = false;
-
-                    if(mData[i] && mData[i].current && wData[i] && wData[i].current) {
-                        wh = mData[i].current.wave_height;
-                        swellDir = mData[i].current.swell_wave_direction;
-                        ws = wData[i].current.wind_speed_10m;
-                        wd = wData[i].current.wind_direction_10m;
-                        if (wh !== null && wh !== undefined) {
-                            hasData = true;
-                        }
-                    }
-
-                    // --- 波の色判定 ---
-                    let cClass = 'c-none'; 
-                    if (hasData) {
-                        if(wh < 0.5) cClass = 'c-calm';
-                        else if(wh < 1.5) cClass = 'c-mod';
-                        else cClass = 'c-high';
-                    }
-
-                    let waveScale = 1.3; // 一定の大きさに固定
-
-                    let windRotate = hasData ? (wd + 180) : 0;
+                    const mHourly = mDataList[i].hourly;
+                    const wHourly = wDataList[i].hourly;
                     
-                    let windArrowColor = "#888"; 
-                    if (hasData) {
-                        if(ws < 4.0) windArrowColor = "#3498db"; 
-                        else if(ws < 8.0) windArrowColor = "#f1c40f"; 
-                        else windArrowColor = "#e74c3c"; 
+                    let startIndex = 0;
+                    if(mHourly && mHourly.time) {
+                        const idx = mHourly.time.findIndex(t => t.startsWith(currentHourStr));
+                        if(idx !== -1) startIndex = idx;
                     }
 
-                    // HTML生成
-                    const iconHtml = `
+                    const spotData = [];
+                    for(let h=0; h<24; h++) {
+                        const targetIdx = startIndex + h;
+                        if(!mHourly.wave_height[targetIdx] && mHourly.wave_height[targetIdx] !== 0) {
+                             spotData.push({ hasData: false });
+                             continue;
+                        }
+
+                        spotData.push({
+                            hasData: true,
+                            wave_height: mHourly.wave_height[targetIdx],
+                            swell_dir: mHourly.swell_wave_direction[targetIdx],
+                            wind_speed: wHourly.wind_speed_10m[targetIdx],
+                            wind_dir: wHourly.wind_direction_10m[targetIdx]
+                        });
+                    }
+                    globalData.push(spotData);
+                });
+
+                document.getElementById('loading-overlay').style.display = 'none';
+                updateMapState(0);
+
+            } catch(e) {
+                console.error(e);
+                document.getElementById('loading-overlay').innerText = "データ取得エラー";
+            }
+        }
+
+        // --- UI Updates ---
+        function updateMapState(timeIndex) {
+            const targetDate = hourLabels[timeIndex];
+            const mm = targetDate.getMonth() + 1;
+            const dd = targetDate.getDate();
+            const hh = targetDate.getHours();
+            const timeStr = `${mm}/${dd} ${String(hh).padStart(2,'0')}:00`;
+            
+            // "X時間後"の表示
+            let displayLabel = timeIndex === 0 ? "現在" : `${timeIndex}時間後`;
+            document.getElementById('time-display-overlay').innerText = `${displayLabel} (${timeStr})`;
+            document.getElementById('p-data-time').innerText = displayLabel + " " + timeStr;
+
+            const tideInfo = getTideInfo(targetDate);
+
+            // 1. Update Markers
+            spots.forEach((spot, i) => {
+                const data = globalData[i][timeIndex];
+                let iconHtml = '';
+                
+                if (data && data.hasData) {
+                    const wh = data.wave_height;
+                    const ws = data.wind_speed;
+                    const wd = data.wind_dir;
+
+                    let cClass = 'c-calm';
+                    if(wh >= 0.5) cClass = 'c-mod';
+                    if(wh >= 1.5) cClass = 'c-high';
+
+                    let waveScale = 1.3;
+                    let windRotate = wd + 180;
+                    let windArrowColor = "#888";
+                    if(ws < 4.0) windArrowColor = "#3498db"; 
+                    else if(ws < 8.0) windArrowColor = "#f1c40f"; 
+                    else windArrowColor = "#e74c3c"; 
+
+                    iconHtml = `
                         <div class="surf-pin-container">
                             <div class="wind-ring" style="transform: rotate(${windRotate}deg)">
                                 <div class="arrow-pointer" style="border-bottom-color: ${windArrowColor}"></div>
@@ -485,65 +619,86 @@
                             <div class="wave-core ${cClass}" style="transform: scale(${waveScale})"></div>
                         </div>
                     `;
+                } else {
+                    iconHtml = `
+                        <div class="surf-pin-container">
+                            <div class="wave-core c-none"></div>
+                        </div>
+                    `;
+                }
 
-                    const icon = L.divIcon({
-                        className: 'custom-div', 
-                        html: iconHtml,
-                        iconSize: [50, 50], 
-                        iconAnchor: [25, 25] 
-                    });
-
-                    const marker = L.marker([spot.lat, spot.lon], {icon: icon, zIndexOffset: 1000}).addTo(map);
-                    
-                    marker.on('click', (e) => {
+                if(!spotMarkers[i]) {
+                    const icon = L.divIcon({ className: 'custom-div', html: iconHtml, iconSize: [50, 50], iconAnchor: [25, 25] });
+                    const m = L.marker([spot.lat, spot.lon], {icon: icon, zIndexOffset: 1000}).addTo(map);
+                    m.on('click', (e) => {
                         L.DomEvent.stopPropagation(e);
-                        const panel = document.getElementById('info-panel');
-                        document.getElementById('p-name').innerText = spot.name;
-                        
-                        document.getElementById('p-update-time').innerText = "データ取得: " + dataFetchTimeStr;
-
-                        if (hasData) {
-                            document.getElementById('p-wave-cond').innerText = getSurfConditionText(wh);
-                            document.getElementById('p-wave').innerText = `${wh.toFixed(2)} m`;
-                            document.getElementById('p-swell').innerText = `${getDirText(swellDir)} (${Math.round(swellDir)}°)`;
-                            document.getElementById('p-wind').innerText = `${ws.toFixed(1)} m/s`;
-                            document.getElementById('p-wdir').innerText = `${getDirText(wd)} (${Math.round(wd)}°)`;
-                        } else {
-                            document.getElementById('p-wave-cond').innerText = "データなし";
-                            document.getElementById('p-wave').innerText = "-- m";
-                            document.getElementById('p-swell').innerText = "--";
-                            document.getElementById('p-wind').innerText = "--";
-                            document.getElementById('p-wdir').innerText = "--";
-                        }
-
-                        document.getElementById('p-tide-name').innerText = tideInfo.name;
-                        const trendEl = document.getElementById('p-tide-trend');
-                        trendEl.innerText = tideInfo.trendText;
-                        trendEl.className = `val ${tideInfo.trendClass}`;
-                        
-                        drawTideGraph(tideInfo);
-                        
-                        panel.style.display = 'block';
+                        selectedSpotIndex = i;
+                        renderInfoPanel(i);
                     });
+                    spotMarkers.push(m);
+                } else {
+                    const icon = L.divIcon({ className: 'custom-div', html: iconHtml, iconSize: [50, 50], iconAnchor: [25, 25] });
+                    spotMarkers[i].setIcon(icon);
+                }
+            });
 
-                    if (hasData && ws > 0) {
-                        const rad = wd * (Math.PI / 180);
-                        windVectors.push({
-                            lat: spot.lat, lon: spot.lon,
-                            u: -ws * Math.sin(rad),
-                            v: -ws * Math.cos(rad),
-                            speed: ws
-                        });
-                    }
-                });
+            // 2. Background Wind
+            const vectors = [];
+            spots.forEach((spot, i) => {
+                const d = globalData[i][timeIndex];
+                if(d && d.hasData && d.wind_speed > 0) {
+                    const rad = d.wind_dir * (Math.PI / 180);
+                    vectors.push({
+                        lat: spot.lat, lon: spot.lon,
+                        u: -d.wind_speed * Math.sin(rad),
+                        v: -d.wind_speed * Math.cos(rad),
+                        speed: d.wind_speed
+                    });
+                }
+            });
+            drawAnimatedWind(vectors);
 
-                drawAnimatedWind(windVectors);
-                setStatus("表示完了");
-
-            } catch(e) {
-                console.error(e);
-                setStatus("データ取得エラー");
+            // 3. Panel
+            if(selectedSpotIndex !== null) {
+                renderInfoPanel(selectedSpotIndex);
             }
+        }
+
+        function renderInfoPanel(index) {
+            const data = globalData[index][currentHourIndex];
+            const spot = spots[index];
+            const panel = document.getElementById('info-panel');
+            const targetDate = hourLabels[currentHourIndex];
+            const tideInfo = getTideInfo(targetDate);
+
+            document.getElementById('p-name').innerText = spot.name;
+
+            if (data && data.hasData) {
+                const wh = data.wave_height;
+                const ws = data.wind_speed;
+                const swellDir = data.swell_dir;
+                const wd = data.wind_dir;
+
+                document.getElementById('p-wave-cond').innerText = getSurfConditionText(wh);
+                document.getElementById('p-wave').innerText = `${wh.toFixed(2)} m`;
+                document.getElementById('p-swell').innerText = `${getDirText(swellDir)} (${Math.round(swellDir)}°)`;
+                document.getElementById('p-wind').innerText = `${ws.toFixed(1)} m/s`;
+                document.getElementById('p-wdir').innerText = `${getDirText(wd)} (${Math.round(wd)}°)`;
+            } else {
+                document.getElementById('p-wave-cond').innerText = "データなし";
+                document.getElementById('p-wave').innerText = "-- m";
+                document.getElementById('p-swell').innerText = "--";
+                document.getElementById('p-wind').innerText = "--";
+                document.getElementById('p-wdir').innerText = "--";
+            }
+
+            document.getElementById('p-tide-name').innerText = tideInfo.name;
+            const trendEl = document.getElementById('p-tide-trend');
+            trendEl.innerText = tideInfo.trendText;
+            trendEl.className = `val ${tideInfo.trendClass}`;
+            
+            drawTideGraph(tideInfo);
+            panel.style.display = 'block';
         }
 
         function drawAnimatedWind(vectors) {
@@ -578,8 +733,7 @@
         }
 
         function addAnimatedArrow(lat, lon, degree, speed) {
-            let scale = 0.8;
-            let opacity = 0.5;
+            let scale = 0.8; let opacity = 0.5;
             if(speed > 5) { scale = 1.0; opacity = 0.7; }
             if(speed > 10) { scale = 1.2; opacity = 0.9; }
             let animDuration = Math.max(0.5, 2.0 - (speed * 0.1));
@@ -589,16 +743,48 @@
                     <path d="M12 2 L6 18 L12 14 L18 18 Z" fill="#555" stroke="none" style="animation-duration: ${animDuration}s; animation-delay: ${animDelay}s;"/>
                 </svg>
             `;
-            const icon = L.divIcon({
-                className: 'wind-arrow-icon',
-                html: svgArrow,
-                iconSize: [30, 30],
-                iconAnchor: [15, 15]
-            });
+            const icon = L.divIcon({ className: 'wind-arrow-icon', html: svgArrow, iconSize: [30, 30], iconAnchor: [15, 15] });
             L.marker([lat, lon], { icon: icon, interactive: false, zIndexOffset: -100 }).addTo(windLayerGroup);
         }
 
-        init();
+        const slider = document.getElementById('time-slider');
+        const playBtn = document.getElementById('play-btn');
+        const playIcon = document.getElementById('play-icon');
+        const pauseIcon = document.getElementById('pause-icon');
+
+        slider.addEventListener('input', (e) => {
+            currentHourIndex = parseInt(e.target.value);
+            updateMapState(currentHourIndex);
+            if(isPlaying) stopPlay();
+        });
+
+        playBtn.addEventListener('click', () => {
+            if(isPlaying) stopPlay();
+            else startPlay();
+        });
+
+        function startPlay() {
+            isPlaying = true;
+            playIcon.style.display = 'none';
+            pauseIcon.style.display = 'block';
+            
+            playInterval = setInterval(() => {
+                currentHourIndex++;
+                if(currentHourIndex > 23) currentHourIndex = 0;
+                slider.value = currentHourIndex;
+                updateMapState(currentHourIndex);
+            }, 1000); 
+        }
+
+        function stopPlay() {
+            isPlaying = false;
+            playIcon.style.display = 'block';
+            pauseIcon.style.display = 'none';
+            clearInterval(playInterval);
+        }
+
+        fetchForecastData();
+
     </script>
 </body>
 </html>
