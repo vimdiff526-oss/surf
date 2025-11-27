@@ -86,7 +86,7 @@
             100% { opacity: 0; transform: translateY(-8px); }
         }
 
-        /* --- タイムスライダー & コントロール (スマホ対応版) --- */
+        /* --- タイムスライダー & コントロール --- */
         #time-control {
             position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
             width: 90%; max-width: 600px;
@@ -107,7 +107,6 @@
         
         .slider-wrapper { flex-grow: 1; position: relative; }
         
-        /* スライダー本体 */
         input[type=range] { 
             width: 100%; cursor: pointer; margin: 0;
             height: 6px; -webkit-appearance: none; background: #ddd; border-radius: 3px;
@@ -116,7 +115,6 @@
             -webkit-appearance: none; width: 18px; height: 18px; background: #3498db; border-radius: 50%; cursor: pointer;
         }
 
-        /* 目盛りラベル */
         .slider-labels {
             display: flex; justify-content: space-between; margin-top: 5px;
             font-size: 0.7rem; color: #666; padding: 0 2px;
@@ -126,59 +124,52 @@
             font-size: 1.0rem; font-weight: bold; color: #333; min-width: 120px; text-align: center;
         }
 
-        /* --- スマホ用レイアウト調整 (幅600px以下) --- */
-        @media (max-width: 600px) {
-            #time-control {
-                bottom: 35px;
-                padding: 15px;
-                width: 94%;
-                border-radius: 20px;
-                flex-wrap: wrap; /* 折り返し許可 */
-                gap: 10px;
-            }
-            
-            /* 時刻表示を一番上に */
-            #current-time-display {
-                width: 100%;
-                order: -1; 
-                margin-bottom: 5px;
-                font-size: 1.1rem;
-                border-bottom: 1px solid #eee;
-                padding-bottom: 5px;
-            }
-
-            /* 再生ボタン */
-            #play-btn {
-                width: 40px; height: 40px; font-size: 1rem;
-            }
-
-            /* スライダー */
-            .slider-wrapper {
-                width: calc(100% - 50px); /* ボタン分を引く */
-            }
-            
-            /* 情報パネルもスマホ用に調整 */
-            #info-panel {
-                width: 90%; top: 10px; right: 5%;
-            }
-        }
-        
-        /* --- Copyright --- */
+        /* --- Copyright (配置修正: 左下へ移動) --- */
         #copyright {
-            position: absolute; bottom: 5px; right: 10px;
-            font-size: 0.65rem; color: rgba(0,0,0,0.5);
+            position: absolute; bottom: 5px; left: 10px; /* 左下に配置 */
+            font-size: 0.65rem; color: rgba(0,0,0,0.6);
             z-index: 1000; pointer-events: auto;
-            text-align: right;
-            background: rgba(255,255,255,0.6);
-            padding: 2px 6px; border-radius: 4px;
+            text-align: left;
+            background: rgba(255,255,255,0.7);
+            padding: 3px 8px; border-radius: 4px;
+            line-height: 1.3;
         }
-        #copyright a { color: #333; text-decoration: none; }
+        #copyright a { color: #333; text-decoration: none; border-bottom: 1px dotted #999; }
 
         #loading-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(255,255,255,0.8); z-index: 9999;
             display: flex; align-items: center; justify-content: center;
             font-size: 1.5rem; font-weight: bold; color: #555;
+        }
+
+        /* --- スマホ用レイアウト調整 (幅600px以下) --- */
+        @media (max-width: 600px) {
+            #time-control {
+                bottom: 40px; /* Copyrightとの被りを防ぐため少し上げる */
+                padding: 15px; width: 92%; border-radius: 20px;
+                flex-wrap: wrap; gap: 10px;
+            }
+            
+            #current-time-display {
+                width: 100%; order: -1; margin-bottom: 5px; font-size: 1.1rem;
+                border-bottom: 1px solid #eee; padding-bottom: 5px;
+            }
+
+            #play-btn { width: 40px; height: 40px; font-size: 1rem; }
+            .slider-wrapper { width: calc(100% - 50px); }
+            
+            /* 情報パネルのスマホ配置（中央寄せ） */
+            #info-panel {
+                width: 94%; 
+                top: 10px; 
+                left: 0; right: 0; margin: 0 auto; /* 左右中央揃え */
+                max-height: 70vh; overflow-y: auto; /* 画面からはみ出さないように */
+            }
+            
+            #copyright {
+                bottom: 5px; left: 5px; font-size: 0.6rem;
+            }
         }
     </style>
 </head>
@@ -190,7 +181,7 @@
     
     <div id="copyright">
         &copy; 2025 Slosea. All rights reserved.<br>
-        Weather data by <a href="https://open-meteo.com/" target="_blank">Open-Meteo.com</a>
+        Weather data by <a href="https://open-meteo.com/" target="_blank">Open-Meteo.com</a> | Map &copy; <a href="https://leafletjs.com/">Leaflet</a>
     </div>
 
     <div id="time-control">
@@ -282,6 +273,7 @@
 
         const map = L.map('map', { 
             zoomControl: false,
+            attributionControl: false, // デフォルトのクレジットを非表示
             maxBounds: bounds,
             maxBoundsViscosity: 1.0,
             minZoom: 5
@@ -299,7 +291,6 @@
         });
         const panel = document.getElementById('info-panel');
         L.DomEvent.disableClickPropagation(panel);
-        // コントロールパネルのクリック伝播防止
         L.DomEvent.disableClickPropagation(document.getElementById('time-control'));
 
         // --- ポイント定義 ---
@@ -372,7 +363,7 @@
             return "クローズ"; 
         }
 
-        // --- 潮汐ロジック ---
+        // --- Tide Logic ---
         function getTideInfo(targetDate) {
             const knownNewMoon = new Date(2024, 0, 11, 20, 57); 
             const cycle = 29.53059;
@@ -420,7 +411,7 @@
             return { name, moonAge: moonAge.toFixed(1), trendText, trendClass, highTide1, amp, currentHour };
         }
 
-        // --- タイドグラフ ---
+        // --- Tide Graph ---
         function drawTideGraph(tideInfo) {
             const canvas = document.getElementById('tideCanvas');
             const ctx = canvas.getContext('2d');
@@ -436,7 +427,7 @@
             const ht = tideInfo.highTide1;
             const amp = tideInfo.amp; 
             
-            // 波形
+            // Draw Wave
             ctx.beginPath();
             ctx.moveTo(0, h);
             for (let x = 0; x <= w; x++) {
@@ -453,7 +444,7 @@
             ctx.lineWidth = 2;
             ctx.stroke();
 
-            // 現在時刻ライン
+            // Draw Current Time Line
             const currentH = tideInfo.currentHour;
             let displayH = currentH; 
             if(displayH < 0) displayH += 24;
@@ -482,7 +473,7 @@
             ctx.stroke();
         }
 
-        // --- データ取得 (24時間予報) ---
+        // --- Data Fetching (24 Hour Forecast) ---
         async function fetchForecastData() {
             const lats = spots.map(s => s.lat).join(',');
             const lons = spots.map(s => s.lon).join(',');
@@ -501,7 +492,6 @@
 
                 globalData = [];
 
-                // ローカル時間文字列を作成してマッチング
                 const y = hourLabels[0].getFullYear();
                 const m = String(hourLabels[0].getMonth() + 1).padStart(2, '0');
                 const d = String(hourLabels[0].getDate()).padStart(2, '0');
@@ -522,7 +512,6 @@
                     for(let h=0; h<24; h++) {
                         const targetIdx = startIndex + h;
                         
-                        // データチェック
                         if(!mHourly.wave_height[targetIdx] && mHourly.wave_height[targetIdx] !== 0) {
                              spotData.push({ hasData: false });
                              continue;
@@ -549,13 +538,12 @@
             }
         }
 
-        // --- 画面更新 ---
+        // --- Main Update Logic ---
         function updateMapState(timeIndex) {
             const targetDate = hourLabels[timeIndex];
             const mm = targetDate.getMonth() + 1;
             const dd = targetDate.getDate();
             const hh = targetDate.getHours();
-            // 現在の年を取得して、年度またぎ等を考慮しなくても良い表示用
             const timeStr = `${mm}/${dd} ${String(hh).padStart(2,'0')}:00`;
             
             document.getElementById('current-time-display').innerText = timeIndex === 0 ? "現在" : timeStr;
@@ -563,7 +551,7 @@
 
             const tideInfo = getTideInfo(targetDate);
 
-            // 1. マーカー更新
+            // 1. Update Markers
             spots.forEach((spot, i) => {
                 const data = globalData[i][timeIndex];
                 let iconHtml = '';
@@ -616,7 +604,7 @@
                 }
             });
 
-            // 2. 風アニメーション更新
+            // 2. Update Background Wind
             const vectors = [];
             spots.forEach((spot, i) => {
                 const d = globalData[i][timeIndex];
@@ -632,7 +620,7 @@
             });
             drawAnimatedWind(vectors);
 
-            // 3. パネル更新
+            // 3. Update Panel if Open
             if(selectedSpotIndex !== null) {
                 renderInfoPanel(selectedSpotIndex);
             }
@@ -675,7 +663,6 @@
             panel.style.display = 'block';
         }
 
-        // --- 風アニメーション描画 ---
         function drawAnimatedWind(vectors) {
             windLayerGroup.clearLayers();
             const gridStep = 0.7; 
@@ -722,7 +709,6 @@
             L.marker([lat, lon], { icon: icon, interactive: false, zIndexOffset: -100 }).addTo(windLayerGroup);
         }
 
-        // --- Slider & Play Logic ---
         const slider = document.getElementById('time-slider');
         const playBtn = document.getElementById('play-btn');
 
@@ -754,7 +740,6 @@
             clearInterval(playInterval);
         }
 
-        // Start
         fetchForecastData();
 
     </script>
