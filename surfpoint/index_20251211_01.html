@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Japan Surf Condition Map (5 Days)</title>
+    <title>Japan Surf Condition Map</title>
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     
@@ -136,10 +136,9 @@
             -webkit-appearance: none; width: 18px; height: 18px; background: #3498db; border-radius: 50%; cursor: pointer;
         }
 
-        /* 日付ラベル (JSで生成) */
         .slider-labels {
             display: flex; justify-content: space-between; margin-top: 4px;
-            font-size: 0.6rem; color: #666; padding: 0 2px;
+            font-size: 0.65rem; color: #666; padding: 0 2px;
         }
         
         #current-time-display {
@@ -206,9 +205,10 @@
         <div id="current-time-display">現在</div>
         <button id="play-btn">▶</button>
         <div class="slider-wrapper">
-            <input type="range" id="time-slider" min="0" max="119" value="0" step="1">
-            <div id="slider-labels" class="slider-labels">
-                </div>
+            <input type="range" id="time-slider" min="0" max="23" value="0" step="1">
+            <div class="slider-labels">
+                <span>0</span><span>6</span><span>12</span><span>18</span><span>+24h</span>
+            </div>
         </div>
     </div>
 
@@ -273,29 +273,13 @@
         let playInterval = null;
         let selectedSpotIndex = null;
         
-        // 5日分(120時間)のDateオブジェクト生成
         const today = new Date();
         const hourLabels = [];
-        const daysToShow = 5;
-        const totalHours = 24 * daysToShow;
-
-        for(let i=0; i<totalHours; i++) {
+        for(let i=0; i<24; i++) {
             const d = new Date(today.getTime());
             d.setHours(today.getHours() + i);
             d.setMinutes(0);
             hourLabels.push(d);
-        }
-
-        // スライダーの下に日付ラベルを生成 (0, 24, 48, 72, 96時間目)
-        const sliderLabelsEl = document.getElementById('slider-labels');
-        sliderLabelsEl.innerHTML = '';
-        for(let i=0; i<daysToShow; i++) {
-            const target = hourLabels[i * 24];
-            const m = target.getMonth() + 1;
-            const d = target.getDate();
-            const span = document.createElement('span');
-            span.innerText = `${m}/${d}`;
-            sliderLabelsEl.appendChild(span);
         }
 
         // --- マップ初期化 ---
@@ -325,8 +309,10 @@
         L.DomEvent.disableClickPropagation(panel);
         L.DomEvent.disableClickPropagation(document.getElementById('time-control'));
 
-        // --- ポイント定義 ---
+        // --- ポイント定義（補正係数 adjust を追加） ---
+        // adjust: 1.0 = そのまま, 0.7 = 70%のサイズに縮小 (湾内などに使用)
         const spots = [
+            // --- 北海道・東北 ---
             { name: "北海道 - 浜厚真", lat: 42.605, lon: 141.832 },
             { name: "北海道 - 銭函", lat: 43.145, lon: 141.220 },
             { name: "北海道 - 室蘭イタンキ", lat: 42.327, lon: 141.037 },
@@ -338,10 +324,11 @@
             { name: "秋田 - 男鹿", lat: 39.850, lon: 139.750 }, 
             { name: "宮城 - 仙台新港", lat: 38.276, lon: 141.026 },
             { name: "山形 - 湯野浜", lat: 38.770, lon: 139.730 },
-            { name: "福島 - 北泉", lat: 37.647, lon: 141.25 }, 
-            { name: "福島 - 岩沢", lat: 37.268, lon: 141.25 }, 
+            { name: "福島 - 北泉", lat: 37.647, lon: 141.25 }, // 沖合調整済み
+            { name: "福島 - 岩沢", lat: 37.268, lon: 141.25 }, // 沖合調整済み
             { name: "福島 - 勿来", lat: 36.870, lon: 140.780 },
             
+            // --- 北陸・日本海 ---
             { name: "新潟 - 直江津", lat: 37.180, lon: 138.250 },
             { name: "日本海 - 新潟", lat: 37.880, lon: 138.940 },
             { name: "石川 - 柴垣", lat: 36.908, lon: 136.762 },
@@ -351,18 +338,20 @@
             { name: "鳥取 - 白兎", lat: 35.540, lon: 134.150 },
             { name: "島根 - 波子", lat: 35.000, lon: 132.170 },
 
+            // --- 茨城・千葉 ---
             { name: "茨城 - 河原子", lat: 36.530, lon: 140.630 },
             { name: "茨城 - 大洗", lat: 36.307, lon: 140.575 },
             { name: "茨城 - トップサンテ", lat: 36.195, lon: 140.575 },
             { name: "千葉 - 片貝", lat: 35.538, lon: 140.460 },
             { name: "千葉 - 一宮", lat: 35.365, lon: 140.395 },
             { name: "千葉 - 太東", lat: 35.300, lon: 140.400 },
-            { name: "千葉 - 御宿", lat: 35.182, lon: 140.355, adjust: 0.75 },
+            { name: "千葉 - 御宿", lat: 35.182, lon: 140.355, adjust: 0.75 }, // ★補正: 25%ダウン
             { name: "千葉 - 部原", lat: 35.140, lon: 140.320 },
             { name: "千葉 - 鴨川", lat: 35.105, lon: 140.105 },
             { name: "千葉 - 和田", lat: 35.038, lon: 140.023 },
             { name: "千葉 - 千倉", lat: 34.960, lon: 139.960 },
             
+            // --- 関東・伊豆・東海 ---
             { name: "東京 - 新島(羽伏浦)", lat: 34.360, lon: 139.270 },
             { name: "湘南 - 由比ガ浜", lat: 35.3120, lon: 139.5415 }, 
             { name: "湘南 - 七里ヶ浜", lat: 35.3058, lon: 139.5105 }, 
@@ -370,7 +359,7 @@
             { name: "湘南 - 茅ヶ崎", lat: 35.3168, lon: 139.4045 },   
             { name: "湘南 - 平塚", lat: 35.3155, lon: 139.3615 },     
             { name: "西湘 - 吉浜", lat: 35.1505, lon: 139.1125 },     
-            { name: "静岡 - 宇佐美", lat: 35.000, lon: 139.130, adjust: 0.6 },
+            { name: "静岡 - 宇佐美", lat: 35.000, lon: 139.130, adjust: 0.6 }, // ★補正: 40%ダウン & 座標微調整
             { name: "静岡 - 白浜", lat: 34.688, lon: 138.975 },
             { name: "静岡 - 多々戸浜", lat: 34.660, lon: 138.930 },
             { name: "静岡 - 静波", lat: 34.752, lon: 138.275 },
@@ -379,13 +368,15 @@
             { name: "愛知 - 伊良湖", lat: 34.598, lon: 137.150 }, 
             { name: "三重 - 国府の浜", lat: 34.350, lon: 136.880 },
 
-            { name: "和歌山 - 磯の浦", lat: 34.257, lon: 135.075, adjust: 0.7 }, 
+            // --- 関西・四国 ---
+            { name: "和歌山 - 磯の浦", lat: 34.257, lon: 135.075, adjust: 0.7 }, // ★補正: 湾内のため
             { name: "徳島 - 小松海岸", lat: 34.050, lon: 134.600 },
             { name: "徳島 - 海部", lat: 33.590, lon: 134.350 },
             { name: "高知 - 生見", lat: 33.542, lon: 134.305 },
             { name: "高知 - 仁淀", lat: 33.480, lon: 133.550 },
             { name: "高知 - 入野", lat: 33.020, lon: 133.005 },
 
+            // --- 九州・沖縄 ---
             { name: "福岡 - 釣川", lat: 33.875, lon: 130.535 },
             { name: "福岡 - 三苫", lat: 33.705, lon: 130.422 }, 
             { name: "福岡 - 芥屋", lat: 33.615, lon: 130.130 },
@@ -539,14 +530,13 @@
             ctx.stroke();
         }
 
-        // --- Data Fetching (5 Days Forecast) ---
+        // --- Data Fetching ---
         async function fetchForecastData() {
             const lats = spots.map(s => s.lat).join(',');
             const lons = spots.map(s => s.lon).join(',');
             
-            // 5日先まで取得 (forecast_days=6)
-            const mUrl = `https://marine-api.open-meteo.com/v1/marine?latitude=${lats}&longitude=${lons}&hourly=wave_height,swell_wave_direction&timezone=Asia%2FTokyo&forecast_days=6`;
-            const wUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lats}&longitude=${lons}&hourly=wind_speed_10m,wind_direction_10m&wind_speed_unit=ms&timezone=Asia%2FTokyo&forecast_days=6`;
+            const mUrl = `https://marine-api.open-meteo.com/v1/marine?latitude=${lats}&longitude=${lons}&hourly=wave_height,swell_wave_direction&timezone=Asia%2FTokyo&forecast_days=2`;
+            const wUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lats}&longitude=${lons}&hourly=wind_speed_10m,wind_direction_10m&wind_speed_unit=ms&timezone=Asia%2FTokyo&forecast_days=2`;
 
             try {
                 const [mRes, wRes] = await Promise.all([
@@ -576,8 +566,7 @@
                     }
 
                     const spotData = [];
-                    // 120時間分ループ
-                    for(let h=0; h<totalHours; h++) {
+                    for(let h=0; h<24; h++) {
                         const targetIdx = startIndex + h;
                         
                         if(!mHourly.wave_height[targetIdx] && mHourly.wave_height[targetIdx] !== 0) {
@@ -593,7 +582,7 @@
 
                         spotData.push({
                             hasData: true,
-                            wave_height: rawWaveHeight,
+                            wave_height: rawWaveHeight, // 補正後の値
                             swell_dir: mHourly.swell_wave_direction[targetIdx],
                             wind_speed: wHourly.wind_speed_10m[targetIdx],
                             wind_dir: wHourly.wind_direction_10m[targetIdx]
@@ -801,7 +790,7 @@
             playBtn.innerText = "||";
             playInterval = setInterval(() => {
                 currentHourIndex++;
-                if(currentHourIndex > 119) currentHourIndex = 0;
+                if(currentHourIndex > 23) currentHourIndex = 0;
                 slider.value = currentHourIndex;
                 updateMapState(currentHourIndex);
             }, 1000); 
