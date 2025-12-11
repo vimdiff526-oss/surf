@@ -9,11 +9,7 @@
     
     <style>
         body, html { margin: 0; padding: 0; height: 100%; font-family: 'Helvetica Neue', Arial, sans-serif; overflow: hidden; }
-<<<<<<< HEAD
         #map { height: 100%; width: 100%; background: #aad3df; /* 海の色に合わせて背景色を変更 */ }
-=======
-        #map { height: 100%; width: 100%; background: #e5e5e5; }
->>>>>>> 515adb7c60e431910a31d9b22dfdd6a371d9477f
 
         /* --- 情報パネル --- */
         #info-panel {
@@ -317,7 +313,6 @@
 
         L.control.zoom({ position: 'topleft' }).addTo(map);
 
-<<<<<<< HEAD
         // ★★★ ここを変更しました（標準OpenStreetMapレイヤー） ★★★
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
@@ -325,11 +320,6 @@
             bounds: bounds
         }).addTo(map);
         // ★★★ 変更終了 ★★★
-=======
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-            maxZoom: 19, attribution: '&copy; CARTO', bounds: bounds
-        }).addTo(map);
->>>>>>> 515adb7c60e431910a31d9b22dfdd6a371d9477f
 
         map.on('click', () => {
             document.getElementById('info-panel').style.display = 'none';
