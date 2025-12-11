@@ -9,7 +9,8 @@
     
     <style>
         body, html { margin: 0; padding: 0; height: 100%; font-family: 'Helvetica Neue', Arial, sans-serif; overflow: hidden; }
-        #map { height: 100%; width: 100%; background: #aad3df; /* 海の色に合わせて背景色を変更 */ }
+        /* 背景色を少し淡いグレーに変更（地図に合わせる） */
+        #map { height: 100%; width: 100%; background: #eee; }
 
         /* --- 情報パネル --- */
         #info-panel {
@@ -199,7 +200,7 @@
     
     <div id="copyright">
         &copy; 2025 Slosea. All rights reserved.<br>
-        Weather data by <a href="https://open-meteo.com/" target="_blank">Open-Meteo.com</a> | Map &copy; <a href="https://leafletjs.com/">Leaflet</a>
+        Weather data by <a href="https://open-meteo.com/" target="_blank">Open-Meteo.com</a> | Map &copy; <a href="https://maps.gsi.go.jp/development/ichiran.html">国土地理院</a>
     </div>
 
     <div id="time-control">
@@ -313,10 +314,10 @@
 
         L.control.zoom({ position: 'topleft' }).addTo(map);
 
-        // ★★★ ここを変更しました（標準OpenStreetMapレイヤー） ★★★
-        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        // ★★★ 国土地理院の淡色地図に変更（日本語・シンプル） ★★★
+        L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+            attribution: '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank">地理院タイル</a>',
             bounds: bounds
         }).addTo(map);
         // ★★★ 変更終了 ★★★
@@ -368,7 +369,10 @@
             { name: "千葉 - 千倉", lat: 34.960, lon: 139.960 },
             
             { name: "東京 - 新島(羽伏浦)", lat: 34.360, lon: 139.270 },
-            { name: "湘南 - 由比ガ浜", lat: 35.3120, lon: 139.5415 }, 
+            
+            // ★★★ 由比ガ浜に adjust: 0.75 を追加 ★★★
+            { name: "湘南 - 由比ガ浜", lat: 35.3120, lon: 139.5415, adjust: 0.75 }, 
+            
             { name: "湘南 - 七里ヶ浜", lat: 35.3058, lon: 139.5105 }, 
             { name: "湘南 - 鵠沼", lat: 35.3165, lon: 139.4685 },     
             { name: "湘南 - 茅ヶ崎", lat: 35.3168, lon: 139.4045 },   
