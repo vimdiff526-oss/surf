@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>初心者向けサーフボードの選び方【診断付き・保存版】</title>
+  <meta name="description" content="スタイルのイメージ（ゆったり／ゆったり＋技／技重視）と体重・体力・素材から、長さ・幅・厚み・浮力の目安を提示し、タイプ＋長さでAmazon/Rakutenの検索リンクを生成。タイプ別・素材別の特徴、失敗しないコツも掲載。" />
+  <link rel="stylesheet" href="./nav.css" />
+  <script src="./nav.js" defer></script>
+  <style>
+    :root{
+      --bg:#ffffff;--fg:#0f172a;--muted:#475569;--brand:#0ea5e9;--accent:#22c55e;--line:#e2e8f0;--chip:#f1f5f9;
+    }
+    html{scroll-behavior:smooth;scroll-padding-top:72px}
+    body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic UI",sans-serif;line-height:1.75}
+    a{color:var(--brand);text-decoration:none}
+    a:hover{text-decoration:underline}
+    .wrap{max-width:1080px;margin:0 auto;padding:0 16px}
+    .page-links{display:flex;align-items:center;justify-content:flex-end;gap:12px;flex-wrap:wrap;font-size:14px;color:var(--muted);padding:12px 16px 0}
+    .page-links a{color:var(--muted);font-weight:600}
+    .page-links a:hover{color:var(--brand)}
+    main{padding:24px 0}
+    h1{font-size:clamp(24px,3vw,36px);line-height:1.3;margin:8px 0 16px}
+    h2{font-size:clamp(18px,2.2vw,24px);margin:32px 0 12px}
+    h3{margin:18px 0 8px;font-size:clamp(16px,2vw,20px)}
+    .lead{color:var(--muted);font-size:16px}
+    .toc{background:var(--chip);border:1px solid var(--line);border-radius:12px;padding:12px;margin:24px 0}
+    .toc li{margin:6px 0}
+
+    /* 診断 UI */
+    .diag{background:linear-gradient(180deg,#f0f9ff,#fff);border:1px solid var(--line);border-radius:14px;padding:16px;margin:18px 0}
+    .diag form{display:grid;gap:12px;grid-template-columns:1fr 1fr}
+    .diag label{display:flex;flex-direction:column;gap:6px;font-weight:600}
+    .diag select,.diag input{padding:10px;border-radius:8px;border:1px solid var(--line)}
+    .diag .span2{grid-column:1/-1}
+    .diag .mini{font-size:.9rem;color:var(--muted)}
+    .diag .out{margin-top:14px;display:grid;gap:16px;grid-template-columns:1.2fr 1fr}
+    .card{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff}
+    .prov{display:grid;gap:12px;grid-template-columns:repeat(2,1fr)}
+    .prov .p{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px}
+    .prov .btns{margin-top:8px;display:flex;gap:8px;flex-wrap:wrap}
+    .btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#fff;padding:8px 10px;border-radius:10px;font-weight:600}
+    .btn[data-a]{border-color:#ffd000;background:#fff8dd}
+    .btn[data-r]{border-color:#e11d48;background:#fff1f2}
+    .btn svg{width:16px;height:16px}
+    .btn span{font-size:14px}
+    @media (max-width:900px){ .diag .out{grid-template-columns:1fr} .diag form{grid-template-columns:1fr} .prov{grid-template-columns:1fr} }
+
+    .chip{display:inline-block;background:var(--chip);border:1px solid var(--line);padding:2px 8px;border-radius:999px;font-size:12px;margin-right:6px}
+    .aside{background:#f8fafc;border:1px solid var(--line);padding:16px;border-radius:12px}
+    footer{border-top:1px solid var(--line);margin-top:32px}
+    .foot{display:flex;justify-content:space-between;gap:12px;padding:24px 0;color:var(--muted);font-size:14px}
+    .breadcrumbs{font-size:13px;color:var(--muted);margin:8px 0 16px}
+    .meta{font-size:12px}
+    code{white-space:normal}
+  </style>
+</head>
+<body>
+  <header class="global-bar">
+    <div class="global-bar__inner">
+      <a class="global-bar__brand" href="./index.html#top" aria-label="SloSea のトップへ戻る">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 16c4 0 4-8 8-8s4 8 8 8 4-8 8-8"/></svg>
+        <span>SloSea</span>
+      </a>
+      <button class="global-bar__menu" type="button" aria-label="メニューを開く" aria-expanded="false" aria-controls="global-menu">
+        <svg class="global-bar__menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+          <path d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    </div>
+    <nav class="global-bar__meta" aria-label="パンくずリスト">
+      <ol class="global-bar__crumbs">
+        <li><a href="./index.html#apps">記事</a></li>
+        <li aria-current="page">サーフボード選び【診断付き】</li>
+      </ol>
+    </nav>
+  </header>
+
+  <nav class="page-links wrap" aria-label="ページ内リンク">
+    <a href="#type">タイプ別の特徴</a>
+    <a href="#size">体重・身長別サイズ目安</a>
+    <a href="#mistakes">初心者がやりがちな失敗</a>
+    <a href="#diagnosis">サーフボード診断</a>
+    <a href="#faq">FAQ</a>
+  </nav>
+
+  <main class="wrap">
+    <div class="breadcrumbs">ホーム › 記事 › 初心者向けサーフボードの選び方</div>
+
+    <article>
+      <h1>初心者向けサーフボードの選び方【診断付き・保存版】</h1>
+      <p class="lead">このページでは、タイプ別の特徴・サイズ目安・よくある失敗・診断・FAQの流れでご案内します。診断では入力内容に基づき目安のサイズを表示し、タイプ＋長さでAmazon/Rakutenの検索リンクを自動生成します。</p>
+
+      <div class="toc">
+        <strong>目次</strong>
+        <ol>
+          <li><a href="#type">タイプ別の特徴</a></li>
+          <li><a href="#size">体重・身長別サイズ目安</a></li>
+          <li><a href="#mistakes">初心者がやりがちな失敗</a></li>
+          <li><a href="#diagnosis">サーフボード診断（購入候補リンク生成）</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ol>
+      </div>
+
+      <!-- 1. タイプ別の特徴 + 素材別の特徴 -->
+      <section id="type">
+        <h2>タイプ別の特徴</h2>
+        <ul>
+          <li><span class="chip">ショート</span> 5'8〜6'6。取り回しと機動性重視。十分な浮力を確保すると習得しやすい。</li>
+          <li><span class="chip">ミッドレングス</span> 6'8〜7'6。安定と取り回しのバランス。小波〜胸肩まで守備範囲が広い。</li>
+          <li><span class="chip">ロング</span> 9'0〜。最も安定。小波に強くクルーズ向き。保管・運搬の確認が必要。</li>
+        </ul>
+
+        <h3>素材別の特徴</h3>
+        <ul>
+          <li><span class="chip">ハード</span> PU/EPS などの硬質素材。キレと反発が出やすく、ボードのレスポンスに優れる。</li>
+          <li><span class="chip">ソフト</span> フォーム外装で安全性が高い。浮力が出やすく、混雑時やビギナーに好適。</li>
+        </ul>
+      </section>
+
+      <!-- 2. 体重・身長別サイズ目安 -->
+      <section id="size">
+        <h2>体重・身長別サイズ目安</h2>
+        <div class="aside">
+          <ul>
+            <li>〜50kg: 35〜50L / 7'0〜8'0</li>
+            <li>50〜65kg: 40〜60L / 7'6〜8'6</li>
+            <li>65〜80kg: 50〜70L / 8'0〜9'0</li>
+            <li>80kg〜: 60〜85L / 8'6〜9'6</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- 3. 初心者がやりがちな失敗 -->
+      <section id="mistakes">
+        <h2>初心者がやりがちな失敗</h2>
+        <ul>
+          <li>浮力不足を選んでしまい、波に乗れない</li>
+          <li>見た目重視でショートにする → 波に乗れない</li>
+          <li>中古で安く買っても、合わずに結局買い直す。</li>
+        </ul>
+      </section>
+
+      <!-- 4. サーフボード診断（購入候補リンク生成） -->
+      <section id="diagnosis" class="diag" aria-labelledby="diag-title">
+        <h2 id="diag-title">サーフボード診断（購入候補リンク生成）</h2>
+        <form id="surfForm">
+          <label>体重（kg）
+            <input id="weight" type="number" min="35" max="120" step="1" placeholder="例）68" required />
+          </label>
+          <label>スタイルのイメージ
+            <select id="styleIntent" aria-label="スタイルのイメージ">
+              <option value="slow-cruise" selected>ゆったりと波に乗りたい</option>
+              <option value="cruise-with-tricks">ゆったりと波に乗りたいが技も楽しみたい</option>
+              <option value="tricks-focused">技を積極的に楽しみたい</option>
+            </select>
+          </label>
+          <label>素材を選ぶ
+            <select id="material">
+              <option value="ハード" selected>ハード</option>
+              <option value="ソフト">ソフト</option>
+            </select>
+          </label>
+          <label>体力
+            <select id="fitness">
+              <option value="low">弱め</option>
+              <option value="mid" selected>ふつう</option>
+              <option value="high">強め</option>
+            </select>
+          </label>
+          <div class="span2 mini">診断後、想定タイプに合わせた Amazon / 楽天 の検索リンク（タイプ＋長さのみ）を表示します。</div>
+          <button class="btn span2" type="button" onclick="diagnose()">診断する</button>
+        </form>
+
+        <div id="diagOut" class="out" hidden>
+          <article class="card">
+            <h3 id="outType">—</h3>
+            <p id="outWhy" class="meta">—</p>
+            <p class="meta" id="outVol">—</p>
+            <table class="table" style="width:100%;border-collapse:collapse;border:1px solid var(--line);border-radius:12px;overflow:hidden">
+              <thead><tr><th>項目</th><th>推奨値（目安）</th></tr></thead>
+              <tbody>
+                <tr><td>長さ</td><td id="outLen">—</td></tr>
+                <tr><td>幅</td><td id="outWid">—</td></tr>
+                <tr><td>厚み</td><td id="outThk">—</td></tr>
+              </tbody>
+            </table>
+          </article>
+          <div class="card">
+            <h3>このタイプを探す</h3>
+            <div class="prov">
+              <div class="p"><strong>Amazon</strong><div class="btns" id="linksAmz"></div></div>
+              <div class="p"><strong>楽天市場</strong><div class="btns" id="linksRkt"></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. FAQ -->
+      <section id="faq">
+        <h2>FAQ</h2>
+        <details>
+          <summary>最初の1本はいくら位が目安？</summary>
+          <p>初心者向けのソフト/ミッドは2.5万円〜7万円程度。リーシュやワックスなどの小物も同時に揃えると合計で3万〜10万円ほど。</p>
+        </details>
+        <details>
+          <summary>中古はアリ？</summary>
+          <p>状態・サイズが適正ならアリ。ただし初心者はダメージの良し悪し判断が難しいため、最初は新品/整備済み推奨。</p>
+        </details>
+      </section>
+
+      <aside class="aside" style="margin-top:24px">
+        <strong>関連記事</strong>
+        <ul>
+          <li><a href="/articles/wetsuit-beginner.html">初心者向けウェットスーツの選び方</a></li>
+          <li><a href="/articles/leash-howto.html">リーシュコードの選び方</a></li>
+          <li><a href="/articles/wax-guide.html">サーフワックス完全ガイド</a></li>
+          <li><a href="/articles/first-set.html">初心者が揃えるべき道具一式</a></li>
+        </ul>
+      </aside>
+    </article>
+
+    <footer>
+      <div class="foot">
+        <div>© <span id="year"></span> SloSea</div>
+        <div><a href="/about.html">運営者情報</a> · <a href="/policy.html">アフィリエイトポリシー</a></div>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    // ====== ASPパラメータ（Amazon/Rakuten） ======
+    const AFFIL = {
+      amazon: { base: 'https://www.amazon.co.jp/s', tag: 'surf526-22' },
+      rakuten: { base: 'https://search.rakuten.co.jp/search/mall/', affId: '4be85441.78c3c098.4be85442.035cdd1c' }
+    };
+
+    function buildAmazonUrl(keyword){
+      const p = new URL(AFFIL.amazon.base);
+      p.searchParams.set('k', keyword);
+      if (AFFIL.amazon.tag) p.searchParams.set('tag', AFFIL.amazon.tag);
+      return p.toString();
+    }
+    function buildRakutenUrl(keyword){
+      const dest = `${AFFIL.rakuten.base}${encodeURIComponent(keyword)}/`;
+      return `https://hb.afl.rakuten.co.jp/hgc/${AFFIL.rakuten.affId}/?pc=${encodeURIComponent(dest)}&m=${encodeURIComponent(dest)}`;
+    }
+
+    // ====== 体重目安テーブル（長さ/浮力）はミッド・ロングの目安として使用 ======
+    const WEIGHT_TABLE = [
+      { maxW: 50, len:[7.0,8.0],  vol:[35,50] },
+      { maxW: 65, len:[7.5,8.5],  vol:[40,60] },
+      { maxW: 80, len:[8.0,9.0],  vol:[50,70] },
+      { maxW: 999, len:[8.5,9.5], vol:[60,85] }
+    ];
+
+    // タイプ別の基準レンジ（長さ・幅・厚み）
+    const TYPE_TABLE = {
+      'ショート':       { len:[5.8, 6.6],  wid:[18.5, 21.0], thick:[2.30, 2.80], why:'取り回し重視。十分な浮力を確保すると習得しやすい。' },
+      'ミッドレングス': { len:[6.8, 7.6],  wid:[20.5, 22.5], thick:[2.60, 3.00], why:'安定と取り回しのバランス。守備範囲が広い。' },
+      'ロング':         { len:[9.0, 9.6],  wid:[22.5, 23.5], thick:[2.75, 3.25], why:'最も安定。小波に強くクルーズ向き。' }
+    };
+
+    function rowByWeight(w){
+      return WEIGHT_TABLE.find(r => w <= r.maxW) || WEIGHT_TABLE[WEIGHT_TABLE.length-1];
+    }
+
+    function clamp(v, lo, hi){ return Math.max(lo, Math.min(hi, v)); }
+
+    // --- ショートはベース+5L。スタイル→タイプのマッピングを追加 ---
+    function getRecommendedVolume(type, weight, fitness){
+      if(type === 'ショート'){
+        const k = (fitness === 'low') ? 0.45 : (fitness === 'high') ? 0.36 : 0.40;
+        const lo = 28, hi = 48;
+        const base = weight * k;
+        const liters = base + 5; // ベース＋5L
+        return { lo, hi, rec: Math.round(clamp(liters, lo, hi)) };
+      }
+      // ミッド／ロングは体重表レンジをベースに体力補正
+      const base = rowByWeight(weight).vol.slice();
+      let add = 0;
+      if(fitness === 'low') add += 5;
+      if(fitness === 'high') add -= 5;
+      if(type === 'ロング') add += 5;
+      let lo = base[0] + add, hi = base[1] + add;
+      if(type === 'ミッドレングス'){ lo = Math.max(40, lo); hi = Math.min(70, hi); }
+      if(type === 'ロング'){ lo = Math.max(60, lo); hi = Math.min(90, hi, 85); }
+      const rec = Math.round((lo + hi) / 2);
+      return { lo, hi, rec };
+    }
+
+    function mergeLengthRanges(typeRange, weightRange, type){
+      if (type === 'ショート') return [ +(typeRange[0].toFixed(2)), +(typeRange[1].toFixed(2)) ];
+      const [a0,a1] = typeRange, [b0,b1] = weightRange;
+      const lo = Math.max(a0,b0), hi = Math.min(a1,b1);
+      if (lo <= hi) return [ +(lo.toFixed(2)), +(hi.toFixed(2)) ];
+      const adjLo = Math.max(Math.min(a0,a1), b0-0.25);
+      const adjHi = Math.min(Math.max(a0,a1), b1+0.25);
+      return [ +(adjLo.toFixed(2)), +(adjHi.toFixed(2)) ];
+    }
+
+    function tweakDimensions(baseWid, baseThk, weight){
+      const wBucket = (weight<55)? -1 : (weight<=75)? 0 : 1;
+      const k = Math.max(-0.12, Math.min(0.12, (wBucket*0.09)));
+      const lerp = ([min,max], t)=>[ +(min+(max-min)*(0.5+t/2)).toFixed(2), +(max+(max-min)*(0.5+t/2)).toFixed(2) ];
+      return { wid: lerp(baseWid, k), thk: lerp(baseThk, k) };
+    }
+    function materialTweakDims(dims, material){
+      const [w0,w1] = dims.wid;
+      const [t0,t1] = dims.thk;
+      if(material === 'ソフト'){
+        return {
+          wid:[ +(w0+0.20).toFixed(2), +(w1+0.20).toFixed(2) ],
+          thk:[ +(t0+0.10).toFixed(2), +(t1+0.10).toFixed(2) ]
+        };
+      }
+      return dims;
+    }
+
+    const toFeetInches = (v)=>{ const f=Math.floor(v); const i=Math.round((v-f)*12); return {feet:f,inches:i}; };
+    const fmtFeetInches = ({feet,inches}) => `${feet}'${inches}"`;
+    const rangeFeetInches = ([a,b])=>{ const A=toFeetInches(a), B=toFeetInches(b); return `${fmtFeetInches(A)} 〜 ${fmtFeetInches(B)}`; };
+    const rangeCm = ([a,b])=>`${Math.round(a*30.48)}〜${Math.round(b*30.48)}cm`;
+    const rangeInch = ([a,b])=>`${a.toFixed(2)}〜${b.toFixed(2)}"`;
+
+    function typeKeyword(type){
+      if(type==='ショート') return 'ショートボード';
+      if(type==='ミッドレングス') return 'ミッドレングス サーフボード';
+      return 'ロングボード';
+    }
+    function searchKeywords(type, avgLenFI){
+      const lenStr = `${avgLenFI.feet}'${avgLenFI.inches}"`;
+      const key = typeKeyword(type);
+      return [ `${key} ${lenStr}`, `${key}` ];
+    }
+
+    // スタイル → タイプにマッピング
+    function typeFromStyle(style){
+      if(style === 'slow-cruise') return 'ロング';
+      if(style === 'cruise-with-tricks') return 'ミッドレングス';
+      return 'ショート'; // tricks-focused
+    }
+
+    function setBtnLinks(el, links){
+      el.innerHTML='';
+      links.forEach(l=>{
+        const a=document.createElement('a');
+        a.className='btn'; a.href=l.url; a.target='_blank';
+        a.rel='sponsored nofollow noopener';
+        a.textContent=l.label;
+        el.appendChild(a);
+      });
+    }
+
+    function diagnose(){
+      const weight = Number(document.getElementById('weight').value || 0);
+      const style = document.getElementById('styleIntent').value;
+      const type = typeFromStyle(style);
+      const material = document.getElementById('material').value;
+      const fitness = document.getElementById('fitness').value;
+
+      if(!weight || weight < 35){ alert('体重(kg)を入力してください'); return; }
+
+      const T = TYPE_TABLE[type];
+      const W = rowByWeight(weight);
+
+      const lenRange = mergeLengthRanges(T.len, W.len, type);
+      let dims = tweakDimensions(T.wid, T.thick, weight);
+      dims = materialTweakDims(dims, material);
+
+      const vol = getRecommendedVolume(type, weight, fitness);
+
+      document.getElementById('diagOut').hidden = false;
+      document.getElementById('outType').textContent = `${type}（${material}）`;
+      document.getElementById('outWhy').textContent = T.why + (material==='ソフト' ? '（ソフトは安全性・浮力寄り）' : '');
+      document.getElementById('outVol').innerHTML =
+        `推奨浮力の目安: <strong>${vol.rec}L</strong>（約${vol.lo}〜${vol.hi}L）`;
+      document.getElementById('outLen').innerHTML =
+        `${rangeFeetInches(lenRange)} <span class="mini">（${rangeCm(lenRange)}）</span>`;
+      document.getElementById('outWid').textContent = rangeInch(dims.wid);
+      document.getElementById('outThk').textContent = rangeInch(dims.thk);
+
+      const avgLen = (lenRange[0] + lenRange[1]) / 2;
+      const avgFI = toFeetInches(avgLen);
+      const kws = searchKeywords(type, avgFI);
+      const L = {
+        amazon: [ {label:'検索', url: buildAmazonUrl(kws[0])}, {label:'代替', url: buildAmazonUrl(kws[1])} ],
+        rakuten:[ {label:'検索', url: buildRakutenUrl(kws[0])}, {label:'代替', url: buildRakutenUrl(kws[1])} ]
+      };
+      setBtnLinks(document.getElementById('linksAmz'), L.amazon);
+      setBtnLinks(document.getElementById('linksRkt'), L.rakuten);
+
+      window.scrollTo({ top: document.getElementById('diagOut').offsetTop - 16, behavior: 'smooth' });
+    }
+
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+
+  <nav class="global-menu" id="global-menu" data-global-menu aria-hidden="true">
+    <div class="global-menu__backdrop" data-menu-dismiss aria-hidden="true"></div>
+    <div class="global-menu__panel" role="dialog" aria-modal="true" aria-labelledby="global-menu-title">
+      <div class="global-menu__header">
+        <h2 class="global-menu__title" id="global-menu-title">コンテンツ一覧</h2>
+        <button class="global-menu__close" type="button" aria-label="メニューを閉じる" data-menu-dismiss data-menu-initial>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M6 6l12 12M18 6L6 18" />
+          </svg>
+        </button>
+      </div>
+      <ul class="global-menu__list">
+        <li class="global-menu__item"><a href="./index.html#apps">ホーム / コンテンツ一覧</a><p>SloSea の最新コンテンツまとめ。</p></li>
+        <li class="global-menu__item"><a href="./サーフボード選び.html">サーフボード選び【保存版】</a><p>目的に合わせたボードの選び方ガイド。</p></li>
+        <li class="global-menu__item"><a href="./game.html">Surf Mini Game</a><p>波を避けてコインを集めるカジュアルゲーム。</p></li>
+        <li class="global-menu__item"><a href="./stickers.html">サーフステッカー配布</a><p>ボードやSNSで使えるデジタルステッカー。</p></li>
+        <li class="global-menu__item"><a href="./about.html">SloSea について</a><p>サイトのコンセプトや制作背景を紹介。</p></li>
+        <li class="global-menu__item"><a href="./policy.html">プライバシーポリシー</a><p>利用者のみなさまに安心して使っていただくために。</p></li>
+      </ul>
+      <p class="global-menu__footer">ご希望のコンテンツを選択してください。</p>
+      <button class="global-menu__close" type="button" data-menu-dismiss>
+        メニューを閉じる
+      </button>
+    </div>
+  </nav>
+</body>
+</html>

@@ -1,0 +1,170 @@
+0000000000000000000000000000000000000000 3c53dd0377d0a94f762e4a3f0855ae80ddc91873 vimdiff526-oss <vimdiff526@gmail.com> 1756822116 +0900	commit (initial): feat: 初期バージョン（トップ・診断ページ・スタイル共通化）
+3c53dd0377d0a94f762e4a3f0855ae80ddc91873 0000000000000000000000000000000000000000 vimdiff526-oss <vimdiff526@gmail.com> 1756822363 +0900	Branch: renamed refs/heads/main to refs/heads/main
+3c53dd0377d0a94f762e4a3f0855ae80ddc91873 3c53dd0377d0a94f762e4a3f0855ae80ddc91873 vimdiff526-oss <vimdiff526@gmail.com> 1756822363 +0900	Branch: renamed refs/heads/main to refs/heads/main
+3c53dd0377d0a94f762e4a3f0855ae80ddc91873 2fff1c69e262ddf83745092bfe657cae016560e1 vimdiff526-oss <vimdiff526@gmail.com> 1756825224 +0900	commit: fix: Chromeでの固定ヘッダー見切れをheader-spacer方式で解消
+2fff1c69e262ddf83745092bfe657cae016560e1 1d042d5007eabdcbf464201d4013e86e818f15c2 vimdiff526-oss <vimdiff526@gmail.com> 1756826289 +0900	commit: fix: プルダウンメニューの修正
+1d042d5007eabdcbf464201d4013e86e818f15c2 bf23f318343f213d8a3b1f486db868df0a2daee4 vimdiff526-oss <vimdiff526@gmail.com> 1756826682 +0900	commit: feat: モバイル対応ハンバーガーメニュー導入＋背景スクロール固定
+bf23f318343f213d8a3b1f486db868df0a2daee4 9230e307f5c3f9f27faff2adaa53893e75e33ba0 vimdiff526-oss <vimdiff526@gmail.com> 1756828582 +0900	commit: feat: 停止
+9230e307f5c3f9f27faff2adaa53893e75e33ba0 f1f48ec84c500a1db6b6fd177a25673d342230f8 vimdiff526-oss <vimdiff526@gmail.com> 1756828650 +0900	commit: feat: 停止
+f1f48ec84c500a1db6b6fd177a25673d342230f8 632ff4e3442f60507d7b1982460a306c29f248e4 vimdiff526-oss <vimdiff526@gmail.com> 1756855319 +0900	commit: feat: 開始
+632ff4e3442f60507d7b1982460a306c29f248e4 cd0339ffdab30d17277b72af67cbb1e19b4fd84c vimdiff526-oss <vimdiff526@gmail.com> 1756855848 +0900	commit: feat: 参考ロジックを要約して診断にボリューム計算と板タイプ推薦を実装
+cd0339ffdab30d17277b72af67cbb1e19b4fd84c f70089a0a0c9c04b48939059e3b08febba6c03e5 vimdiff526-oss <vimdiff526@gmail.com> 1756856408 +0900	commit: feat: 係数テーブル方式＋サイズ算出＋学習モードを診断に統合
+f70089a0a0c9c04b48939059e3b08febba6c03e5 3794b7806916608aa124677d3cd6d921b2f34ce3 vimdiff526-oss <vimdiff526@gmail.com> 1756856867 +0900	commit: feat: 停止
+3794b7806916608aa124677d3cd6d921b2f34ce3 99451d08a9a7017c66499f0ea03e379ba7560ce5 vimdiff526-oss <vimdiff526@gmail.com> 1756870859 +0900	commit: feat: api 導入
+99451d08a9a7017c66499f0ea03e379ba7560ce5 763aa6a344c1167d48150b92063b5625d5592dd3 vimdiff526-oss <vimdiff526@gmail.com> 1756870996 +0900	commit: feat: api 導入2
+763aa6a344c1167d48150b92063b5625d5592dd3 8cb6535b070091df3641496f61da8bc343a92001 vimdiff526-oss <vimdiff526@gmail.com> 1756871923 +0900	commit: feat: api 導入3
+8cb6535b070091df3641496f61da8bc343a92001 61560f694277cf16991189cf93efc8286562fa6a vimdiff526-oss <vimdiff526@gmail.com> 1756873083 +0900	commit: feat: api 導入5
+61560f694277cf16991189cf93efc8286562fa6a 859bb1262409d30260383a87ff56ab3aedb8d4ba vimdiff526-oss <vimdiff526@gmail.com> 1756873483 +0900	commit: feat: api 導入6
+859bb1262409d30260383a87ff56ab3aedb8d4ba 6118d76ce8bb0c73bcba150df9aab0db2d733b2f vimdiff526-oss <vimdiff526@gmail.com> 1756873932 +0900	commit: feat: api 導入7
+6118d76ce8bb0c73bcba150df9aab0db2d733b2f 62bbdf621ebd7daf5f794c3e7c3b4cb2ccaa87b8 vimdiff526-oss <vimdiff526@gmail.com> 1756947518 +0900	pull: Fast-forward
+62bbdf621ebd7daf5f794c3e7c3b4cb2ccaa87b8 431ff1257dfb6ccc4a17cf330b3348d1ec9e2898 vimdiff526-oss <vimdiff526@gmail.com> 1756947788 +0900	commit: feat: index戻し
+431ff1257dfb6ccc4a17cf330b3348d1ec9e2898 70a82c3837b6f901c252df4f34b0c7aea219b1bb vimdiff526-oss <vimdiff526@gmail.com> 1756957300 +0900	commit: feat: index戻し3
+70a82c3837b6f901c252df4f34b0c7aea219b1bb 3703af3b4342b1d537e5d41a1d5841d877a4f147 vimdiff526-oss <vimdiff526@gmail.com> 1756957929 +0900	commit: feat: index戻し4
+3703af3b4342b1d537e5d41a1d5841d877a4f147 08c9145b8a51a99f579a930d0dd44ce4f8b6cf55 vimdiff526-oss <vimdiff526@gmail.com> 1756958193 +0900	commit: feat: index戻し5
+08c9145b8a51a99f579a930d0dd44ce4f8b6cf55 21f5eb00cb170203cc6f50f39cdbedccc3a55a87 vimdiff526-oss <vimdiff526@gmail.com> 1756966103 +0900	commit: feat: 診断ページupdate
+21f5eb00cb170203cc6f50f39cdbedccc3a55a87 a80e040566990713b3f88a367f6fda498c928178 vimdiff526-oss <vimdiff526@gmail.com> 1756966300 +0900	commit: feat: 診断ページupdate2
+a80e040566990713b3f88a367f6fda498c928178 09b90a0bcf818b94db5c2dd26ce0fca0126dc866 vimdiff526-oss <vimdiff526@gmail.com> 1756967009 +0900	commit: feat: 診断ページupdate3
+09b90a0bcf818b94db5c2dd26ce0fca0126dc866 b7fba4af22b5e7452a34e73ea8a1f07bc21e056d vimdiff526-oss <vimdiff526@gmail.com> 1756968458 +0900	commit: feat: 診断ページupdate4
+b7fba4af22b5e7452a34e73ea8a1f07bc21e056d faf81bc73957123e1b95ec9d6350ff6788419923 vimdiff526-oss <vimdiff526@gmail.com> 1756969582 +0900	commit: feat: 診断ページupdate5
+faf81bc73957123e1b95ec9d6350ff6788419923 8f40b0d616d091ad3817b2c3d30b8da4fa594926 vimdiff526-oss <vimdiff526@gmail.com> 1756970414 +0900	commit: feat: 診断ページupdate6
+8f40b0d616d091ad3817b2c3d30b8da4fa594926 936c4fa5cbf6bc5b5556b85a78b093747441878c vimdiff526-oss <vimdiff526@gmail.com> 1757036970 +0900	commit: feat: image変更１
+936c4fa5cbf6bc5b5556b85a78b093747441878c 2610f7f174d97001a45cccce3269779b2f816b3a vimdiff526-oss <vimdiff526@gmail.com> 1757037313 +0900	commit: feat: image変更2
+2610f7f174d97001a45cccce3269779b2f816b3a a0366cda91d7b051d63992417758015fce6c9387 vimdiff526-oss <vimdiff526@gmail.com> 1757040460 +0900	commit: feat: image変更3
+a0366cda91d7b051d63992417758015fce6c9387 2d14a0f7bbb8fb0b9c289d4a72aa42ac2bc9200b vimdiff526-oss <vimdiff526@gmail.com> 1757082051 +0900	commit: feat: 記事のリンク追加１
+2d14a0f7bbb8fb0b9c289d4a72aa42ac2bc9200b e410c9b530cd85b5b4bdb425a9634c24cee1d20d vimdiff526-oss <vimdiff526@gmail.com> 1757082509 +0900	commit: feat: 記事のリンク追加2
+e410c9b530cd85b5b4bdb425a9634c24cee1d20d 548e87267ec3396134b55a42e98f7ec72a29569b vimdiff526-oss <vimdiff526@gmail.com> 1757083128 +0900	commit: feat: 記事のリンク追加3
+548e87267ec3396134b55a42e98f7ec72a29569b 2dbc06e93a887d46b69046c3878c073fd6fd4773 vimdiff526-oss <vimdiff526@gmail.com> 1757083281 +0900	commit: feat: 停止０９０５
+2dbc06e93a887d46b69046c3878c073fd6fd4773 cb4d68a44a75a5b4f4a9aa9619261f78ba01e254 vimdiff526-oss <vimdiff526@gmail.com> 1759039342 +0900	commit: feat: 開始0928
+cb4d68a44a75a5b4f4a9aa9619261f78ba01e254 b15f6e7c19150fd7cb11efb485924c36288828a4 vimdiff526-oss <vimdiff526@gmail.com> 1759039467 +0900	commit: feat: 開始0928-2
+b15f6e7c19150fd7cb11efb485924c36288828a4 221b8d02c6a81519b2825da7abaa1226feb0140d vimdiff526-oss <vimdiff526@gmail.com> 1759039677 +0900	commit: feat: index修正
+221b8d02c6a81519b2825da7abaa1226feb0140d 618425ca1ee3658421a1b228a40f05c7cbd57a1c vimdiff526-oss <vimdiff526@gmail.com> 1759121068 +0900	pull: Fast-forward
+618425ca1ee3658421a1b228a40f05c7cbd57a1c 0003595408a1981ccc3f4ad3a7ffb3939e294756 vimdiff526-oss <vimdiff526@gmail.com> 1759121296 +0900	commit: feat: index修正3
+0003595408a1981ccc3f4ad3a7ffb3939e294756 b60832bb51a7d1d7de15f79a19aad6224e363404 vimdiff526-oss <vimdiff526@gmail.com> 1759121455 +0900	commit: feat: index修正4
+b60832bb51a7d1d7de15f79a19aad6224e363404 b3c52186979ebe8f8f8d2248375c3a2e7be596a0 vimdiff526-oss <vimdiff526@gmail.com> 1759121723 +0900	commit: feat: index修正5
+b3c52186979ebe8f8f8d2248375c3a2e7be596a0 15d4c960e7437f65793bdfee62b053d74ffec974 vimdiff526-oss <vimdiff526@gmail.com> 1759122414 +0900	commit: feat: index修正6
+15d4c960e7437f65793bdfee62b053d74ffec974 e26347583126b31c74968c2b9ee44d0c5bb61f38 vimdiff526-oss <vimdiff526@gmail.com> 1759122742 +0900	commit: feat: index修正7
+e26347583126b31c74968c2b9ee44d0c5bb61f38 24f009faff13ed2d7650756fa60cd7296648fdda vimdiff526-oss <vimdiff526@gmail.com> 1759122775 +0900	commit: feat: index修正8
+24f009faff13ed2d7650756fa60cd7296648fdda 643047f21ae1fe6f184dbf2c60f1f58e4c03eb4f vimdiff526-oss <vimdiff526@gmail.com> 1759124332 +0900	commit: feat: index修正9
+643047f21ae1fe6f184dbf2c60f1f58e4c03eb4f f92287a65111c4340561dde397a70ca5bd2235d0 vimdiff526-oss <vimdiff526@gmail.com> 1759124886 +0900	commit: feat: マージ１
+f92287a65111c4340561dde397a70ca5bd2235d0 d84ac1da9565cc0d35e23ff7cfb8ec8337077b17 vimdiff526-oss <vimdiff526@gmail.com> 1759125597 +0900	commit: feat: マージ2
+d84ac1da9565cc0d35e23ff7cfb8ec8337077b17 427b5fc69bc03f9a9ff6d4d7b47f17bbcfc868e2 vimdiff526-oss <vimdiff526@gmail.com> 1759127122 +0900	commit: feat: マージ4
+427b5fc69bc03f9a9ff6d4d7b47f17bbcfc868e2 ae94b64b24464419f334cf01fecde7ebf7b48a07 vimdiff526-oss <vimdiff526@gmail.com> 1759127226 +0900	commit: feat: マージ5
+ae94b64b24464419f334cf01fecde7ebf7b48a07 4f0fef65769b139788c5bee9a3a7dc6757e38781 vimdiff526-oss <vimdiff526@gmail.com> 1759128003 +0900	commit: feat: マージ6
+4f0fef65769b139788c5bee9a3a7dc6757e38781 f984c771c38929b27595fd3149f266216b1b4771 vimdiff526-oss <vimdiff526@gmail.com> 1759129078 +0900	commit: feat: マージ7
+f984c771c38929b27595fd3149f266216b1b4771 dee5923c49290fbed33ec8a90ebbe0def3187b50 vimdiff526-oss <vimdiff526@gmail.com> 1759129267 +0900	commit: feat: マージ8
+dee5923c49290fbed33ec8a90ebbe0def3187b50 0c5c0ec4e0ec4a8d600fa680a33feb6e5dce1ee3 vimdiff526-oss <vimdiff526@gmail.com> 1759130347 +0900	commit: feat: マージ9
+0c5c0ec4e0ec4a8d600fa680a33feb6e5dce1ee3 ebefab9549f2ca63dc746645c5527a1b26193b16 vimdiff526-oss <vimdiff526@gmail.com> 1759211525 +0900	commit: feat: stikers修正１
+ebefab9549f2ca63dc746645c5527a1b26193b16 54db24cd5bc4c4d4f9e21096a73f314a3bc4b754 vimdiff526-oss <vimdiff526@gmail.com> 1759211817 +0900	commit: feat: stikers修正2
+54db24cd5bc4c4d4f9e21096a73f314a3bc4b754 8db8dfac8a70fbcbd934b7363c243aeb7b5ca2f7 vimdiff526-oss <vimdiff526@gmail.com> 1759213399 +0900	commit: feat: stikers修正3
+8db8dfac8a70fbcbd934b7363c243aeb7b5ca2f7 f14d5c0de947d6f8c6adadd2345165bd3f691baf vimdiff526-oss <vimdiff526@gmail.com> 1759213732 +0900	commit: feat: stikers修正4
+f14d5c0de947d6f8c6adadd2345165bd3f691baf 4b4292868b0ba729140807d0ce6456f9f7c33b83 vimdiff526-oss <vimdiff526@gmail.com> 1759295859 +0900	commit: feat: policy.index 1
+4b4292868b0ba729140807d0ce6456f9f7c33b83 6adba8f80c2fd637f6af4ff550c82f22532c05a6 vimdiff526-oss <vimdiff526@gmail.com> 1759295921 +0900	pull: Merge made by the 'ort' strategy.
+6adba8f80c2fd637f6af4ff550c82f22532c05a6 4ec9765893b607166e2d1a6260622354f204b1b7 vimdiff526-oss <vimdiff526@gmail.com> 1759351309 +0900	pull: Fast-forward
+4ec9765893b607166e2d1a6260622354f204b1b7 2bdf332ac0c79798ba0e92054d57de99f7cf2b0b vimdiff526-oss <vimdiff526@gmail.com> 1759351463 +0900	commit: feat: index修正9
+2bdf332ac0c79798ba0e92054d57de99f7cf2b0b 11733087891025c533e02460f30bea95075e22d9 vimdiff526-oss <vimdiff526@gmail.com> 1759351584 +0900	commit: feat: index修正10
+11733087891025c533e02460f30bea95075e22d9 98d7181e2d40462a3f76325c2be115a40ede1b97 vimdiff526-oss <vimdiff526@gmail.com> 1759354427 +0900	pull: Fast-forward
+98d7181e2d40462a3f76325c2be115a40ede1b97 400e524565844758e3a36c075a5e808ee6bed9fe vimdiff526-oss <vimdiff526@gmail.com> 1759355789 +0900	pull: Fast-forward
+400e524565844758e3a36c075a5e808ee6bed9fe c7203615e48ffd1317aadc3bf4ad4299134c3b03 vimdiff526-oss <vimdiff526@gmail.com> 1759386565 +0900	pull: Fast-forward
+c7203615e48ffd1317aadc3bf4ad4299134c3b03 06317e4199fe90c5760dac77dfa11ef7e6bc6f30 vimdiff526-oss <vimdiff526@gmail.com> 1759543811 +0900	commit: feat: アフェリエイトリンク追加１
+06317e4199fe90c5760dac77dfa11ef7e6bc6f30 5a66364d9eb99624bdc8a1bf0abe709bf9f358f6 vimdiff526-oss <vimdiff526@gmail.com> 1759543852 +0900	pull: Merge made by the 'ort' strategy.
+5a66364d9eb99624bdc8a1bf0abe709bf9f358f6 3b9b1f211d9b892df2b75557554a4001492d8b52 vimdiff526-oss <vimdiff526@gmail.com> 1759544725 +0900	commit: feat: アフェリエイトリンク追加3
+3b9b1f211d9b892df2b75557554a4001492d8b52 6b1de6a8c237e28c409c8233e222b6fa20f8370e vimdiff526-oss <vimdiff526@gmail.com> 1759644543 +0900	commit: feat: あると便利追加１
+6b1de6a8c237e28c409c8233e222b6fa20f8370e 2fd246b33940446dc54a6a0ae711f6bc8c07b608 vimdiff526-oss <vimdiff526@gmail.com> 1759647421 +0900	commit: feat: あると便利追加2
+2fd246b33940446dc54a6a0ae711f6bc8c07b608 fd6819b84c6a2582908126fad960213503c71a76 vimdiff526-oss <vimdiff526@gmail.com> 1759647829 +0900	commit: feat: あると便利追加3
+fd6819b84c6a2582908126fad960213503c71a76 2c9bf4a5e74eb503fc21814592b56d3c2a8daf45 vimdiff526-oss <vimdiff526@gmail.com> 1759648007 +0900	commit: feat: あると便利追加4
+2c9bf4a5e74eb503fc21814592b56d3c2a8daf45 6c9842d0d2516a1754f303f648f82ceeed6cf065 vimdiff526-oss <vimdiff526@gmail.com> 1759648261 +0900	commit: feat: あると便利追加5
+6c9842d0d2516a1754f303f648f82ceeed6cf065 d8219150598c136226cf4eae4dc0a1a69a696fc1 vimdiff526-oss <vimdiff526@gmail.com> 1759648317 +0900	commit: feat: あると便利追加6
+d8219150598c136226cf4eae4dc0a1a69a696fc1 85705b7e1b94bb5f1d51e09cf74526fa164cdf65 vimdiff526-oss <vimdiff526@gmail.com> 1759650016 +0900	commit: feat: あると便利追加7
+85705b7e1b94bb5f1d51e09cf74526fa164cdf65 b3f3f2601a55e5a9d9368eedec58ba4aa4e70fed vimdiff526-oss <vimdiff526@gmail.com> 1759650054 +0900	commit (merge): feat: あると便利追加7
+b3f3f2601a55e5a9d9368eedec58ba4aa4e70fed 9415e66b17b4a63caeb2b232a8dee315bbb32565 vimdiff526-oss <vimdiff526@gmail.com> 1759803897 +0900	pull: Fast-forward
+9415e66b17b4a63caeb2b232a8dee315bbb32565 332bc6598624c68405c44d6e94c31fd7c8d8113c vimdiff526-oss <vimdiff526@gmail.com> 1759957352 +0900	pull: Fast-forward
+332bc6598624c68405c44d6e94c31fd7c8d8113c ab8f9bd828ecd1227400764c59d14140dfcc11a1 vimdiff526-oss <vimdiff526@gmail.com> 1759976141 +0900	commit: feat: image1
+ab8f9bd828ecd1227400764c59d14140dfcc11a1 2ebc7212aa8a7544c9dadd0a305c750009818b11 vimdiff526-oss <vimdiff526@gmail.com> 1759979454 +0900	commit: feat: sticer.jsupdate
+2ebc7212aa8a7544c9dadd0a305c750009818b11 5e3e8e7125214d1986a367135dbe9441dc69b975 vimdiff526-oss <vimdiff526@gmail.com> 1759979717 +0900	commit: feat: sticer.jsupdate2
+5e3e8e7125214d1986a367135dbe9441dc69b975 74d0c4c802d588bb15911ae8ea6776e89d3fc948 vimdiff526-oss <vimdiff526@gmail.com> 1759981009 +0900	commit: feat: indexupdate1
+74d0c4c802d588bb15911ae8ea6776e89d3fc948 bdb880fbaa5692b2a2ff20026683a33c1802f821 vimdiff526-oss <vimdiff526@gmail.com> 1759981131 +0900	commit: feat: indexupdate2
+bdb880fbaa5692b2a2ff20026683a33c1802f821 cfeb2ce7b04c6b6edd9d02be61a076ceb6bdec21 vimdiff526-oss <vimdiff526@gmail.com> 1759981823 +0900	commit: feat: indexupdate3
+cfeb2ce7b04c6b6edd9d02be61a076ceb6bdec21 9c280113e02da1a38d9494f83c18887b2bcf00f4 vimdiff526-oss <vimdiff526@gmail.com> 1759985190 +0900	commit: feat: jsupdate
+9c280113e02da1a38d9494f83c18887b2bcf00f4 ecf3a69f3c2a9675466565397ea2b83424e5216e vimdiff526-oss <vimdiff526@gmail.com> 1760003006 +0900	commit: feat: slotupdate
+ecf3a69f3c2a9675466565397ea2b83424e5216e 5f8a7c747f9bb0c76aad092907118f4b6f06d4bd vimdiff526-oss <vimdiff526@gmail.com> 1760003029 +0900	pull: Merge made by the 'ort' strategy.
+5f8a7c747f9bb0c76aad092907118f4b6f06d4bd 91db7d4d156161c5ddf1e1e9a086831911c59549 vimdiff526-oss <vimdiff526@gmail.com> 1760038268 +0900	pull: Fast-forward
+91db7d4d156161c5ddf1e1e9a086831911c59549 f624e4c46e0b6bbe52ea5ea11aa799937a9c6f98 vimdiff526-oss <vimdiff526@gmail.com> 1760038455 +0900	commit: feat: slotupdate3
+f624e4c46e0b6bbe52ea5ea11aa799937a9c6f98 ff2aa996a9e6a5cca71e79803f7e0b6e4d7eaa6d vimdiff526-oss <vimdiff526@gmail.com> 1760039013 +0900	commit: feat: slotupdate4
+ff2aa996a9e6a5cca71e79803f7e0b6e4d7eaa6d 8a10778820d5dc053c7ec15ec450e689eb215ff1 vimdiff526-oss <vimdiff526@gmail.com> 1760052023 +0900	commit: feat: slotupdate5
+8a10778820d5dc053c7ec15ec450e689eb215ff1 290d3218d2b4520419c0892e2c3d897459d1c6ab vimdiff526-oss <vimdiff526@gmail.com> 1760052341 +0900	commit: feat: slotupdate6
+290d3218d2b4520419c0892e2c3d897459d1c6ab 75a98347ddd52ef171c3dc7cb576c5d93e4cede8 vimdiff526-oss <vimdiff526@gmail.com> 1760055221 +0900	commit: feat: slotupdate9
+75a98347ddd52ef171c3dc7cb576c5d93e4cede8 5f74b171e28b3718611481c25ee2b22e52dccc62 vimdiff526-oss <vimdiff526@gmail.com> 1760059333 +0900	pull: Fast-forward
+5f74b171e28b3718611481c25ee2b22e52dccc62 67e88ee9096f48cf9594df1f80489c86d9ac4ea9 vimdiff526-oss <vimdiff526@gmail.com> 1760059577 +0900	commit: feat: slotupdate10
+67e88ee9096f48cf9594df1f80489c86d9ac4ea9 66e5fae003df2fa3c28fcfc6d84fff3be5af28fb vimdiff526-oss <vimdiff526@gmail.com> 1760059755 +0900	commit: feat: slotupdate11
+66e5fae003df2fa3c28fcfc6d84fff3be5af28fb 7ff8745ff231b3657cd62d2569f2b44a620b7640 vimdiff526-oss <vimdiff526@gmail.com> 1760174349 +0900	commit: 診断update
+7ff8745ff231b3657cd62d2569f2b44a620b7640 a37bc61dcc705aded028f12373a17b318a53a08c vimdiff526-oss <vimdiff526@gmail.com> 1760174733 +0900	commit: 診断update2
+a37bc61dcc705aded028f12373a17b318a53a08c 0b4c691febc1a79e2d2a08bdef0c11a6c255d99a vimdiff526-oss <vimdiff526@gmail.com> 1760176151 +0900	commit: 診断update3
+0b4c691febc1a79e2d2a08bdef0c11a6c255d99a 6b92517042cafe56ee272c283f5a07d9ea24ca3c vimdiff526-oss <vimdiff526@gmail.com> 1760178888 +0900	commit: 診断update4
+6b92517042cafe56ee272c283f5a07d9ea24ca3c 8ca2a45900a5297765a9915de6119e5743790e5a vimdiff526-oss <vimdiff526@gmail.com> 1760179430 +0900	commit: 診断update5
+8ca2a45900a5297765a9915de6119e5743790e5a baf6f4ca63702845874216f03b6b45c72035edf5 vimdiff526-oss <vimdiff526@gmail.com> 1760183075 +0900	commit: 診断update6
+baf6f4ca63702845874216f03b6b45c72035edf5 fef5e4db4a9c09902baf59efd3f5497ec443fa5c vimdiff526-oss <vimdiff526@gmail.com> 1760239594 +0900	commit: 診断update7
+fef5e4db4a9c09902baf59efd3f5497ec443fa5c d5c486db93a3bb71cae18f0c8d207319748692f4 vimdiff526-oss <vimdiff526@gmail.com> 1760240441 +0900	commit: 診断update8
+d5c486db93a3bb71cae18f0c8d207319748692f4 5473f8a9ac74c5de6332ffb97112c6ceecaaa730 vimdiff526-oss <vimdiff526@gmail.com> 1760256085 +0900	commit: feat: あると便利追加8
+5473f8a9ac74c5de6332ffb97112c6ceecaaa730 d61f27d442b16354040f3caad9153138f2a4fb4d vimdiff526-oss <vimdiff526@gmail.com> 1760256445 +0900	commit: feat: あると便利追加9
+d61f27d442b16354040f3caad9153138f2a4fb4d b0a59569e065d9c196945dfe01287831fb662362 vimdiff526-oss <vimdiff526@gmail.com> 1760256771 +0900	commit: feat: あると便利追加10
+b0a59569e065d9c196945dfe01287831fb662362 1a8102fa7aba31680aabade95df911958eca054b vimdiff526-oss <vimdiff526@gmail.com> 1760266324 +0900	commit: feat: あると便利追加11
+1a8102fa7aba31680aabade95df911958eca054b dbb4fa7d862ad638e6f183b6bd03b5e788df9af9 vimdiff526-oss <vimdiff526@gmail.com> 1760305527 +0900	commit: feat: 診断update１
+dbb4fa7d862ad638e6f183b6bd03b5e788df9af9 fc0319357a10fa6b0deea47ed1d9887b8bbbc5cd vimdiff526-oss <vimdiff526@gmail.com> 1760993902 +0900	commit: feat: SLOSSEAhenkou
+fc0319357a10fa6b0deea47ed1d9887b8bbbc5cd e0efe65851d869ac74c786ee868a104f4c7e4bf7 vimdiff526-oss <vimdiff526@gmail.com> 1760999182 +0900	commit: feat: <ファイル名>を過去の状態に戻す
+e0efe65851d869ac74c786ee868a104f4c7e4bf7 548b481753881087957608ceb3f6f029309202af vimdiff526-oss <vimdiff526@gmail.com> 1763084165 +0900	commit: feat: namiyosotutika1
+548b481753881087957608ceb3f6f029309202af 8957f15e93224e38416d48626e4bce7bd8abce4d vimdiff526-oss <vimdiff526@gmail.com> 1763103774 +0900	pull: Fast-forward
+8957f15e93224e38416d48626e4bce7bd8abce4d b7dcb0eabd6586277de15b134b0963db8cc75fd4 vimdiff526-oss <vimdiff526@gmail.com> 1763103899 +0900	commit: feat: namiyosotutika2
+b7dcb0eabd6586277de15b134b0963db8cc75fd4 d2ffb5ebdf3062c7f9ed793f54cf323f7735f799 vimdiff526-oss <vimdiff526@gmail.com> 1763104178 +0900	commit: feat: namiyosotutika3
+d2ffb5ebdf3062c7f9ed793f54cf323f7735f799 62035d402be305836a3c0556ac1290fd1da6154e vimdiff526-oss <vimdiff526@gmail.com> 1763105121 +0900	pull: Fast-forward
+62035d402be305836a3c0556ac1290fd1da6154e 7a686b58e113dfcbe3d231bf8a4d408076b383c2 vimdiff526-oss <vimdiff526@gmail.com> 1763105191 +0900	commit: feat: namiyosotutika4
+7a686b58e113dfcbe3d231bf8a4d408076b383c2 3d9715746121184daf8e442ad5ac4c376438a6bc vimdiff526-oss <vimdiff526@gmail.com> 1763105419 +0900	pull: Fast-forward
+3d9715746121184daf8e442ad5ac4c376438a6bc 2e035cbbdea0537328fe71a87a583854b53fc637 vimdiff526-oss <vimdiff526@gmail.com> 1763105515 +0900	commit: feat: namiyosotutika5
+2e035cbbdea0537328fe71a87a583854b53fc637 41f7a6dd40316644994dcffd838723749198e258 vimdiff526-oss <vimdiff526@gmail.com> 1763106097 +0900	commit: feat: namiyosotutika6
+41f7a6dd40316644994dcffd838723749198e258 74d3010434d24efc98e6e1ea5b27a4594d83fd17 vimdiff526-oss <vimdiff526@gmail.com> 1763788875 +0900	pull: Fast-forward
+74d3010434d24efc98e6e1ea5b27a4594d83fd17 4022cccc1a38d77c7c2da8af442cda457b3772c6 vimdiff526-oss <vimdiff526@gmail.com> 1763788902 +0900	commit: feat: namijyouhou1
+4022cccc1a38d77c7c2da8af442cda457b3772c6 3e32bf0cc12298ac01f702694a22a91beb31d8e0 vimdiff526-oss <vimdiff526@gmail.com> 1763790834 +0900	commit: feat: namijyouhou2
+3e32bf0cc12298ac01f702694a22a91beb31d8e0 97e6ff3012d0364466fbd5d3fc4349fa346f7d7e vimdiff526-oss <vimdiff526@gmail.com> 1763797127 +0900	commit: feat: namijyouhou3
+97e6ff3012d0364466fbd5d3fc4349fa346f7d7e 7c1276fc4c03c9f8de915fb0482739f570fa5f74 vimdiff526-oss <vimdiff526@gmail.com> 1763797330 +0900	commit: feat: namijyouhou4
+7c1276fc4c03c9f8de915fb0482739f570fa5f74 83cee7566f39595a90413f11aca90ea6517477f9 vimdiff526-oss <vimdiff526@gmail.com> 1763797505 +0900	commit: feat: namijyouhou5
+83cee7566f39595a90413f11aca90ea6517477f9 c6d0e72fb514bb3a89d5f523527756bcc904d46a vimdiff526-oss <vimdiff526@gmail.com> 1763797988 +0900	commit: feat: namijyouhou6
+c6d0e72fb514bb3a89d5f523527756bcc904d46a a4573eda82ef7160b6bed0afdeb7f0bc227e1eb5 vimdiff526-oss <vimdiff526@gmail.com> 1763798661 +0900	commit: feat: namijyouhou7
+a4573eda82ef7160b6bed0afdeb7f0bc227e1eb5 d245609e676bd3a6915c1e91a1eeaabb9852de31 vimdiff526-oss <vimdiff526@gmail.com> 1763802081 +0900	commit: feat: namijyouhou8
+d245609e676bd3a6915c1e91a1eeaabb9852de31 d19d02eb7a6767a39cfa5fe1b5733d9681a6e596 vimdiff526-oss <vimdiff526@gmail.com> 1763845021 +0900	commit: feat: namijyouhou9
+d19d02eb7a6767a39cfa5fe1b5733d9681a6e596 6a19bac8bb8d84da9725b4d37398f68893e213dc vimdiff526-oss <vimdiff526@gmail.com> 1763845086 +0900	pull: Merge made by the 'ort' strategy.
+6a19bac8bb8d84da9725b4d37398f68893e213dc 7c7fbb065abc301ff143a8a7776231346d1d7d6a vimdiff526-oss <vimdiff526@gmail.com> 1763845864 +0900	commit: feat: namijyouhou10
+7c7fbb065abc301ff143a8a7776231346d1d7d6a 149f3c21db3edce13e941bbbf483d31feda68404 vimdiff526-oss <vimdiff526@gmail.com> 1763846280 +0900	commit: feat: namijyouhou11
+149f3c21db3edce13e941bbbf483d31feda68404 50c833dcce1163a5745ffb5143a06e0c552e247d vimdiff526-oss <vimdiff526@gmail.com> 1763846623 +0900	commit: feat: namijyouhou12
+50c833dcce1163a5745ffb5143a06e0c552e247d 2376f3ccfb34aac98dc5f3d749564ce2ed755634 vimdiff526-oss <vimdiff526@gmail.com> 1763846828 +0900	commit: feat: namijyouhou13
+2376f3ccfb34aac98dc5f3d749564ce2ed755634 fa1a750c981e51bc2b3552af92761c0425cc1a8b vimdiff526-oss <vimdiff526@gmail.com> 1763847004 +0900	commit: feat: namijyouhou14
+fa1a750c981e51bc2b3552af92761c0425cc1a8b fbef519026e78effd66f92edbd65d2559ca02c8d vimdiff526-oss <vimdiff526@gmail.com> 1763847189 +0900	commit: feat: namijyouhou15
+fbef519026e78effd66f92edbd65d2559ca02c8d f14c5f01f588bfb6a9ba7111be2b63c5e8312727 vimdiff526-oss <vimdiff526@gmail.com> 1763847404 +0900	commit: feat: namijyouhou16
+f14c5f01f588bfb6a9ba7111be2b63c5e8312727 586cda7dcbaae4d5b1f8de4a56bf4fc850a37921 vimdiff526-oss <vimdiff526@gmail.com> 1763847554 +0900	commit: feat: namijyouhou17
+586cda7dcbaae4d5b1f8de4a56bf4fc850a37921 9eefef2f597c8681c3b6589000a210799303feb8 vimdiff526-oss <vimdiff526@gmail.com> 1763847841 +0900	commit: feat: namijyouhou18
+9eefef2f597c8681c3b6589000a210799303feb8 fe04e5a8eff3052263c6b4abe92b9774a1f097f6 vimdiff526-oss <vimdiff526@gmail.com> 1763847992 +0900	commit: feat: namijyouhou19
+fe04e5a8eff3052263c6b4abe92b9774a1f097f6 d1ce00cc64215ae4a3a43b0a3f2d9506f11319f6 vimdiff526-oss <vimdiff526@gmail.com> 1763848167 +0900	commit: feat: namijyouhou20
+d1ce00cc64215ae4a3a43b0a3f2d9506f11319f6 e6a7a1582e6dab505757ae4adcb72dd5c35d51b4 vimdiff526-oss <vimdiff526@gmail.com> 1763854488 +0900	commit: feat: shiomihyou1
+e6a7a1582e6dab505757ae4adcb72dd5c35d51b4 4488637e7e4263fafb31cacb4c050f4db4ad6712 vimdiff526-oss <vimdiff526@gmail.com> 1764020511 +0900	commit: feat: pin1
+4488637e7e4263fafb31cacb4c050f4db4ad6712 6b0c454480cf8a9171c168d7c61e992ef3ebbc54 vimdiff526-oss <vimdiff526@gmail.com> 1764020533 +0900	pull: Merge made by the 'ort' strategy.
+6b0c454480cf8a9171c168d7c61e992ef3ebbc54 cad5ddf2a6f0dbad6f0e5871ab050f7de1c1be34 vimdiff526-oss <vimdiff526@gmail.com> 1764027606 +0900	commit: feat: pin3
+cad5ddf2a6f0dbad6f0e5871ab050f7de1c1be34 932281a894ddd2b85e3011832cd62a6dca9905b7 vimdiff526-oss <vimdiff526@gmail.com> 1764027955 +0900	commit: feat: pin4
+932281a894ddd2b85e3011832cd62a6dca9905b7 a4231cd9ecc62b72b6a14f63400d792c218000bf vimdiff526-oss <vimdiff526@gmail.com> 1764029091 +0900	commit: feat: pin5
+a4231cd9ecc62b72b6a14f63400d792c218000bf ad81369fba484db78d172dc70ba316cf81a64eff vimdiff526-oss <vimdiff526@gmail.com> 1764029668 +0900	commit: feat: pin6
+ad81369fba484db78d172dc70ba316cf81a64eff e59d211159d77daee47ca7dda6a5819665a01ce1 vimdiff526-oss <vimdiff526@gmail.com> 1764030514 +0900	commit: feat: pin7
+e59d211159d77daee47ca7dda6a5819665a01ce1 25f761af40df21a9888fbae450f85aa33407070a vimdiff526-oss <vimdiff526@gmail.com> 1764032517 +0900	commit: feat: pin7
+25f761af40df21a9888fbae450f85aa33407070a fd5751ca37473c3b9ab803389c8b359e813d67d4 vimdiff526-oss <vimdiff526@gmail.com> 1764114103 +0900	commit: feat: pin8
+fd5751ca37473c3b9ab803389c8b359e813d67d4 ba778749e86ce9679fcee49fc8342b2c157f0a51 vimdiff526-oss <vimdiff526@gmail.com> 1764114112 +0900	pull: Merge made by the 'ort' strategy.
+ba778749e86ce9679fcee49fc8342b2c157f0a51 d45110d992510d7288a1d96f8f16578b938bcc1b vimdiff526-oss <vimdiff526@gmail.com> 1764114367 +0900	commit: feat: pin9
+d45110d992510d7288a1d96f8f16578b938bcc1b b9fbfa761df40e2430eda96603f789ab30b2cce3 vimdiff526-oss <vimdiff526@gmail.com> 1764114479 +0900	commit: feat: pin10
+b9fbfa761df40e2430eda96603f789ab30b2cce3 058c9a7f4ca8095e63ddacd650b1e4e32cbf0c07 vimdiff526-oss <vimdiff526@gmail.com> 1764114571 +0900	commit: feat: pin11
+058c9a7f4ca8095e63ddacd650b1e4e32cbf0c07 7c58ab9c564d95e7586ffc9e1ae42a5e0067e0c6 vimdiff526-oss <vimdiff526@gmail.com> 1764114840 +0900	commit: feat: pin12
+7c58ab9c564d95e7586ffc9e1ae42a5e0067e0c6 49d6fb915801fce38759d28eb9b0dbe3f0fb0c74 vimdiff526-oss <vimdiff526@gmail.com> 1764238931 +0900	commit: feat: time1
+49d6fb915801fce38759d28eb9b0dbe3f0fb0c74 82bed72926c11fb240c20a586059f9bbed781292 vimdiff526-oss <vimdiff526@gmail.com> 1764238940 +0900	pull: Merge made by the 'ort' strategy.
+82bed72926c11fb240c20a586059f9bbed781292 396e0f8e93d376538043ce476a919e3ce8796aa4 vimdiff526-oss <vimdiff526@gmail.com> 1764280878 +0900	commit: feat: time2
+396e0f8e93d376538043ce476a919e3ce8796aa4 5596dc1438b88e1c6c58a1222dfa0fdc611c2da4 vimdiff526-oss <vimdiff526@gmail.com> 1764281254 +0900	commit: feat: time3
+5596dc1438b88e1c6c58a1222dfa0fdc611c2da4 de0c4f6fa0af939215b958e6cb92195565464795 vimdiff526-oss <vimdiff526@gmail.com> 1764281520 +0900	commit: feat: time4
+de0c4f6fa0af939215b958e6cb92195565464795 6ed7f9bfc6af32615468f1beff65aafee0f851c2 vimdiff526-oss <vimdiff526@gmail.com> 1765352646 +0900	commit: feat: pointtuika1
+6ed7f9bfc6af32615468f1beff65aafee0f851c2 b021511047aeff30af6bfefd3818f6cfc52adca2 vimdiff526-oss <vimdiff526@gmail.com> 1765352657 +0900	pull: Merge made by the 'ort' strategy.
+b021511047aeff30af6bfefd3818f6cfc52adca2 11735bd0d26d4e604459755a1ee3e164faf42b80 vimdiff526-oss <vimdiff526@gmail.com> 1765353537 +0900	commit: feat: pointtuika2
+11735bd0d26d4e604459755a1ee3e164faf42b80 3488676d03f56c0a6992f1b56ed163d4af46691f vimdiff526-oss <vimdiff526@gmail.com> 1765403366 +0900	commit: feat: pointtuika3
+3488676d03f56c0a6992f1b56ed163d4af46691f 95ff3611459db78698feb745955572cea75c0972 vimdiff526-oss <vimdiff526@gmail.com> 1765403379 +0900	pull: Merge made by the 'ort' strategy.
+95ff3611459db78698feb745955572cea75c0972 515adb7c60e431910a31d9b22dfdd6a371d9477f vimdiff526-oss <vimdiff526@gmail.com> 1765403694 +0900	commit: feat: pointtuika4
