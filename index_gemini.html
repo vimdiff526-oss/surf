@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SloSea｜サーフコンテンツのポータル</title>
+  <meta name="description" content="全国の波予報マップ、サーフィン記事、ミニゲームなど、サーファーのためのコンテンツポータル。" />
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Zen+Kaku+Gothic+New:wght@400;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="./nav.css" />
+  <script src="./nav.js" defer></script>
+  
+  <style>
+    :root {
+      --bg-grad: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
+      --accent: #0ea5e9;
+      --glass-bg: rgba(255, 255, 255, 0.75);
+      --glass-border: rgba(255, 255, 255, 0.8);
+      --text-main: #0f172a;
+      --text-muted: #475569;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    
+    body {
+      margin: 0;
+      font-family: 'Zen Kaku Gothic New', sans-serif;
+      color: var(--text-main);
+      background-color: #f0f9ff;
+      /* 背景にうっすらと波のSVGパターンなどを敷くとさらにお洒落になります */
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(14, 165, 233, 0.1) 0px, transparent 50%);
+      min-height: 100vh;
+    }
+
+    a { text-decoration: none; color: inherit; transition: color 0.2s; }
+
+    /* --- Typography --- */
+    h1, h2, h3 { margin: 0; font-family: 'Montserrat', sans-serif; letter-spacing: 0.02em; }
+    
+    /* --- Hero Section --- */
+    .hero {
+      padding: 60px 20px 40px;
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .hero h1 {
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      background: linear-gradient(to right, #0284c7, #22d3ee);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 16px;
+      line-height: 1.1;
+    }
+    .hero p {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      line-height: 1.8;
+    }
+
+    /* --- Bento Grid Layout --- */
+    .bento-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px 60px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr); /* 4カラム構成 */
+      grid-auto-rows: minmax(180px, auto);
+      gap: 20px;
+    }
+
+    /* Card Common Styles (Glassmorphism) */
+    .bento-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 24px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s ease;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+      cursor: pointer;
+      text-decoration: none; /* リンクの下線を消す */
+    }
+
+    .bento-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.01);
+      border-color: #bae6fd;
+    }
+
+    .card-icon {
+      width: 48px;
+      height: 48px;
+      background: #e0f2fe;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+      margin-bottom: 16px;
+      font-size: 24px;
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .card-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* --- Specific Card Sizes --- */
+    
+    /* Main Map (2x2 size) - 一番目立たせる */
+    .card-map {
+      grid-column: span 2;
+      grid-row: span 2;
+      background: linear-gradient(to bottom right, rgba(255,255,255,0.9), rgba(255,255,255,0.6)), url('map-bg-placeholder.jpg'); /* 背景画像があれば設定 */
+      background-size: cover;
+    }
+    .card-map .card-icon {
+      background: var(--accent);
+      color: white;
+      width: 60px; height: 60px; font-size: 30px;
+    }
+    .card-map .card-title { font-size: 1.8rem; }
+    .card-map .card-desc { font-size: 1.0rem; }
+    
+    /* Wide Cards (2x1) */
+    .card-wide {
+      grid-column: span 2;
+    }
+    
+    /* Tall Cards (1x2) - 必要なら */
+    .card-tall {
+      grid-row: span 2;
+    }
+
+    /* Sticker (画像プレビュー付き) */
+    .card-sticker {
+      background: linear-gradient(135deg, #fffbeb 0%, #fff 100%);
+    }
+
+    /* Badge */
+    .badge {
+      position: absolute; top: 16px; right: 16px;
+      background: #ef4444; color: white;
+      font-size: 0.7rem; font-weight: bold;
+      padding: 4px 8px; border-radius: 99px;
+      box-shadow: 0 2px 4px rgba(239,68,68,0.3);
+    }
+    .badge-new { background: var(--accent); }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 40px 0;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      border-top: 1px solid rgba(0,0,0,0.05);
+      margin-top: 40px;
+    }
+    footer a { border-bottom: 1px dotted currentColor; }
+
+    /* --- Responsive --- */
+    @media (max-width: 900px) {
+      .bento-container {
+        grid-template-columns: repeat(2, 1fr); /* タブレットは2列 */
+      }
+      .card-map {
+        grid-column: span 2; /* マップは横幅いっぱい */
+        grid-row: span 1;    /* 高さは1段分でOKかも */
+        min-height: 250px;
+      }
+    }
+    @media (max-width: 600px) {
+      .bento-container {
+        display: flex;
+        flex-direction: column; /* スマホは縦積み */
+      }
+      .hero h1 { font-size: 2.2rem; }
+      .bento-card { min-height: 160px; }
+      .card-map { min-height: 220px; }
+    }
+  </style>
+</head>
+<body id="top">
+
+  <header class="global-bar">
+    <div class="global-bar__inner">
+      <a class="global-bar__brand" href="./index.html#top">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:24px; height:24px; color:var(--accent);"><path d="M2 16c4 0 4-8 8-8s4 8 8 8 4-8 8-8"/></svg>
+        <span style="font-family: 'Montserrat', sans-serif; font-weight: 900; margin-left:8px;">SloSea</span>
+      </a>
+      <button class="global-bar__menu" type="button" aria-label="メニューを開く" aria-expanded="false" aria-controls="global-menu">
+        <svg class="global-bar__menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16" /></svg>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1>Surf Life Portal</h1>
+      <p>
+        サーフィンをもっと楽しく、もっと身近に。<br>
+        波予報からステッカー作成まで、すべての「遊び」をここに。
+      </p>
+    </section>
+
+    <div class="bento-container">
+      
+      <a href="./surfpoint/index.html" class="bento-card card-map">
+        <div class="badge badge-new">New Release</div>
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" width="32" height="32" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 21 18 21 2 16 6 8 2 1 6"></polygon><line x1="8" y1="2" x2="8" y2="18"></line><line x1="16" y1="6" x2="16" y2="22"></line></svg>
+        </div>
+        <h2 class="card-title">Surf Condition Map</h2>
+        <p class="card-desc">
+          全国の波予報をビジュアル化。<br>
+          風向き、うねり、潮回りを5日先まで直感的にチェックできる最新マップ。
+        </p>
+        <div style="position:absolute; bottom:-20px; right:-20px; opacity:0.1; transform:rotate(-15deg);">
+          <svg width="200" height="200" viewBox="0 0 24 24" fill="currentColor"><path d="M2 16c4 0 4-8 8-8s4 8 8 8 4-8 8-8"/></svg>
+        </div>
+      </a>
+
+      <a href="./surfboard-guide.html" class="bento-card card-wide">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        </div>
+        <h3 class="card-title">サーフボード選び【保存版】</h3>
+        <p class="card-desc">初心者から中級者まで。失敗しないボード選びの基準と基礎知識。</p>
+      </a>
+
+      <a href="./game.html" class="bento-card">
+        <div class="card-icon" style="color:#f59e0b; background:#fef3c7;">
+          <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+        </div>
+        <h3 class="card-title">Mini Game</h3>
+        <p class="card-desc">波待ちの暇つぶしに。コインを集めるレトロゲーム。</p>
+      </a>
+
+      <a href="./slot.html" class="bento-card">
+        <div class="card-icon" style="color:#ec4899; background:#fce7f3;">
+          <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+        </div>
+        <h3 class="card-title">波運スロット</h3>
+        <p class="card-desc">今日の運勢を占う。</p>
+      </a>
+
+      <a href="./stickers.html" class="bento-card card-sticker">
+        <div class="badge">Popular</div>
+        <div class="card-icon" style="color:#10b981; background:#d1fae5;">
+          <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+        </div>
+        <h3 class="card-title">Sticker Design</h3>
+        <p class="card-desc">ボードを飾るジョークステッカー素材配布。</p>
+      </a>
+
+      <a href="./beginner-gear.html" class="bento-card">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
+        </div>
+        <h3 class="card-title">道具一式</h3>
+        <p class="card-desc">最初に揃えるべきアイテムリスト。</p>
+      </a>
+
+      <a href="./shonanforecast.html" class="bento-card">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+        </div>
+        <h3 class="card-title">湘南アーカイブ</h3>
+        <p class="card-desc">エリア限定の波予報ログ。</p>
+      </a>
+
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <p>© <span id="year"></span> SloSea</p>
+      <p style="margin-top:8px;">
+        <a href="./about.html">運営者情報</a> &nbsp;|&nbsp; 
+        <a href="./policy.html">プライバシーポリシー</a>
+      </p>
+    </div>
+  </footer>
+
+  <nav class="global-menu" id="global-menu" data-global-menu aria-hidden="true">
+    <div class="global-menu__backdrop" data-menu-dismiss aria-hidden="true"></div>
+    <div class="global-menu__panel" role="dialog" aria-modal="true" aria-labelledby="global-menu-title">
+      <div class="global-menu__header">
+        <h2 class="global-menu__title" id="global-menu-title">Menu</h2>
+        <button class="global-menu__close" type="button" aria-label="メニューを閉じる" data-menu-dismiss data-menu-initial>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+        </button>
+      </div>
+      <ul class="global-menu__list">
+        <li class="global-menu__item"><a href="./surfpoint/index.html">🌊 波予報マップ (New)</a></li>
+        <li class="global-menu__item"><a href="./surfboard-guide.html">サーフボード選び</a></li>
+        <li class="global-menu__item"><a href="./game.html">Mini Game</a></li>
+        <li class="global-menu__item"><a href="./stickers.html">ステッカー素材</a></li>
+        <li class="global-menu__item"><a href="./about.html">SloSeaについて</a></li>
+      </ul>
+      <button class="global-menu__close" type="button" data-menu-dismiss>閉じる</button>
+    </div>
+  </nav>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
