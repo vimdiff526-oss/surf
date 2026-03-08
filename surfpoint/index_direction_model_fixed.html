@@ -320,7 +320,8 @@
             attribution: '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank">地理院タイル</a>',
             bounds: bounds
         }).addTo(map);
-        // ★★★ 変更終了 ★★★
+        
+// ★★★ 変更終了 ★★★
 
         map.on('click', () => {
             document.getElementById('info-panel').style.display = 'none';
@@ -410,12 +411,163 @@
             { name: "沖縄 - スーサイド", lat: 26.080, lon: 127.670 }
         ];
 
-        const spotMarkers = [];
+        
+        // 初期化: 各ポイントの向き推定を適用
+        initSpotFacing(spots);
+const spotMarkers = [];
         const windLayerGroup = L.layerGroup().addTo(map);
 
         function getDirText(deg) {
             const dirs = ['北', '北東', '東', '南東', '南', '南西', '西', '北西'];
             return dirs[Math.round(deg / 45) % 8];
+        }
+
+        // ============================================================
+        // ポイント向き（海に開いている方向）推定 + うねり反応モデル
+        // ------------------------------------------------------------
+        // ① 全ポイントの向き: inferFacingDeg(name) で推定（必要なら個別上書き）
+        // ② 推定値を各ポイントへ適用: initSpotFacing() で spot.facing_deg に格納
+        // ③ うねり向きに対して「ダイレクト / 回り込み / ほぼ反応しない」を
+        //    係数（factor）に変換し、有効波高 = raw * factor で表示。
+        //
+        // 表示文言（ひざ/もも腰/腹胸/肩/頭/クローズ）は既存 getSurfConditionText() のみを使用。
+        // ============================================================
+
+        function normDeg(deg) {
+            if (deg === null || deg === undefined || Number.isNaN(deg)) return null;
+            let d = deg % 360;
+            if (d < 0) d += 360;
+            return d;
+        }
+
+        function angDist(a, b) {
+            const d = ((a - b + 540) % 360) - 180;
+            return Math.abs(d);
+        }
+
+        function inferFacingDeg(name) {
+            // 0=N, 90=E, 180=S, 270=W（「うねりが来る方向(from)」の代表値）
+            // 注意: これは全国共通の一次推定。精度が必要なポイントはここに個別上書きを追加。
+
+            // --- 個別上書き（伊豆東：白浜より多々戸は南寄り） ---
+            if (name.includes("静岡 - 白浜")) return 140;   // ESE寄り
+            if (name.includes("静岡 - 多々戸浜")) return 165; // SSE寄り
+            if (name.includes("静岡 - 宇佐美")) return 120;  // SE寄り
+
+            // 房総南（南ほどS寄りを拾う）
+            if (name.includes("千葉 - 鴨川")) return 145;
+            if (name.includes("千葉 - 和田")) return 165;
+            if (name.includes("千葉 - 千倉")) return 175;
+
+            // 磯の浦（紀伊水道側：W〜NWの冬型を拾う）
+            if (name.includes("和歌山 - 磯の浦")) return 290;
+
+            // 沖縄
+            if (name.includes("沖縄 - 伊計島")) return 90;
+            if (name.includes("沖縄 - 砂辺")) return 270;
+            if (name.includes("沖縄 - スーサイド")) return 180;
+
+            // --- 日本海側（冬型NW中心） ---
+            const japanSeaKeys = ["日本海", "新潟", "石川", "福井", "京都", "鳥取", "島根", "山形", "秋田"];
+            if (japanSeaKeys.some(k => name.includes(k)) || name.includes("青森 - 深浦") || name.includes("北海道 - 銭函")) {
+                return 300; // NW
+            }
+
+            // 玄界灘（北部九州）: N〜NW
+            const genkai = ["福岡 - 釣川", "福岡 - 三苫", "福岡 - 芥屋", "佐賀 - 立神"];
+            if (genkai.some(k => name.includes(k))) return 330;
+
+            if (name.includes("長崎 - 脇岬")) return 225; // SW寄りも入る想定
+
+            // 東北〜茨城（太平洋東向き）
+            const pacificNE = ["青森 - 三沢", "岩手", "宮城", "福島", "茨城"];
+            if (pacificNE.some(k => name.includes(k))) return 90;
+
+            // 千葉（外房: ESE寄り、南は個別済）
+            if (name.startsWith("千葉 -")) return 110;
+
+            // 新島（太平洋: ESE）
+            if (name.includes("東京 - 新島")) return 120;
+
+            // 湘南・西湘（相模湾: S）
+            if (name.includes("湘南") || name.includes("西湘")) return 180;
+
+            // 静岡（遠州灘・駿河湾: S〜SSE。伊豆東は個別済）
+            if (name.startsWith("静岡 -")) return 185;
+
+            // 三重・愛知（太平洋: SSE）
+            if (name.includes("三重") || name.includes("愛知")) return 160;
+
+            // 四国太平洋側（南向き）
+            if (name.includes("徳島")) return 150;
+            if (name.includes("高知")) return 180;
+
+            // 宮崎（東向き〜SE）
+            if (name.includes("宮崎")) return 110;
+
+            // 鹿児島
+            if (name.includes("鹿児島 - 江口浜")) return 270; // 東シナ海側
+            if (name.includes("鹿児島")) return 140;
+
+            // 北海道（ざっくり）
+            if (name.startsWith("北海道 -")) {
+                if (name.includes("銭函")) return 300;
+                if (name.includes("浜中")) return 90;
+                return 120; // 太平洋側
+            }
+
+            // デフォルト（不明は減衰しない）
+            return null;
+        }
+
+        function initSpotFacing(spotsArr) {
+            // ①向き洗い出し（推定値を全スポットに付与）
+            spotsArr.forEach(s => {
+                const f = inferFacingDeg(s.name);
+                s.facing_deg = f;
+            });
+
+            // コンソールで一覧確認（必要なら運用時にコメントアウト可能）
+            try {
+                console.table(spotsArr.map(s => ({
+                    name: s.name,
+                    facing_deg: s.facing_deg
+                })));
+            } catch(e) {}
+        }
+
+        function responseFactorByDirection(facingDeg, swellDirFrom) {
+            // ③ うねり反応モデル（全国共通の初期値）
+            // ダイレクト: delta <= DIRECT_DEG -> 1.0
+            // 回り込み:   delta <= WRAP_DEG   -> WRAP_FACTOR
+            // ほぼ反応しない: それ以外        -> MIN_FACTOR（0にはしない）
+            if (facingDeg === null || facingDeg === undefined) return 1.0;
+            const f = normDeg(facingDeg);
+            const d = normDeg(swellDirFrom);
+            if (f === null || d === null) return 1.0;
+
+            const delta = angDist(d, f);
+
+            const DIRECT_DEG  = 35;
+            const WRAP_DEG    = 85;
+
+            const WRAP_FACTOR = 0.45;
+            const MIN_FACTOR  = 0.15;
+
+            if (delta <= DIRECT_DEG) return 1.0;
+
+            if (delta <= WRAP_DEG) {
+                // 回り込みは、外れ量に応じて 1.0 -> WRAP_FACTOR に滑らかに落とす
+                const t = (delta - DIRECT_DEG) / (WRAP_DEG - DIRECT_DEG); // 0..1
+                const eased = 1 - (t * t); // 1..0
+                return WRAP_FACTOR + (1 - WRAP_FACTOR) * eased;
+            }
+
+            // ほぼ反応しない領域も、遠いほど MIN に寄る（到達はする前提）
+            // 85°〜180°を MIN_FACTOR へ
+            const t2 = Math.min(1, (delta - WRAP_DEG) / (180 - WRAP_DEG));
+            const eased2 = 1 - (t2 * t2);
+            return MIN_FACTOR + (WRAP_FACTOR - MIN_FACTOR) * eased2;
         }
 
         function getSurfConditionText(height) {
@@ -597,16 +749,22 @@
                              continue;
                         }
 
-                        // ★補正計算
-                        let rawWaveHeight = mHourly.wave_height[targetIdx];
-                        if (spot.adjust) {
-                            rawWaveHeight *= spot.adjust;
-                        }
+                        // 波高（沖の値）を取得（adjust は使用しない）
+                        const rawWaveHeight = mHourly.wave_height[targetIdx];
+
+                        // うねり方向（来る方向/from）
+                        const swellDirFrom = normDeg(mHourly.swell_wave_direction[targetIdx]);
+
+                        // 各ポイントの向きに基づく有効波高（表示用）
+                        const facing = (spot.facing_deg === undefined ? inferFacingDeg(spot.name) : spot.facing_deg);
+                        const factor = responseFactorByDirection(facing, swellDirFrom);
+                        const effectiveWaveHeight = rawWaveHeight * factor;
 
                         spotData.push({
                             hasData: true,
-                            wave_height: rawWaveHeight,
-                            swell_dir: mHourly.swell_wave_direction[targetIdx],
+                            wave_height_raw: rawWaveHeight,
+                            wave_height: effectiveWaveHeight,
+                            swell_dir: swellDirFrom,
                             wind_speed: wHourly.wind_speed_10m[targetIdx],
                             wind_dir: wHourly.wind_direction_10m[targetIdx]
                         });
@@ -728,7 +886,11 @@
 
                 document.getElementById('p-wave-cond').innerText = getSurfConditionText(wh);
                 document.getElementById('p-wave').innerText = `${wh.toFixed(2)} m`;
-                document.getElementById('p-swell').innerText = `${getDirText(swellDir)} (${Math.round(swellDir)}°)`;
+                if (swellDir !== null && swellDir !== undefined && !Number.isNaN(swellDir)) {
+                    document.getElementById('p-swell').innerText = `${getDirText(swellDir)} (${Math.round(swellDir)}°)`;
+                } else {
+                    document.getElementById('p-swell').innerText = "--";
+                }
                 document.getElementById('p-wind').innerText = `${ws.toFixed(1)} m/s`;
                 document.getElementById('p-wdir').innerText = `${getDirText(wd)} (${Math.round(wd)}°)`;
             } else {
