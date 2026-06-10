@@ -269,6 +269,8 @@
     <script>
         // --- 状態管理 ---
         let globalData = [];
+        // 各ポイントの実測潮位(海面高 MSL基準)。タイムスタンプ文字列 -> 海面高(m) のMapを保持
+        let globalTide = [];
         let currentHourIndex = 0;
         let isPlaying = false;
         let playInterval = null;
@@ -333,7 +335,7 @@
         // --- ポイント定義 ---
         const spots = [
             { name: "北海道 - 浜厚真", lat: 42.605, lon: 141.832 },
-            { name: "北海道 - 銭函", lat: 43.145, lon: 141.220 },
+            { name: "北海道 - 銭函", lat: 43.158, lon: 141.211 }, // 修正: 手稲側内陸→小樽市銭函の海岸へ
             { name: "北海道 - 室蘭イタンキ", lat: 42.327, lon: 141.037 },
             { name: "北海道 - 浜中", lat: 43.160, lon: 145.120 },
             { name: "青森 - 三沢", lat: 40.702, lon: 141.428 },
@@ -350,13 +352,13 @@
             { name: "新潟 - 直江津", lat: 37.180, lon: 138.250 },
             { name: "日本海 - 新潟", lat: 37.880, lon: 138.940 },
             { name: "石川 - 柴垣", lat: 36.908, lon: 136.762 },
-            { name: "福井 - 鳥居浜", lat: 35.540, lon: 135.400 },
+            { name: "福井 - 鳥居浜", lat: 35.487, lon: 135.553 }, // 修正: 京都府舞鶴沖→高浜町の鳥居浜海岸へ
             { name: "京都 - 八丁浜", lat: 35.688, lon: 135.062 },
             { name: "京都 - 葛野浜", lat: 35.615, lon: 134.920 },
             { name: "鳥取 - 白兎", lat: 35.540, lon: 134.150 },
             { name: "島根 - 波子", lat: 35.000, lon: 132.170 },
 
-            { name: "茨城 - 河原子", lat: 36.530, lon: 140.630 },
+            { name: "茨城 - 河原子", lat: 36.527, lon: 140.652 }, // 修正: 内陸→日立市河原子海岸へ
             { name: "茨城 - 大洗", lat: 36.307, lon: 140.575 },
             { name: "茨城 - トップサンテ", lat: 36.195, lon: 140.575 },
             { name: "千葉 - 片貝", lat: 35.538, lon: 140.460 },
@@ -380,7 +382,7 @@
             { name: "西湘 - 吉浜", lat: 35.1505, lon: 139.1125 },     
             { name: "静岡 - 宇佐美", lat: 35.000, lon: 139.130, adjust: 0.6 },
             { name: "静岡 - 白浜", lat: 34.688, lon: 138.975 },
-            { name: "静岡 - 多々戸浜", lat: 34.660, lon: 138.930 },
+            { name: "静岡 - 多々戸浜", lat: 34.663, lon: 138.948 }, // 修正: 隣の吉佐美→多々戸浜へ
             { name: "静岡 - 静波", lat: 34.752, lon: 138.275 },
             { name: "静岡 - 御前崎", lat: 34.595, lon: 138.225 },
             { name: "愛知 - ロコ", lat: 34.600, lon: 137.180 },
@@ -397,10 +399,10 @@
             { name: "福岡 - 釣川", lat: 33.875, lon: 130.535 },
             { name: "福岡 - 三苫", lat: 33.705, lon: 130.422 }, 
             { name: "福岡 - 芥屋", lat: 33.615, lon: 130.130 },
-            { name: "佐賀 - 立神", lat: 33.430, lon: 129.980 },
+            { name: "佐賀 - 立神", lat: 33.487, lon: 129.925 }, // 修正: 唐津市街地内陸→立神岩西側の海岸へ
             { name: "長崎 - 脇岬", lat: 32.580, lon: 129.780 },
             { name: "宮崎 - お倉ヶ浜", lat: 32.410, lon: 131.670 },
-            { name: "宮崎 - 木崎浜", lat: 31.825, lon: 131.445 },
+            { name: "宮崎 - 木崎浜", lat: 31.815, lon: 131.470 }, // 修正: 内陸(熊野)→青島北の木崎浜海岸へ
             { name: "宮崎 - 恋ヶ浦", lat: 31.420, lon: 131.330 },
             { name: "鹿児島 - 江口浜", lat: 31.630, lon: 130.300 },
             { name: "鹿児島 - 種子島(鉄浜)", lat: 30.380, lon: 130.980 },
@@ -444,55 +446,59 @@
         }
 
         // --- Tide Logic ---
-        function getTideInfo(targetDate) {
-            const knownNewMoon = new Date(2024, 0, 11, 20, 57); 
-            const cycle = 29.53059;
-            const diffTime = targetDate.getTime() - knownNewMoon.getTime();
-            const diffDays = diffTime / (1000 * 60 * 60 * 24);
+        // 潮名(大潮/中潮など)は天文(月齢)で決まる暦上の区分なので月齢から算出する。
+        // 一方、潮位グラフと満ち引き(上げ潮/下げ潮)は実測ベースの sea_level_height_msl を使う。
+        function getTideName(targetDate) {
+            const knownNewMoon = new Date(2024, 0, 11, 20, 57); // 2024-01-11 20:57(JST)の新月を基準
+            const cycle = 29.53059; // 朔望月(日)
+            const diffDays = (targetDate.getTime() - knownNewMoon.getTime()) / (1000 * 60 * 60 * 24);
             let moonAge = diffDays % cycle;
             if (moonAge < 0) moonAge += cycle;
 
+            // 旧暦日(1〜30)に対応する潮名(海上保安庁の標準的な区分に準拠)
             const lunarDate = Math.floor(moonAge) + 1;
-            let name = "中潮";
-            
-            if ([1, 2, 15, 16, 17, 30].includes(lunarDate)) name = "大潮";
-            else if ([3, 4, 5, 18, 19, 20, 21].includes(lunarDate)) name = "中潮";
-            else if ([6, 7, 8, 22, 23, 24].includes(lunarDate)) name = "小潮";
-            else if ([9, 25].includes(lunarDate)) name = "長潮";
-            else if ([10, 11, 12, 13, 14, 26, 27, 28, 29].includes(lunarDate)) name = "若潮〜中潮";
-            
-            if (lunarDate === 10 || lunarDate === 25) name = "長潮";
-            else if (lunarDate === 11 || lunarDate === 26) name = "若潮";
-            else if ([12, 13, 14, 27, 28, 29].includes(lunarDate)) name = "中潮";
+            const tideTable = {
+                1:'大潮', 2:'大潮', 3:'中潮', 4:'中潮', 5:'中潮', 6:'中潮', 7:'小潮', 8:'小潮', 9:'小潮',
+                10:'長潮', 11:'若潮', 12:'中潮', 13:'中潮', 14:'中潮', 15:'大潮', 16:'大潮', 17:'大潮', 18:'大潮',
+                19:'中潮', 20:'中潮', 21:'中潮', 22:'中潮', 23:'小潮', 24:'小潮', 25:'小潮', 26:'長潮', 27:'若潮',
+                28:'中潮', 29:'中潮', 30:'大潮'
+            };
+            const name = tideTable[lunarDate] || '中潮';
+            return { name, moonAge: moonAge.toFixed(1) };
+        }
 
-            const baseOffset = 6.0; 
-            const highTide1 = (moonAge * (24 / 29.53) + baseOffset) % 24;
-            const highTide2 = (highTide1 + 12.42) % 24;
-            
-            const currentHour = targetDate.getHours() + targetDate.getMinutes()/60;
-            let targetHT = highTide1;
-            if (Math.abs(currentHour - highTide2) < Math.abs(currentHour - highTide1)) targetHT = highTide2;
-            if (Math.abs(currentHour - (highTide1 + 24)) < Math.abs(currentHour - targetHT)) targetHT = highTide1 + 24;
-            if (Math.abs(currentHour - (highTide2 - 24)) < Math.abs(currentHour - targetHT)) targetHT = highTide2 - 24;
+        // 指定ポイント・指定日時の実測潮位(海面高 m)を取得。なければ null
+        function tideKey(d) {
+            const y = d.getFullYear();
+            const mo = String(d.getMonth() + 1).padStart(2, '0');
+            const da = String(d.getDate()).padStart(2, '0');
+            const hh = String(d.getHours()).padStart(2, '0');
+            return `${y}-${mo}-${da}T${hh}:00`;
+        }
+        function getTideLevel(spotIndex, date) {
+            const m = globalTide[spotIndex];
+            if (!m) return null;
+            const v = m.get(tideKey(date));
+            return (v === undefined) ? null : v;
+        }
 
-            const diff = targetHT - currentHour;
-            let trendText = "", trendClass = "";
-
-            if (diff > 0) {
-                if (diff < 1.5) { trendText = "満潮付近 (止まり)"; trendClass = "tide-trend"; }
-                else { trendText = "上げ潮 ↗"; trendClass = "tide-trend"; }
-            } else {
-                if (Math.abs(diff) < 1.5) { trendText = "満潮付近 (止まり)"; trendClass = "tide-trend down"; }
-                else { trendText = "下げ潮 ↘"; trendClass = "tide-trend down"; }
-            }
-
-            const amp = 1.0 + 0.3 * Math.cos((moonAge / 14.76) * Math.PI * 2);
-
-            return { name, moonAge: moonAge.toFixed(1), trendText, trendClass, highTide1, amp, currentHour };
+        // 実測潮位の前後1時間から満ち引きの傾向を判定する
+        function getTideTrend(spotIndex, date) {
+            const cur = getTideLevel(spotIndex, date);
+            if (cur === null) return { text: '-', cls: '' };
+            const prevRaw = getTideLevel(spotIndex, new Date(date.getTime() - 3600 * 1000));
+            const nextRaw = getTideLevel(spotIndex, new Date(date.getTime() + 3600 * 1000));
+            const prev = (prevRaw === null) ? cur : prevRaw;
+            const next = (nextRaw === null) ? cur : nextRaw;
+            if (cur >= prev && cur >= next) return { text: '満潮付近 (止まり)', cls: 'tide-trend' };
+            if (cur <= prev && cur <= next) return { text: '干潮付近 (止まり)', cls: 'tide-trend down' };
+            if (next > cur) return { text: '上げ潮 ↗', cls: 'tide-trend' };
+            return { text: '下げ潮 ↘', cls: 'tide-trend down' };
         }
 
         // --- Tide Graph (50px height) ---
-        function drawTideGraph(tideInfo) {
+        // 対象ポイント・対象日の実測潮位(0:00〜翌0:00)を折れ線で描画する
+        function drawTideGraph(spotIndex, targetDate) {
             const canvas = document.getElementById('tideCanvas');
             const ctx = canvas.getContext('2d');
             const w = canvas.width;
@@ -500,55 +506,103 @@
 
             ctx.clearRect(0, 0, w, h);
 
+            // 対象日の0時〜翌0時(25点)の実測潮位を取得
+            const dayStart = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate(), 0, 0, 0);
+            const levels = [];
+            for (let hr = 0; hr <= 24; hr++) {
+                const d = new Date(dayStart.getTime());
+                d.setHours(hr);
+                levels.push(getTideLevel(spotIndex, d));
+            }
+
+            const valid = levels.filter(v => v !== null);
+            if (valid.length < 2) {
+                ctx.fillStyle = '#bbb';
+                ctx.font = '11px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('潮位データなし', w / 2, h / 2);
+                return;
+            }
+
+            // 当日の最小〜最大で縦軸スケールを決める(変化が小さい場合は下限幅を確保)
+            let min = Math.min(...valid);
+            let max = Math.max(...valid);
+            if (max - min < 0.2) { const mid = (max + min) / 2; min = mid - 0.5; max = mid + 0.5; }
+            const range = max - min;
+            const top = h * 0.15, bot = h * 0.9;
+            const yOf = v => bot - ((v - min) / range) * (bot - top);
+            const xOf = hr => (hr / 24) * w;
+
             const gradient = ctx.createLinearGradient(0, 0, 0, h);
             gradient.addColorStop(0, "rgba(52, 152, 219, 0.6)");
             gradient.addColorStop(1, "rgba(52, 152, 219, 0.05)");
 
-            const ht = tideInfo.highTide1;
-            const amp = tideInfo.amp; 
-            
+            // 塗りつぶし(下端→カーブ→下端で閉じる)
             ctx.beginPath();
-            ctx.moveTo(0, h);
-            for (let x = 0; x <= w; x++) {
-                const time = (x / w) * 24;
-                const wave = Math.cos(2 * Math.PI * (time - ht) / 12.42);
-                const y = (h / 2) + (wave * -1 * (h * 0.35 * amp));
-                ctx.lineTo(x, y);
+            let started = false, firstX = 0, lastX = 0;
+            for (let hr = 0; hr <= 24; hr++) {
+                if (levels[hr] === null) continue;
+                const x = xOf(hr), y = yOf(levels[hr]);
+                if (!started) { firstX = x; ctx.moveTo(x, h); ctx.lineTo(x, y); started = true; }
+                else ctx.lineTo(x, y);
+                lastX = x;
             }
-            ctx.lineTo(w, h);
+            ctx.lineTo(lastX, h);
             ctx.closePath();
             ctx.fillStyle = gradient;
             ctx.fill();
+
+            // 潮位カーブ
+            ctx.beginPath();
+            started = false;
+            for (let hr = 0; hr <= 24; hr++) {
+                if (levels[hr] === null) continue;
+                const x = xOf(hr), y = yOf(levels[hr]);
+                if (!started) { ctx.moveTo(x, y); started = true; }
+                else ctx.lineTo(x, y);
+            }
             ctx.strokeStyle = "#3498db";
             ctx.lineWidth = 2;
             ctx.stroke();
 
-            const currentH = tideInfo.currentHour;
-            let displayH = currentH; 
-            if(displayH < 0) displayH += 24;
-            if(displayH > 24) displayH -= 24;
-
-            const currentX = (displayH / 24) * w;
-
+            // 現在時刻の縦線
+            const curHour = targetDate.getHours() + targetDate.getMinutes() / 60;
+            const curX = xOf(curHour);
             ctx.beginPath();
-            ctx.moveTo(currentX, 0);
-            ctx.lineTo(currentX, h);
+            ctx.moveTo(curX, 0);
+            ctx.lineTo(curX, h);
             ctx.strokeStyle = "rgba(231, 76, 60, 0.8)";
             ctx.lineWidth = 1.5;
             ctx.setLineDash([4, 2]);
             ctx.stroke();
             ctx.setLineDash([]);
 
-            const currentWave = Math.cos(2 * Math.PI * (displayH - ht) / 12.42);
-            const currentY = (h / 2) + (currentWave * -1 * (h * 0.35 * amp));
-            
-            ctx.beginPath();
-            ctx.arc(currentX, currentY, 4, 0, Math.PI * 2);
-            ctx.fillStyle = "#e74c3c";
-            ctx.fill();
-            ctx.strokeStyle = "white";
-            ctx.lineWidth = 2;
-            ctx.stroke();
+            // 現在の潮位(前後の実測値を線形補間)とマーカー
+            const h0 = Math.floor(curHour), h1 = Math.min(24, h0 + 1);
+            let curLevel = null;
+            if (levels[h0] !== null && levels[h1] !== null) {
+                const f = curHour - h0;
+                curLevel = levels[h0] * (1 - f) + levels[h1] * f;
+            } else if (levels[h0] !== null) {
+                curLevel = levels[h0];
+            }
+            if (curLevel !== null) {
+                const cy = yOf(curLevel);
+                ctx.beginPath();
+                ctx.arc(curX, cy, 4, 0, Math.PI * 2);
+                ctx.fillStyle = "#e74c3c";
+                ctx.fill();
+                ctx.strokeStyle = "white";
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // 現在潮位の数値(MSL基準)を表示
+                ctx.fillStyle = "#e74c3c";
+                ctx.font = "bold 9px sans-serif";
+                const rightSide = curX > w * 0.8;
+                ctx.textAlign = rightSide ? "right" : "left";
+                ctx.fillText(`${curLevel.toFixed(2)}m`, rightSide ? curX - 6 : curX + 6, cy - 6);
+            }
         }
 
         // --- Data Fetching (5 Days Forecast) ---
@@ -556,8 +610,8 @@
             const lats = spots.map(s => s.lat).join(',');
             const lons = spots.map(s => s.lon).join(',');
             
-            // 5日先まで取得 (forecast_days=6)
-            const mUrl = `https://marine-api.open-meteo.com/v1/marine?latitude=${lats}&longitude=${lons}&hourly=wave_height,swell_wave_direction&timezone=Asia%2FTokyo&forecast_days=6`;
+            // 5日先まで取得 (forecast_days=6)。sea_level_height_msl で実測ベースの潮位も取得する
+            const mUrl = `https://marine-api.open-meteo.com/v1/marine?latitude=${lats}&longitude=${lons}&hourly=wave_height,swell_wave_direction,sea_level_height_msl&timezone=Asia%2FTokyo&forecast_days=6`;
             const wUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lats}&longitude=${lons}&hourly=wind_speed_10m,wind_direction_10m&wind_speed_unit=ms&timezone=Asia%2FTokyo&forecast_days=6`;
 
             try {
@@ -570,6 +624,7 @@
                 const wDataList = Array.isArray(wRes) ? wRes : [wRes];
 
                 globalData = [];
+                globalTide = [];
 
                 const y = hourLabels[0].getFullYear();
                 const m = String(hourLabels[0].getMonth() + 1).padStart(2, '0');
@@ -586,6 +641,16 @@
                         const idx = mHourly.time.findIndex(t => t.startsWith(currentHourStr));
                         if(idx !== -1) startIndex = idx;
                     }
+
+                    // 実測潮位データをタイムスタンプ("YYYY-MM-DDTHH:MM")で保持する
+                    const tideMap = new Map();
+                    if (mHourly.time && mHourly.sea_level_height_msl) {
+                        mHourly.time.forEach((t, ti) => {
+                            const v = mHourly.sea_level_height_msl[ti];
+                            if (v !== null && v !== undefined) tideMap.set(t, v);
+                        });
+                    }
+                    globalTide.push(tideMap);
 
                     const spotData = [];
                     // 120時間分ループ
@@ -634,8 +699,6 @@
             
             document.getElementById('current-time-display').innerText = timeIndex === 0 ? "現在" : timeStr;
             document.getElementById('p-data-time').innerText = timeStr;
-
-            const tideInfo = getTideInfo(targetDate);
 
             // Markers
             spots.forEach((spot, i) => {
@@ -716,7 +779,8 @@
             const spot = spots[index];
             const panel = document.getElementById('info-panel');
             const targetDate = hourLabels[currentHourIndex];
-            const tideInfo = getTideInfo(targetDate);
+            const tideName = getTideName(targetDate);
+            const tideTrend = getTideTrend(index, targetDate);
 
             document.getElementById('p-name').innerText = spot.name;
 
@@ -739,12 +803,13 @@
                 document.getElementById('p-wdir').innerText = "--";
             }
 
-            document.getElementById('p-tide-name').innerText = tideInfo.name;
+            document.getElementById('p-tide-name').innerText = tideName.name;
+            document.getElementById('p-moon-age').innerText = `(月齢 ${tideName.moonAge})`;
             const trendEl = document.getElementById('p-tide-trend');
-            trendEl.innerText = tideInfo.trendText;
-            trendEl.className = `val ${tideInfo.trendClass}`;
-            
-            drawTideGraph(tideInfo);
+            trendEl.innerText = tideTrend.text;
+            trendEl.className = `val ${tideTrend.cls}`;
+
+            drawTideGraph(index, targetDate);
             panel.style.display = 'block';
         }
 
