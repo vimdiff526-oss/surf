@@ -57,6 +57,10 @@
             font-size: 0.75rem; color: white; background: #555; margin-right: 4px;
         }
         .tide-trend { font-weight: bold; color: #007bff; font-size: 0.85rem; }
+        .sw-good { color: #1e8e3e; font-weight: bold; }
+        .sw-ok   { color: #2e9e4f; }
+        .sw-weak { color: #f39c12; }
+        .sw-bad  { color: #e74c3c; font-weight: bold; }
         .tide-trend.down { color: #dc3545; }
 
         #tide-graph-container {
@@ -232,6 +236,7 @@
             <span class="label">うねり</span>
             <div style="text-align:right;">
                 <span id="p-swell" class="val">-</span>
+                <div id="p-swell-q" class="sub-val">-</div>
             </div>
         </div>
 
@@ -334,82 +339,82 @@
 
         // --- ポイント定義 ---
         const spots = [
-            { name: "北海道 - 浜厚真", lat: 42.5997, lon: 141.8301 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(字浜厚真)
-            { name: "北海道 - 銭函", lat: 43.1602, lon: 141.208 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(銭函三丁目)
-            { name: "北海道 - 室蘭イタンキ", lat: 42.3290, lon: 141.0250 }, // 修正: 沖1.3km→イタンキ浜のブレイク位置へ
-            { name: "北海道 - 浜中", lat: 43.1376, lon: 145.1378 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(後静)
-            { name: "青森 - 三沢", lat: 40.702, lon: 141.428 },
-            { name: "青森 - 深浦", lat: 40.6502, lon: 139.9265 }, // 修正: 海岸沿いへ微調整
-            { name: "岩手 - 久慈", lat: 40.199, lon: 141.7918 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(湊町)
-            { name: "岩手 - 浪板", lat: 39.3849, lon: 141.9394 }, // 修正(GSI地名検索): 船越→浪板海岸へ(GSI地名)
-            { name: "秋田 - 男鹿", lat: 39.9727, lon: 139.8418 }, // 修正: 男鹿の代表ポイント宮沢海岸(五里合)へ 
-            { name: "宮城 - 仙台新港", lat: 38.276, lon: 141.026 },
-            { name: "山形 - 湯野浜", lat: 38.7781, lon: 139.7469 }, // 修正(GSI地名検索): 沖→湯野浜海water浴場へ
-            { name: "福島 - 北泉", lat: 37.6512, lon: 141.0243 }, // 修正: 外洋20km沖→南相馬市北泉海岸へ 
-            { name: "福島 - 岩沢", lat: 37.2735, lon: 141.0198 }, // 修正: 外洋20km沖→楢葉町岩沢海岸へ 
-            { name: "福島 - 勿来", lat: 36.87, lon: 140.7914 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(勿来町)
+            { name: "北海道 - 浜厚真", lat: 42.5997, lon: 141.8301, face: 200.0, open: 170 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(字浜厚真)
+            { name: "北海道 - 銭函", lat: 43.1602, lon: 141.208, face: 350.0, open: 150 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(銭函三丁目)
+            { name: "北海道 - 室蘭イタンキ", lat: 42.3290, lon: 141.0250, face: 130.0, open: 190 }, // 修正: 沖1.3km→イタンキ浜のブレイク位置へ
+            { name: "北海道 - 浜中", lat: 43.1376, lon: 145.1378, face: 150.0, open: 110 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(後静)
+            { name: "青森 - 三沢", lat: 40.702, lon: 141.428, face: 70.0, open: 170 },
+            { name: "青森 - 深浦", lat: 40.6502, lon: 139.9265, face: 320.0, open: 130 }, // 修正: 海岸沿いへ微調整
+            { name: "岩手 - 久慈", lat: 40.199, lon: 141.7918, face: 85.0, open: 80 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(湊町)
+            { name: "岩手 - 浪板", lat: 39.3849, lon: 141.9394, face: 80.0, open: 50 }, // 修正(GSI地名検索): 船越→浪板海岸へ(GSI地名)
+            { name: "秋田 - 男鹿", lat: 39.9727, lon: 139.8418, face: 340.0, open: 130 }, // 修正: 男鹿の代表ポイント宮沢海岸(五里合)へ 
+            { name: "宮城 - 仙台新港", lat: 38.276, lon: 141.026, face: 140.0, open: 110 },
+            { name: "山形 - 湯野浜", lat: 38.7781, lon: 139.7469, face: 305.0, open: 160 }, // 修正(GSI地名検索): 沖→湯野浜海water浴場へ
+            { name: "福島 - 北泉", lat: 37.6512, lon: 141.0243, face: 85.0, open: 180 }, // 修正: 外洋20km沖→南相馬市北泉海岸へ 
+            { name: "福島 - 岩沢", lat: 37.2735, lon: 141.0198, face: 95.0, open: 180 }, // 修正: 外洋20km沖→楢葉町岩沢海岸へ 
+            { name: "福島 - 勿来", lat: 36.87, lon: 140.7914, face: 105.0, open: 120 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(勿来町)
             
-            { name: "新潟 - 直江津", lat: 37.1818, lon: 138.2478 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(港町一丁目)
-            { name: "日本海 - 新潟", lat: 37.880, lon: 138.940 },
-            { name: "石川 - 柴垣", lat: 36.9468, lon: 136.759 }, // 修正(GSI地名検索): 約4km南の誤り→柴垣海岸へ(GSI地名)
-            { name: "福井 - 鳥居浜", lat: 35.4913, lon: 135.5583 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(薗部)
-            { name: "京都 - 八丁浜", lat: 35.6914, lon: 135.0228 }, // 修正(GSI地名検索): 約3.5km東の誤り→八丁浜へ(GSI地名)
-            { name: "京都 - 葛野浜", lat: 35.6499, lon: 134.9315 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(久美浜町湊宮)
-            { name: "鳥取 - 白兎", lat: 35.5275, lon: 134.1170 }, // 修正: 沖→白兎海岸へ(約3km西)
-            { name: "島根 - 波子", lat: 34.9680, lon: 132.1470 }, // 修正: 沖→江津市波子海岸へ
+            { name: "新潟 - 直江津", lat: 37.1818, lon: 138.2478, face: 325.0, open: 140 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(港町一丁目)
+            { name: "日本海 - 新潟", lat: 37.880, lon: 138.940, face: 325.0, open: 180 },
+            { name: "石川 - 柴垣", lat: 36.9468, lon: 136.759, face: 275.0, open: 140 }, // 修正(GSI地名検索): 約4km南の誤り→柴垣海岸へ(GSI地名)
+            { name: "福井 - 鳥居浜", lat: 35.4913, lon: 135.5583, face: 10.0, open: 90 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(薗部)
+            { name: "京都 - 八丁浜", lat: 35.6914, lon: 135.0228, face: 340.0, open: 130 }, // 修正(GSI地名検索): 約3.5km東の誤り→八丁浜へ(GSI地名)
+            { name: "京都 - 葛野浜", lat: 35.6499, lon: 134.9315, face: 340.0, open: 130 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(久美浜町湊宮)
+            { name: "鳥取 - 白兎", lat: 35.5275, lon: 134.1170, face: 350.0, open: 170 }, // 修正: 沖→白兎海岸へ(約3km西)
+            { name: "島根 - 波子", lat: 34.9680, lon: 132.1470, face: 320.0, open: 170 }, // 修正: 沖→江津市波子海岸へ
 
-            { name: "茨城 - 河原子", lat: 36.5397, lon: 140.6453 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(河原子町三丁目)
-            { name: "茨城 - 大洗", lat: 36.307, lon: 140.575 },
-            { name: "茨城 - トップサンテ", lat: 36.1935, lon: 140.5714 }, // 修正: 海岸沿いへ微調整
-            { name: "千葉 - 片貝", lat: 35.5333, lon: 140.4616 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(小関)
-            { name: "千葉 - 一宮", lat: 35.365, lon: 140.395 },
-            { name: "千葉 - 太東", lat: 35.3044, lon: 140.4154, adjust: 0.75 }, // 修正(GSI地名検索): 太東海岸のブレイク位置へ
-            { name: "千葉 - 御宿(メイン付近)", lat: 35.182, lon: 140.355, adjust: 0.75 },
-            { name: "千葉 - 部原", lat: 35.1636, lon: 140.335 }, // 修正(GSI地名検索): 興津付近の誤り→部原海岸へ
-            { name: "千葉 - 鴨川", lat: 35.104, lon: 140.1094 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(横渚)
-            { name: "千葉 - 和田", lat: 35.038, lon: 140.023 },
-            { name: "千葉 - 千倉", lat: 34.9608, lon: 139.9637 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(千倉町北朝夷)
+            { name: "茨城 - 河原子", lat: 36.5397, lon: 140.6453, face: 110.0, open: 170 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(河原子町三丁目)
+            { name: "茨城 - 大洗", lat: 36.307, lon: 140.575, face: 115.0, open: 140 },
+            { name: "茨城 - トップサンテ", lat: 36.1935, lon: 140.5714, face: 80.0, open: 170 }, // 修正: 海岸沿いへ微調整
+            { name: "千葉 - 片貝", lat: 35.5333, lon: 140.4616, face: 125.0, open: 180 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(小関)
+            { name: "千葉 - 一宮", lat: 35.365, lon: 140.395, face: 85.0, open: 160 },
+            { name: "千葉 - 太東", lat: 35.3044, lon: 140.4154, adjust: 0.75, face: 85.0, open: 200 }, // 修正(GSI地名検索): 太東海岸のブレイク位置へ
+            { name: "千葉 - 御宿(メイン付近)", lat: 35.182, lon: 140.355, adjust: 0.75, face: 150.0, open: 130 },
+            { name: "千葉 - 部原", lat: 35.1636, lon: 140.335, face: 135.0, open: 140 }, // 修正(GSI地名検索): 興津付近の誤り→部原海岸へ
+            { name: "千葉 - 鴨川", lat: 35.104, lon: 140.1094, face: 140.0, open: 130 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(横渚)
+            { name: "千葉 - 和田", lat: 35.038, lon: 140.023, face: 135.0, open: 160 },
+            { name: "千葉 - 千倉", lat: 34.9608, lon: 139.9637, face: 105.0, open: 160 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(千倉町北朝夷)
             
-            { name: "東京 - 新島(羽伏浦)", lat: 34.3754, lon: 139.2767 }, // 修正(GSI地名検索): 羽伏浦海岸へ(GSI地名)
+            { name: "東京 - 新島(羽伏浦)", lat: 34.3754, lon: 139.2767, face: 100.0, open: 170 }, // 修正(GSI地名検索): 羽伏浦海岸へ(GSI地名)
             
             // ★★★ 由比ガ浜に adjust: 0.75 を追加 ★★★
-            { name: "湘南 - 由比ガ浜", lat: 35.3078, lon: 139.5401, adjust: 0.75 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(由比ガ浜四丁目)
+            { name: "湘南 - 由比ガ浜", lat: 35.3078, lon: 139.5401, adjust: 0.75, face: 200.0, open: 110 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(由比ガ浜四丁目)
             
-            { name: "湘南 - 七里ヶ浜", lat: 35.3034, lon: 139.5097 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(七里ガ浜一丁目)
-            { name: "湘南 - 鵠沼", lat: 35.3141, lon: 139.4677 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(鵠沼海岸二丁目)
-            { name: "湘南 - 茅ヶ崎", lat: 35.3168, lon: 139.4045 },   
-            { name: "湘南 - 平塚", lat: 35.313, lon: 139.3615 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(高浜台)
-            { name: "西湘 - 吉浜", lat: 35.1458, lon: 139.1183 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(吉浜)
-            { name: "静岡 - 宇佐美", lat: 35.0452, lon: 139.1019, adjust: 0.6 }, // 修正: 沖2.7km→宇佐美海水浴場のブレイク位置へ
-            { name: "静岡 - 白浜", lat: 34.688, lon: 138.975 },
-            { name: "静岡 - 多々戸浜", lat: 34.6596, lon: 138.9335 }, // 修正(GSI地名検索): 赤根島付近の誤り→多々戸浜へ(GSI地名)
-            { name: "静岡 - 静波", lat: 34.733, lon: 138.2381 }, // 修正(GSI地名検索): 約4.6km東の誤り→静波海岸へ(GSI地名)
-            { name: "静岡 - 御前崎", lat: 34.595, lon: 138.225 },
-            { name: "愛知 - ロコ", lat: 34.6078, lon: 137.1871 }, // 修正(GSI地名検索): 赤羽根ロングビーチへ(GSI地名)
-            { name: "愛知 - 伊良湖", lat: 34.5909, lon: 137.1523 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(越戸町)
-            { name: "三重 - 国府の浜", lat: 34.3442, lon: 136.8841 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(阿児町国府)
+            { name: "湘南 - 七里ヶ浜", lat: 35.3034, lon: 139.5097, face: 200.0, open: 150 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(七里ガ浜一丁目)
+            { name: "湘南 - 鵠沼", lat: 35.3141, lon: 139.4677, face: 210.0, open: 130 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(鵠沼海岸二丁目)
+            { name: "湘南 - 茅ヶ崎", lat: 35.3168, lon: 139.4045, face: 180.0, open: 170 },   
+            { name: "湘南 - 平塚", lat: 35.313, lon: 139.3615, face: 170.0, open: 170 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(高浜台)
+            { name: "西湘 - 吉浜", lat: 35.1458, lon: 139.1183, face: 150.0, open: 110 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(吉浜)
+            { name: "静岡 - 宇佐美", lat: 35.0452, lon: 139.1019, adjust: 0.6, face: 90.0, open: 190 }, // 修正: 沖2.7km→宇佐美海水浴場のブレイク位置へ
+            { name: "静岡 - 白浜", lat: 34.688, lon: 138.975, face: 100.0, open: 150 },
+            { name: "静岡 - 多々戸浜", lat: 34.6596, lon: 138.9335, face: 165.0, open: 120 }, // 修正(GSI地名検索): 赤根島付近の誤り→多々戸浜へ(GSI地名)
+            { name: "静岡 - 静波", lat: 34.733, lon: 138.2381, face: 130.0, open: 150 }, // 修正(GSI地名検索): 約4.6km東の誤り→静波海岸へ(GSI地名)
+            { name: "静岡 - 御前崎", lat: 34.595, lon: 138.225, face: 130.0, open: 310 },
+            { name: "愛知 - ロコ", lat: 34.6078, lon: 137.1871, face: 155.0, open: 160 }, // 修正(GSI地名検索): 赤羽根ロングビーチへ(GSI地名)
+            { name: "愛知 - 伊良湖", lat: 34.5909, lon: 137.1523, face: 165.0, open: 200 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(越戸町)
+            { name: "三重 - 国府の浜", lat: 34.3442, lon: 136.8841, face: 110.0, open: 130 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(阿児町国府)
 
-            { name: "和歌山 - 磯の浦", lat: 34.2598, lon: 135.0878, adjust: 0.7 }, // 修正(GSI地名検索): 磯ノ浦海water浴場のブレイク位置へ
-            { name: "徳島 - 小松海岸", lat: 34.050, lon: 134.600 },
-            { name: "徳島 - 海部", lat: 33.5935, lon: 134.365 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(海部川河口(大里松原))
-            { name: "高知 - 生見", lat: 33.5271, lon: 134.2854 }, // 修正(GSI地名検索): 約3km北の誤り→生見海岸へ(GSI地名)
-            { name: "高知 - 仁淀", lat: 33.4608, lon: 133.482 }, // 修正(GSI地名検索): 仁淀川河口へ(GSI地名で微補正)
-            { name: "高知 - 入野", lat: 33.0136, lon: 133.0127 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(入野)
+            { name: "和歌山 - 磯の浦", lat: 34.2598, lon: 135.0878, adjust: 0.7, face: 210.0, open: 130 }, // 修正(GSI地名検索): 磯ノ浦海water浴場のブレイク位置へ
+            { name: "徳島 - 小松海岸", lat: 34.050, lon: 134.600, face: 75.0, open: 140 },
+            { name: "徳島 - 海部", lat: 33.5935, lon: 134.365, face: 125.0, open: 200 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(海部川河口(大里松原))
+            { name: "高知 - 生見", lat: 33.5271, lon: 134.2854, face: 125.0, open: 160 }, // 修正(GSI地名検索): 約3km北の誤り→生見海岸へ(GSI地名)
+            { name: "高知 - 仁淀", lat: 33.4608, lon: 133.482, face: 145.0, open: 140 }, // 修正(GSI地名検索): 仁淀川河口へ(GSI地名で微補正)
+            { name: "高知 - 入野", lat: 33.0136, lon: 133.0127, face: 135.0, open: 100 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(入野)
 
-            { name: "福岡 - 釣川", lat: 33.8603, lon: 130.5156 }, // 修正(GSI地名検索): 釣川河口(さつき松原)のブレイク位置へ
-            { name: "福岡 - 三苫", lat: 33.7067, lon: 130.4142 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(三苫八丁目)
-            { name: "福岡 - 芥屋", lat: 33.5875, lon: 130.1080 }, // 修正: 沖→芥屋海水浴場のブレイク位置へ
-            { name: "佐賀 - 立神", lat: 33.5326, lon: 129.9515 }, // 修正(GSI地名検索): 約5km南の誤り→唐津市湊町の立神岩へ(GSI地名)
-            { name: "長崎 - 脇岬", lat: 32.5774, lon: 129.7769 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(脇岬町)
-            { name: "宮崎 - お倉ヶ浜", lat: 32.3968, lon: 131.6397 }, // 修正(GSI地名検索): 沖→お倉ヶ浜のブレイク位置へ
-            { name: "宮崎 - 木崎浜", lat: 31.8108, lon: 131.4612 }, // 修正: 沖出すぎ→木崎浜のブレイク位置へ
-            { name: "宮崎 - 恋ヶ浦", lat: 31.4066, lon: 131.343 }, // 修正(GSI地名検索): 恋ヶ浦のブレイク位置へ(GSI地名)
-            { name: "鹿児島 - 江口浜", lat: 31.6665, lon: 130.2985 }, // 修正: 沖3km→江口浜のブレイク位置へ
-            { name: "鹿児島 - 種子島(鉄浜)", lat: 30.7556, lon: 131.0751 }, // 修正: 島南端の誤り→西之表市の鉄浜海岸へ(約42km北)
-            { name: "鹿児島 - 奄美手広", lat: 28.4282, lon: 129.622 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(芦徳)
-            { name: "沖縄 - 伊計島", lat: 26.390, lon: 127.990 },
-            { name: "沖縄 - 砂辺", lat: 26.3392, lon: 127.7456 }, // 修正(GSI地名検索): 砂辺ポイントへ(GSI地名)
-            { name: "沖縄 - スーサイド", lat: 26.077, lon: 127.6691 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(字喜屋武)
+            { name: "福岡 - 釣川", lat: 33.8603, lon: 130.5156, face: 290.0, open: 90 }, // 修正(GSI地名検索): 釣川河口(さつき松原)のブレイク位置へ
+            { name: "福岡 - 三苫", lat: 33.7067, lon: 130.4142, face: 275.0, open: 80 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(三苫八丁目)
+            { name: "福岡 - 芥屋", lat: 33.5875, lon: 130.1080, face: 310.0, open: 210 }, // 修正: 沖→芥屋海水浴場のブレイク位置へ
+            { name: "佐賀 - 立神", lat: 33.5326, lon: 129.9515, face: 355.0, open: 120 }, // 修正(GSI地名検索): 約5km南の誤り→唐津市湊町の立神岩へ(GSI地名)
+            { name: "長崎 - 脇岬", lat: 32.5774, lon: 129.7769, face: 100.0, open: 90 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(脇岬町)
+            { name: "宮崎 - お倉ヶ浜", lat: 32.3968, lon: 131.6397, face: 120.0, open: 150 }, // 修正(GSI地名検索): 沖→お倉ヶ浜のブレイク位置へ
+            { name: "宮崎 - 木崎浜", lat: 31.8108, lon: 131.4612, face: 70.0, open: 150 }, // 修正: 沖出すぎ→木崎浜のブレイク位置へ
+            { name: "宮崎 - 恋ヶ浦", lat: 31.4066, lon: 131.343, face: 110.0, open: 130 }, // 修正(GSI地名検索): 恋ヶ浦のブレイク位置へ(GSI地名)
+            { name: "鹿児島 - 江口浜", lat: 31.6665, lon: 130.2985, face: 240.0, open: 170 }, // 修正: 沖3km→江口浜のブレイク位置へ
+            { name: "鹿児島 - 種子島(鉄浜)", lat: 30.7556, lon: 131.0751, face: 95.0, open: 180 }, // 修正: 島南端の誤り→西之表市の鉄浜海岸へ(約42km北)
+            { name: "鹿児島 - 奄美手広", lat: 28.4282, lon: 129.622, face: 40.0, open: 120 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(芦徳)
+            { name: "沖縄 - 伊計島", lat: 26.390, lon: 127.990, face: 70.0, open: 210 },
+            { name: "沖縄 - 砂辺", lat: 26.3392, lon: 127.7456, face: 270.0, open: 130 }, // 修正(GSI地名検索): 砂辺ポイントへ(GSI地名)
+            { name: "沖縄 - スーサイド", lat: 26.077, lon: 127.6691, face: 205.0, open: 260 }, // 修正(全点見直し): 陸上→海岸沖のブレイク位置へ(字喜屋武)
         ];
 
         const spotMarkers = [];
@@ -443,6 +448,38 @@
             if (height < 2.10) return "頭半";
             if (height < 2.20) return "頭半";
             return "クローズ"; 
+        }
+
+
+        // --- うねりの「入りやすさ」判定 ---
+        // 各ポイントの face(外洋に面する方位) と open(外洋が開けている角度幅) を使い、
+        // うねりの到来方向(swellFrom)がそのポイントに入るかを評価する。
+        // 湾(openが小さい)ほど受け入れ角が狭く、岬(openが大きい)ほど広く拾える。
+        function swellExposure(spot, swellFrom) {
+            if (spot.face === undefined || swellFrom === null || swellFrom === undefined) {
+                return { factor: 1.0, label: '', cls: '', ang: null };
+            }
+            // face とうねり到来方向の角度差(0〜180°)
+            const diff = Math.abs(((swellFrom - spot.face + 540) % 360) - 180);
+            // 受け入れ半角: 開け幅の半分 + 回折ぶん12°(湾35°〜岬115°でクランプ)
+            const half = Math.min(Math.max((spot.open || 160) / 2 + 12, 35), 115);
+            let f;
+            if (diff >= half) f = 0;                                   // 受け入れ角の外
+            else f = 0.5 * (1 + Math.cos(Math.PI * (diff / half)));    // 正面=1 → 端=0 の滑らかな減衰
+            const factor = 0.12 + 0.88 * f;                            // 回折で12%は残る
+            const ratio = diff / half;
+            let label, cls;
+            if (ratio < 0.45)      { label = '◎ ばっちり';     cls = 'sw-good'; }
+            else if (ratio < 0.80) { label = '○ 入る';         cls = 'sw-ok';   }
+            else if (ratio < 1.00) { label = '△ 弱め(オフ気味)'; cls = 'sw-weak'; }
+            else                   { label = '× 向き合わず';    cls = 'sw-bad';  }
+            return { factor, label, cls, ang: Math.round(diff) };
+        }
+
+        // ポイントに実際に入る波高(沖の波高 × うねりの入りやすさ)
+        function effHeight(spot, data) {
+            const e = swellExposure(spot, data.swell_dir);
+            return data.wave_height * e.factor;
         }
 
         // --- Tide Logic ---
@@ -611,7 +648,7 @@
             const lons = spots.map(s => s.lon).join(',');
             
             // 5日先まで取得 (forecast_days=6)。sea_level_height_msl で実測ベースの潮位も取得する
-            const mUrl = `https://marine-api.open-meteo.com/v1/marine?latitude=${lats}&longitude=${lons}&hourly=wave_height,swell_wave_direction,sea_level_height_msl&timezone=Asia%2FTokyo&forecast_days=6`;
+            const mUrl = `https://marine-api.open-meteo.com/v1/marine?latitude=${lats}&longitude=${lons}&hourly=wave_height,swell_wave_direction,swell_wave_period,sea_level_height_msl&timezone=Asia%2FTokyo&forecast_days=6`;
             const wUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lats}&longitude=${lons}&hourly=wind_speed_10m,wind_direction_10m&wind_speed_unit=ms&timezone=Asia%2FTokyo&forecast_days=6`;
 
             try {
@@ -672,6 +709,7 @@
                             hasData: true,
                             wave_height: rawWaveHeight,
                             swell_dir: mHourly.swell_wave_direction[targetIdx],
+                            swell_period: mHourly.swell_wave_period ? mHourly.swell_wave_period[targetIdx] : null,
                             wind_speed: wHourly.wind_speed_10m[targetIdx],
                             wind_dir: wHourly.wind_direction_10m[targetIdx]
                         });
@@ -706,7 +744,7 @@
                 let iconHtml = '';
                 
                 if (data && data.hasData) {
-                    const wh = data.wave_height;
+                    const wh = effHeight(spot, data);   // うねりの入りやすさを反映した実効波高
                     const ws = data.wind_speed;
                     const wd = data.wind_dir;
 
@@ -790,15 +828,30 @@
                 const swellDir = data.swell_dir;
                 const wd = data.wind_dir;
 
-                document.getElementById('p-wave-cond').innerText = getSurfConditionText(wh);
-                document.getElementById('p-wave').innerText = `${wh.toFixed(2)} m`;
-                document.getElementById('p-swell').innerText = `${getDirText(swellDir)} (${Math.round(swellDir)}°)`;
+                const exp = swellExposure(spot, swellDir);
+                const eff = wh * exp.factor;            // 実際にポイントに入る波高
+                const per = data.swell_period;
+                document.getElementById('p-wave-cond').innerText = getSurfConditionText(eff);
+                // メインは実効波高。括弧内に沖(オープン)の波高を補足
+                document.getElementById('p-wave').innerText =
+                    `${eff.toFixed(2)} m （沖 ${wh.toFixed(2)}m）`;
+                document.getElementById('p-swell').innerText =
+                    `${getDirText(swellDir)} (${Math.round(swellDir)}°)` + (per ? ` ${per.toFixed(0)}s` : '');
+                // うねり相性(向き) の表示
+                const swq = document.getElementById('p-swell-q');
+                if (exp.label) {
+                    swq.innerText = `${exp.label}　ポイント向き:${getDirText(spot.face)}`;
+                    swq.className = 'sub-val ' + exp.cls;
+                } else {
+                    swq.innerText = '';
+                }
                 document.getElementById('p-wind').innerText = `${ws.toFixed(1)} m/s`;
                 document.getElementById('p-wdir').innerText = `${getDirText(wd)} (${Math.round(wd)}°)`;
             } else {
                 document.getElementById('p-wave-cond').innerText = "データなし";
                 document.getElementById('p-wave').innerText = "-- m";
                 document.getElementById('p-swell').innerText = "--";
+                document.getElementById('p-swell-q').innerText = "";
                 document.getElementById('p-wind').innerText = "--";
                 document.getElementById('p-wdir').innerText = "--";
             }
