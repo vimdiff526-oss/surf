@@ -236,7 +236,6 @@
             <span class="label">うねり</span>
             <div style="text-align:right;">
                 <span id="p-swell" class="val">-</span>
-                <div id="p-swell-q" class="sub-val">-</div>
             </div>
         </div>
 
@@ -750,7 +749,21 @@
 
             // ② 最新データを取得(marine先行・風は失敗可)
             const marineP = fetchJSON(mUrl, 30000);
-            const windP = fetchJSON(wUrl, 15000).catch(() => null);
+            // 風(forecast)は地点を分割して並列取得。68地点一括だと forecast API が
+            // 遅くタイムアウトしやすいため、~17地点ずつに分けて成功率を上げる。
+            const WIND_CHUNK = 17;
+            const windChunks = [];
+            for (let i = 0; i < spots.length; i += WIND_CHUNK) windChunks.push(spots.slice(i, i + WIND_CHUNK));
+            const windP = Promise.all(windChunks.map(chunk => {
+                const cla = chunk.map(s => s.lat).join(',');
+                const clo = chunk.map(s => s.lon).join(',');
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${cla}&longitude=${clo}&hourly=wind_speed_10m,wind_direction_10m&wind_speed_unit=ms&timezone=Asia%2FTokyo&forecast_days=6`;
+                return fetchJSON(url, 15000).then(r => Array.isArray(r) ? r : [r]).catch(() => chunk.map(() => null));
+            })).then(parts => {
+                const full = [];
+                parts.forEach(p => p.forEach(x => full.push(x)));
+                return full.some(x => x) ? full : null;   // 全滅ならnull
+            }).catch(() => null);
 
             let mRes = null, wRes = null;
             try {
@@ -768,7 +781,7 @@
             // ③ 風が届いたらマージして再描画
             try {
                 wRes = await windP;
-                if (wRes) { applyWind(toList(wRes)); updateMapState(currentHourIndex); }
+                if (wRes) { applyWind(wRes); updateMapState(currentHourIndex); }
             } catch (e) { console.warn("風データ取得失敗:", e); }
 
             // ④ 取得できた最新をキャッシュ保存(次回は即表示)。古いキャッシュは掃除
@@ -878,13 +891,6 @@
                 document.getElementById('p-swell').innerText =
                     `${getDirText(swellDir)} (${Math.round(swellDir)}°)` + (per ? ` ${per.toFixed(0)}s` : '');
                 // うねり相性(向き) の表示
-                const swq = document.getElementById('p-swell-q');
-                if (exp.label) {
-                    swq.innerText = `${exp.label}　ポイント向き:${getDirText(spot.face)}`;
-                    swq.className = 'sub-val ' + exp.cls;
-                } else {
-                    swq.innerText = '';
-                }
                 if (ws !== null && ws !== undefined) {
                     document.getElementById('p-wind').innerText = `${ws.toFixed(1)} m/s`;
                     document.getElementById('p-wdir').innerText = `${getDirText(wd)} (${Math.round(wd)}°)`;
@@ -896,7 +902,6 @@
                 document.getElementById('p-wave-cond').innerText = "データなし";
                 document.getElementById('p-wave').innerText = "-- m";
                 document.getElementById('p-swell').innerText = "--";
-                document.getElementById('p-swell-q').innerText = "";
                 document.getElementById('p-wind').innerText = "--";
                 document.getElementById('p-wdir').innerText = "--";
             }
