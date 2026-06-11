@@ -643,45 +643,47 @@
             }
         }
 
-        // --- 取得用ヘルパー: タイムアウト付きfetch ---
-        function fetchJSON(url, ms) {
-            const ctrl = new AbortController();
-            const timer = setTimeout(() => ctrl.abort(), ms);
-            return fetch(url, { signal: ctrl.signal })
-                .then(r => r.json())
-                .finally(() => clearTimeout(timer));
-        }
-
         // --- Data Fetching (5 Days Forecast) ---
-        // 1) キャッシュ(localStorage)があれば即描画(待ち時間ゼロ) 2) marine(波/うねり/潮)を取得して更新
-        // 3) 風(forecast)は後から非同期でマージ。風サーバが遅くてもマップは固まらない。
+        // 波・うねり・潮(marine)と風(forecast)をすべて取得してから表示する(元の挙動)。
         async function fetchForecastData() {
             const lats = spots.map(s => s.lat).join(',');
             const lons = spots.map(s => s.lon).join(',');
             const mUrl = `https://marine-api.open-meteo.com/v1/marine?latitude=${lats}&longitude=${lons}&hourly=wave_height,swell_wave_direction,swell_wave_period,sea_level_height_msl&timezone=Asia%2FTokyo&forecast_days=6`;
             const wUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lats}&longitude=${lons}&hourly=wind_speed_10m,wind_direction_10m&wind_speed_unit=ms&timezone=Asia%2FTokyo&forecast_days=6`;
-            const overlay = document.getElementById('loading-overlay');
 
-            // 現在の「年月日T時」。データは1時間単位なので同じ時刻ならキャッシュ有効
             const y = hourLabels[0].getFullYear();
             const mo = String(hourLabels[0].getMonth() + 1).padStart(2, '0');
             const da = String(hourLabels[0].getDate()).padStart(2, '0');
             const hh = String(hourLabels[0].getHours()).padStart(2, '0');
             const currentHourStr = `${y}-${mo}-${da}T${hh}`;
-            const cacheKey = 'surfcache_' + currentHourStr;
-            const toList = r => Array.isArray(r) ? r : [r];
 
-            // marine応答から globalData / globalTide を構築
-            function buildMarine(mDataList) {
+            try {
+                // marineと風の両方が揃うまで待つ(タイムアウトで中断しない)
+                const [mRes, wRes] = await Promise.all([
+                    fetch(mUrl).then(r => r.json()),
+                    fetch(wUrl).then(r => r.json())
+                ]);
+                const mDataList = Array.isArray(mRes) ? mRes : [mRes];
+                const wDataList = Array.isArray(wRes) ? wRes : [wRes];
+
                 globalData = [];
                 globalTide = [];
+
                 spots.forEach((spot, i) => {
                     const mHourly = mDataList[i].hourly;
+                    const wHourly = wDataList[i] ? wDataList[i].hourly : null;
+
                     let startIndex = 0;
                     if (mHourly && mHourly.time) {
                         const idx = mHourly.time.findIndex(t => t.startsWith(currentHourStr));
                         if (idx !== -1) startIndex = idx;
                     }
+                    let wStart = startIndex;
+                    if (wHourly && wHourly.time) {
+                        const widx = wHourly.time.findIndex(t => t.startsWith(currentHourStr));
+                        if (widx !== -1) wStart = widx;
+                    }
+
                     const tideMap = new Map();
                     if (mHourly.time && mHourly.sea_level_height_msl) {
                         mHourly.time.forEach((t, ti) => {
@@ -690,6 +692,7 @@
                         });
                     }
                     globalTide.push(tideMap);
+
                     const spotData = [];
                     for (let k = 0; k < totalHours; k++) {
                         const targetIdx = startIndex + k;
@@ -699,90 +702,25 @@
                         }
                         let rawWaveHeight = mHourly.wave_height[targetIdx];
                         if (spot.adjust) rawWaveHeight *= spot.adjust;
+                        const wIdx = wStart + k;
                         spotData.push({
                             hasData: true,
                             wave_height: rawWaveHeight,
                             swell_dir: mHourly.swell_wave_direction[targetIdx],
                             swell_period: mHourly.swell_wave_period ? mHourly.swell_wave_period[targetIdx] : null,
-                            wind_speed: null,
-                            wind_dir: null
+                            wind_speed: wHourly ? wHourly.wind_speed_10m[wIdx] : null,
+                            wind_dir: wHourly ? wHourly.wind_direction_10m[wIdx] : null
                         });
                     }
                     globalData.push(spotData);
                 });
-            }
 
-            // 風応答を globalData にマージ
-            function applyWind(wDataList) {
-                spots.forEach((spot, i) => {
-                    const wHourly = wDataList[i] && wDataList[i].hourly;
-                    if (!wHourly || !wHourly.time) return;
-                    let wStart = 0;
-                    const idx = wHourly.time.findIndex(t => t.startsWith(currentHourStr));
-                    if (idx !== -1) wStart = idx;
-                    const sd = globalData[i];
-                    if (!sd) return;
-                    for (let k = 0; k < sd.length; k++) {
-                        if (!sd[k] || !sd[k].hasData) continue;
-                        const ti = wStart + k;
-                        sd[k].wind_speed = wHourly.wind_speed_10m[ti];
-                        sd[k].wind_dir = wHourly.wind_direction_10m[ti];
-                    }
-                });
-            }
-
-            // ① キャッシュがあれば即描画(ネットワークを待たない)
-            let shown = false;
-            try {
-                const raw = localStorage.getItem(cacheKey);
-                if (raw) {
-                    const c = JSON.parse(raw);
-                    if (c && c.m) {
-                        buildMarine(toList(c.m));
-                        if (c.w) applyWind(toList(c.w));
-                        overlay.style.display = 'none';
-                        updateMapState(currentHourIndex);
-                        shown = true;
-                    }
-                }
-            } catch (e) { /* キャッシュ不正は無視 */ }
-
-            // ② 最新データを取得(marine先行・風は失敗可)
-            const marineP = fetchJSON(mUrl, 30000);
-            // 風(forecast)は元コード同様に1リクエストで取得し、タイムアウトで中断しない。
-            // (中断していたのが風が取れなくなった原因) 表示はmarineで先に出すので、
-            // 風が遅くてもブロックせず、届き次第マージする。
-            const windP = fetch(wUrl).then(r => r.json()).catch(() => null);
-
-            let mRes = null, wRes = null;
-            try {
-                mRes = await marineP;
-                buildMarine(toList(mRes));
-                overlay.style.display = 'none';
+                document.getElementById('loading-overlay').style.display = 'none';
                 updateMapState(currentHourIndex);
-                shown = true;
             } catch (e) {
                 console.error(e);
-                if (!shown) overlay.innerText = "波データの取得に失敗しました（時間をおいて再読込してください）";
-                return;
+                document.getElementById('loading-overlay').innerText = "データ取得エラー";
             }
-
-            // ③ 風が届いたらマージして再描画
-            try {
-                wRes = await windP;
-                if (wRes) { applyWind(toList(wRes)); updateMapState(currentHourIndex); }
-            } catch (e) { console.warn("風データ取得失敗:", e); }
-
-            // ④ 取得できた最新をキャッシュ保存(次回は即表示)。古いキャッシュは掃除
-            try {
-                if (mRes) {
-                    for (let i = localStorage.length - 1; i >= 0; i--) {
-                        const k = localStorage.key(i);
-                        if (k && k.startsWith('surfcache_') && k !== cacheKey) localStorage.removeItem(k);
-                    }
-                    localStorage.setItem(cacheKey, JSON.stringify({ m: mRes, w: wRes }));
-                }
-            } catch (e) { /* 保存失敗(容量等)は無視 */ }
         }
 
         // --- Main Update ---
