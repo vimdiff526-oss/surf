@@ -418,7 +418,6 @@
         ];
 
         const spotMarkers = [];
-        const windLayerGroup = L.layerGroup().addTo(map);
 
         function getDirText(deg) {
             const dirs = ['北', '北東', '東', '南東', '南', '南西', '西', '北西'];
@@ -751,7 +750,7 @@
 
             // ② 最新データを取得(marine先行・風は失敗可)
             const marineP = fetchJSON(mUrl, 30000);
-            const windP = fetchJSON(wUrl, 30000).catch(() => null);
+            const windP = fetchJSON(wUrl, 15000).catch(() => null);
 
             let mRes = null, wRes = null;
             try {
@@ -847,21 +846,6 @@
                 }
             });
 
-            // Wind BG
-            const vectors = [];
-            spots.forEach((spot, i) => {
-                const d = globalData[i][timeIndex];
-                if(d && d.hasData && d.wind_speed > 0) {
-                    const rad = d.wind_dir * (Math.PI / 180);
-                    vectors.push({
-                        lat: spot.lat, lon: spot.lon,
-                        u: -d.wind_speed * Math.sin(rad),
-                        v: -d.wind_speed * Math.cos(rad),
-                        speed: d.wind_speed
-                    });
-                }
-            });
-            drawAnimatedWind(vectors);
 
             if(selectedSpotIndex !== null) {
                 renderInfoPanel(selectedSpotIndex);
@@ -905,8 +889,8 @@
                     document.getElementById('p-wind').innerText = `${ws.toFixed(1)} m/s`;
                     document.getElementById('p-wdir').innerText = `${getDirText(wd)} (${Math.round(wd)}°)`;
                 } else {
-                    document.getElementById('p-wind').innerText = "取得中…";
-                    document.getElementById('p-wdir').innerText = "";
+                    document.getElementById('p-wind').innerText = "—";
+                    document.getElementById('p-wdir').innerText = "（風データ取得不可）";
                 }
             } else {
                 document.getElementById('p-wave-cond').innerText = "データなし";
@@ -925,52 +909,6 @@
 
             drawTideGraph(index, targetDate);
             panel.style.display = 'block';
-        }
-
-        function drawAnimatedWind(vectors) {
-            windLayerGroup.clearLayers();
-            const gridStep = 0.7; 
-            const latTop = 46.0, latBottom = 24.0;
-            const lonLeft = 122.0, lonRight = 148.0;
-
-            for(let lat = latTop; lat >= latBottom; lat -= gridStep) {
-                for(let lon = lonLeft; lon <= lonRight; lon += gridStep) {
-                    let sumU = 0, sumV = 0, sumW = 0;
-                    let minDistance = 9999;
-                    for(const vec of vectors) {
-                        const d2 = Math.pow(lat - vec.lat, 2) + Math.pow(lon - vec.lon, 2);
-                        const d = Math.sqrt(d2);
-                        if(d < minDistance) minDistance = d;
-                        const w = 1.0 / (d2 + 0.05); 
-                        sumU += vec.u * w;
-                        sumV += vec.v * w;
-                        sumW += w;
-                    }
-                    if(minDistance > 4.5) continue;
-                    if(sumW > 0) {
-                        const u = sumU / sumW;
-                        const v = sumV / sumW;
-                        const speed = Math.sqrt(u*u + v*v);
-                        let degree = (Math.atan2(-u, -v) * 180 / Math.PI) + 180; 
-                        addAnimatedArrow(lat, lon, degree, speed);
-                    }
-                }
-            }
-        }
-
-        function addAnimatedArrow(lat, lon, degree, speed) {
-            let scale = 0.8; let opacity = 0.5;
-            if(speed > 5) { scale = 1.0; opacity = 0.7; }
-            if(speed > 10) { scale = 1.2; opacity = 0.9; }
-            let animDuration = Math.max(0.5, 2.0 - (speed * 0.1));
-            let animDelay = -Math.random() * 2;
-            const svgArrow = `
-                <svg width="30" height="30" viewBox="0 0 24 24" class="arrow-svg" style="transform: rotate(${degree}deg) scale(${scale}); opacity: ${opacity};">
-                    <path d="M12 2 L6 18 L12 14 L18 18 Z" fill="#555" stroke="none" style="animation-duration: ${animDuration}s; animation-delay: ${animDelay}s;"/>
-                </svg>
-            `;
-            const icon = L.divIcon({ className: 'wind-arrow-icon', html: svgArrow, iconSize: [30, 30], iconAnchor: [15, 15] });
-            L.marker([lat, lon], { icon: icon, interactive: false, zIndexOffset: -100 }).addTo(windLayerGroup);
         }
 
         const slider = document.getElementById('time-slider');
