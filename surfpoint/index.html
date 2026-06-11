@@ -749,21 +749,10 @@
 
             // ② 最新データを取得(marine先行・風は失敗可)
             const marineP = fetchJSON(mUrl, 30000);
-            // 風(forecast)は地点を分割して並列取得。68地点一括だと forecast API が
-            // 遅くタイムアウトしやすいため、~17地点ずつに分けて成功率を上げる。
-            const WIND_CHUNK = 17;
-            const windChunks = [];
-            for (let i = 0; i < spots.length; i += WIND_CHUNK) windChunks.push(spots.slice(i, i + WIND_CHUNK));
-            const windP = Promise.all(windChunks.map(chunk => {
-                const cla = chunk.map(s => s.lat).join(',');
-                const clo = chunk.map(s => s.lon).join(',');
-                const url = `https://api.open-meteo.com/v1/forecast?latitude=${cla}&longitude=${clo}&hourly=wind_speed_10m,wind_direction_10m&wind_speed_unit=ms&timezone=Asia%2FTokyo&forecast_days=6`;
-                return fetchJSON(url, 15000).then(r => Array.isArray(r) ? r : [r]).catch(() => chunk.map(() => null));
-            })).then(parts => {
-                const full = [];
-                parts.forEach(p => p.forEach(x => full.push(x)));
-                return full.some(x => x) ? full : null;   // 全滅ならnull
-            }).catch(() => null);
+            // 風(forecast)は元コード同様に1リクエストで取得し、タイムアウトで中断しない。
+            // (中断していたのが風が取れなくなった原因) 表示はmarineで先に出すので、
+            // 風が遅くてもブロックせず、届き次第マージする。
+            const windP = fetch(wUrl).then(r => r.json()).catch(() => null);
 
             let mRes = null, wRes = null;
             try {
@@ -781,7 +770,7 @@
             // ③ 風が届いたらマージして再描画
             try {
                 wRes = await windP;
-                if (wRes) { applyWind(wRes); updateMapState(currentHourIndex); }
+                if (wRes) { applyWind(toList(wRes)); updateMapState(currentHourIndex); }
             } catch (e) { console.warn("風データ取得失敗:", e); }
 
             // ④ 取得できた最新をキャッシュ保存(次回は即表示)。古いキャッシュは掃除
