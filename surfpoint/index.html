@@ -461,13 +461,16 @@
             }
             // face とうねり到来方向の角度差(0〜180°)
             const diff = Math.abs(((swellFrom - spot.face + 540) % 360) - 180);
-            // 受け入れ半角: 開け幅の半分 + 回折ぶん12°(湾35°〜岬115°でクランプ)
-            const half = Math.min(Math.max((spot.open || 160) / 2 + 12, 35), 115);
-            let f;
-            if (diff >= half) f = 0;                                   // 受け入れ角の外
-            else f = 0.5 * (1 + Math.cos(Math.PI * (diff / half)));    // 正面=1 → 端=0 の滑らかな減衰
-            const factor = 0.12 + 0.88 * f;                            // 回折で12%は残る
+            // 受け入れ半角: 開け幅の半分 + 回折ぶん12°(湾40°〜岬120°でクランプ)
+            const half = Math.min(Math.max((spot.open || 160) / 2 + 12, 40), 120);
             const ratio = diff / half;
+            // 向きが合っているうねり(ratio<0.5)はフルに反応させ、
+            // 受け入れ角の外側(0.5→1.0)でのみ滑らかに減衰させる(沖モデルの過小化を防ぐ)
+            let f;
+            if (ratio >= 1)        f = 0;
+            else if (ratio < 0.5)  f = 1.0;
+            else                   f = Math.cos(((ratio - 0.5) / 0.5) * (Math.PI / 2));
+            const factor = 0.25 + 0.75 * f;                            // 向き外でも25%は残る(回折/反射/風波)
             let label, cls;
             if (ratio < 0.45)      { label = '◎ ばっちり';     cls = 'sw-good'; }
             else if (ratio < 0.80) { label = '○ 入る';         cls = 'sw-ok';   }
