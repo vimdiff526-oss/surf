@@ -89,11 +89,6 @@
         .tide-trend { font-weight: bold; color: var(--accent); font-size: 0.85rem; }
         .tide-trend.down { color: #dc3545; }
 
-        /* うねりの入りやすさ(向きの相性)の色分け */
-        .sw-good { color: #1e8e3e; font-weight: bold; }
-        .sw-ok   { color: #2e9e4f; }
-        .sw-weak { color: #f39c12; }
-        .sw-bad  { color: var(--danger); font-weight: bold; }
 
         #tide-graph-container {
             margin-top: 6px; text-align: center;
@@ -317,7 +312,6 @@
             <span class="label">うねり</span>
             <div style="text-align:right;">
                 <span id="p-swell" class="val">-</span>
-                <div id="p-swell-fit" class="sub-val">-</div>
             </div>
         </div>
 
@@ -530,40 +524,6 @@
             return "クローズ"; 
         }
 
-
-        // --- うねりの「入りやすさ」判定 ---
-        // 各ポイントの face(外洋に面する方位) と open(外洋が開けている角度幅) を使い、
-        // うねりの到来方向(swellFrom)がそのポイントに入るかを評価する。
-        // 湾(openが小さい)ほど受け入れ角が狭く、岬(openが大きい)ほど広く拾える。
-        function swellExposure(spot, swellFrom) {
-            if (spot.face === undefined || swellFrom === null || swellFrom === undefined) {
-                return { factor: 1.0, label: '', cls: '', ang: null };
-            }
-            // face とうねり到来方向の角度差(0〜180°)
-            const diff = Math.abs(((swellFrom - spot.face + 540) % 360) - 180);
-            // 受け入れ半角: 開け幅の半分 + 回折ぶん12°(湾40°〜岬120°でクランプ)
-            const half = Math.min(Math.max((spot.open || 160) / 2 + 12, 40), 120);
-            const ratio = diff / half;
-            // 向きが合っているうねり(ratio<0.5)はフルに反応させ、
-            // 受け入れ角の外側(0.5→1.0)でのみ滑らかに減衰させる(沖モデルの過小化を防ぐ)
-            let f;
-            if (ratio >= 1)        f = 0;
-            else if (ratio < 0.5)  f = 1.0;
-            else                   f = Math.cos(((ratio - 0.5) / 0.5) * (Math.PI / 2));
-            const factor = 0.25 + 0.75 * f;                            // 向き外でも25%は残る(回折/反射/風波)
-            let label, cls;
-            if (ratio < 0.45)      { label = '◎ ばっちり';     cls = 'sw-good'; }
-            else if (ratio < 0.80) { label = '○ 入る';         cls = 'sw-ok';   }
-            else if (ratio < 1.00) { label = '△ 弱め(オフ気味)'; cls = 'sw-weak'; }
-            else                   { label = '× 向き合わず';    cls = 'sw-bad';  }
-            return { factor, label, cls, ang: Math.round(diff) };
-        }
-
-        // ポイントに実際に入る波高(沖の波高 × うねりの入りやすさ)
-        function effHeight(spot, data) {
-            const e = swellExposure(spot, data.swell_dir);
-            return data.wave_height * e.factor;
-        }
 
         // --- Tide Logic ---
         // 潮名(大潮/中潮など)は天文(月齢)で決まる暦上の区分なので月齢から算出する。
@@ -831,7 +791,7 @@
                 let iconHtml = '';
 
                 if (data && data.hasData) {
-                    const wh = effHeight(spot, data);   // うねりの入りやすさを反映した実効波高
+                    const wh = data.wave_height;
                     const ws = data.wind_speed;
                     const wd = data.wind_dir;
 
@@ -893,7 +853,6 @@
             const targetDate = hourLabels[currentHourIndex];
             const tideName = getTideName(targetDate);
             const tideTrend = getTideTrend(index, targetDate);
-            const fitEl = document.getElementById('p-swell-fit');
 
             document.getElementById('p-name').innerText = spot.name;
 
@@ -903,26 +862,14 @@
                 const swellDir = data.swell_dir;
                 const wd = data.wind_dir;
 
-                const exp = swellExposure(spot, swellDir);
-                const eff = wh * exp.factor;            // 実際にポイントに入る波高
                 const per = data.swell_period;
-                document.getElementById('p-wave-cond').innerText = getSurfConditionText(eff);
-                // メインは実効波高。括弧内に沖(オープン)の波高を補足
-                document.getElementById('p-wave').innerText =
-                    `${eff.toFixed(2)} m （沖 ${wh.toFixed(2)}m）`;
+                document.getElementById('p-wave-cond').innerText = getSurfConditionText(wh);
+                document.getElementById('p-wave').innerText = `${wh.toFixed(2)} m`;
                 // うねり方向が欠損している時刻は「--」表示(nullを北0°と誤表示しない)
                 document.getElementById('p-swell').innerText =
                     (swellDir === null || swellDir === undefined)
                         ? '--'
                         : `${getDirText(swellDir)} (${Math.round(swellDir)}°)` + (per ? ` ${per.toFixed(0)}s` : '');
-                // うねり相性(向き)の表示: ポイントの向きとうねり到来方向の合い具合
-                if (exp.label) {
-                    fitEl.innerText = (exp.ang !== null) ? `${exp.label}（差${exp.ang}°）` : exp.label;
-                    fitEl.className = `sub-val ${exp.cls}`;
-                } else {
-                    fitEl.innerText = '';
-                    fitEl.className = 'sub-val';
-                }
                 if (ws !== null && ws !== undefined) {
                     document.getElementById('p-wind').innerText = `${ws.toFixed(1)} m/s`;
                     // 風向のみ欠損のケースに備えてガード
@@ -936,8 +883,6 @@
                 document.getElementById('p-wave-cond').innerText = "データなし";
                 document.getElementById('p-wave').innerText = "-- m";
                 document.getElementById('p-swell').innerText = "--";
-                fitEl.innerText = '--';
-                fitEl.className = 'sub-val';
                 document.getElementById('p-wind').innerText = "--";
                 document.getElementById('p-wdir').innerText = "--";
             }
