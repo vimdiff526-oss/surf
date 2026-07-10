@@ -7,77 +7,214 @@
   <!-- Google AdSense ローダー（サイト所有権確認＆広告配信用） -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9779421014286339"
           crossorigin="anonymous"></script>
-  <title>SloSea｜サーフコンテンツのポータル</title>
-  <meta name="description" content="サーフィン関連記事、ミニゲーム、ステッカー配布など、サーファー向けの楽しい・役立つコンテンツをひとまとめ。初心者にもやさしい入口です。" />
-  <link rel="canonical" href="https://example.com/" />
+
+  <title>SloSea｜波と遊ぶサーフポータル</title>
+  <meta name="description" content="全国の波情報マップ、湘南のリアルタイム波チェック、波みくじ、サーフゲーム、初心者ガイド、ステッカー配布。波と遊ぶためのサーフポータル SloSea。" />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="SloSea｜サーフコンテンツのポータル" />
-  <meta property="og:description" content="サーフィン関連記事、ミニゲーム、ステッカー配布など、サーファー向けの楽しい・役立つコンテンツをひとまとめ。" />
-  <meta property="og:url" content="https://example.com/" />
-  <meta property="og:image" content="https://example.com/og/surf-home.jpg" />
-  <meta name="theme-color" content="#0ea5e9" />
+  <meta property="og:title" content="SloSea｜波と遊ぶサーフポータル" />
+  <meta property="og:description" content="全国の波情報マップ、波みくじ、サーフゲーム、初心者ガイドまで。波と遊ぶためのサーフポータル。" />
+  <meta name="theme-color" content="#04101f" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet" />
+
   <link rel="stylesheet" href="./nav.css" />
   <script src="./nav.js" defer></script>
+
   <style>
     :root{
-      --bg:#ffffff; --fg:#0f172a; --muted:#475569; --line:#e2e8f0; --brand:#0ea5e9; --sea1:#0ea5e9; --sea2:#22d3ee; --sea3:#a7f3d0;
+      --deep:#04101f; --deep2:#071c33; --ink:#e8f6ff; --muted:#8fb3cc;
+      --cyan:#38e1ff; --cyan-dim:rgba(56,225,255,.14);
+      --coral:#ff8a5c; --gold:#ffd166;
+      --glass:rgba(13,38,64,.55); --glass-line:rgba(120,200,255,.18);
+      --radius:20px;
+      --jp:"Noto Sans JP",system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic UI",sans-serif;
+      --disp:"Montserrat","Noto Sans JP",sans-serif;
     }
     *{box-sizing:border-box}
     html{scroll-behavior:smooth}
-    body{margin:0; color:var(--fg); background:linear-gradient(180deg, #f8ffff 0%, #ffffff 40%); font-family:system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", sans-serif; line-height:1.7}
-    a{color:var(--brand); text-decoration:none}
-    a:hover{text-decoration:underline}
-    .wrap{max-width:1100px; margin:0 auto; padding:0 16px}
-
-    /* Hero */
-    .hero{position:relative; padding:48px 0 24px}
-    .hero .inner{display:grid; grid-template-columns:1.2fr 0.8fr; align-items:center; gap:24px}
-    .hero h1{font-size:clamp(28px,4vw,44px); line-height:1.15; margin:8px 0}
-    .hero p{color:var(--muted); margin:8px 0 0}
-    .cta{margin-top:16px; display:flex; flex-wrap:wrap; gap:10px}
-    .btn{display:inline-flex; align-items:center; gap:8px; background:#fff; border:1px solid var(--line); border-radius:999px; padding:10px 14px; font-weight:700}
-    .btn--primary{background:linear-gradient(135deg, var(--sea1), var(--sea2)); color:#003; border-color:transparent}
-    .btn svg{width:18px; height:18px}
-
-    /* Decorative waves */
-    .ocean{position:absolute; inset:auto 0 -1px 0; height:120px; pointer-events:none}
-    .ocean svg{width:100%; height:100%}
-
-    /* Grid cards */
-    .section{padding:28px 0}
-    .section h2{font-size:clamp(20px,2.4vw,28px); margin:0 0 12px}
-    .grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px}
-    .card{border:1px solid var(--line); border-radius:16px; background:#fff; overflow:hidden; display:flex; flex-direction:column}
-    .card .thumb{height:140px; background:linear-gradient(135deg, var(--sea2), var(--sea3)); position:relative; overflow:hidden}
-    .card .thumb img{width:100%; height:100%; object-fit:cover; display:block}
-
-    /* 2枚目・3枚目は元のグラデ色指定を残しても、<img>で上書き表示されます */
-    .card:nth-child(2) .thumb{background:linear-gradient(135deg, #60a5fa, #93c5fd)}
-    .card:nth-child(3) .thumb{background:linear-gradient(135deg, #34d399, #a7f3d0)}
-
-    .card .body{padding:14px}
-    .card h3{margin:0 0 6px; font-size:18px}
-    .card p{margin:0; color:var(--muted); font-size:14px}
-
-    /* 記事リンク（クリック優先度を上げる） */
-    .card .body ul{margin:8px 0 0; padding-left:18px; color:var(--muted); font-size:14px; position:relative}
-    .card .body li{margin:6px 0; position:relative}
-    .card .body li a{font-weight:700; position:relative; z-index:1; pointer-events:auto; display:inline}
-
-    .card .actions{display:flex; gap:8px; padding:12px 14px; margin-top:auto}
-    .chip{display:inline-flex; align-items:center; gap:6px; border:1px solid var(--line); background:#fff; border-radius:999px; padding:6px 10px; font-weight:700}
-
-    /* Footer */
-    footer{border-top:1px solid var(--line); margin-top:24px}
-    .foot{display:flex; justify-content:space-between; align-items:center; gap:12px; color:var(--muted); font-size:14px; padding:18px 0}
-
-    /* Responsive */
-    @media (max-width:900px){
-      .hero .inner{grid-template-columns:1fr}
+    body{
+      margin:0; color:var(--ink); font-family:var(--jp); line-height:1.75;
+      background:
+        radial-gradient(1000px 500px at 80% -100px, rgba(255,138,92,.10), transparent 60%),
+        radial-gradient(1200px 700px at 15% 0%, rgba(56,225,255,.08), transparent 55%),
+        linear-gradient(180deg, #04101f 0%, #061a30 45%, #072441 100%);
+      background-attachment:fixed;
+      overflow-x:hidden;
     }
-    @media (max-width:760px){
+    a{color:var(--cyan); text-decoration:none}
+    a:hover{text-decoration:none}
+    .wrap{max-width:1120px; margin:0 auto; padding:0 20px}
+
+    ::selection{background:rgba(56,225,255,.35)}
+
+    /* ---------- Hero ---------- */
+    .hero{position:relative; min-height:88vh; display:flex; flex-direction:column; justify-content:center; overflow:hidden; padding:60px 0 150px}
+    .hero-sky{position:absolute; inset:0; pointer-events:none}
+    .star{position:absolute; width:2px; height:2px; border-radius:50%; background:#cfeeff; opacity:.7; animation:twinkle 3.4s ease-in-out infinite}
+    @keyframes twinkle{0%,100%{opacity:.15; transform:scale(.8)}50%{opacity:.9; transform:scale(1.25)}}
+    .moon{
+      position:absolute; top:9%; right:8%; width:110px; height:110px; border-radius:50%;
+      background:radial-gradient(circle at 38% 34%, #fff8ea 0%, #ffe9c4 45%, #ffca85 100%);
+      box-shadow:0 0 60px 18px rgba(255,209,133,.35), 0 0 140px 60px rgba(255,170,90,.12);
+      animation:moonfloat 9s ease-in-out infinite;
+    }
+    @keyframes moonfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+
+    .hero-inner{position:relative; z-index:2}
+    .kicker{
+      display:inline-flex; align-items:center; gap:8px; font-weight:700; letter-spacing:.16em; font-size:13px;
+      color:var(--cyan); border:1px solid var(--glass-line); border-radius:999px; padding:7px 16px;
+      background:var(--cyan-dim); backdrop-filter:blur(6px);
+    }
+    .kicker .dot{width:7px; height:7px; border-radius:50%; background:var(--cyan); animation:pulse 2s infinite}
+    @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(56,225,255,.6)}70%{box-shadow:0 0 0 9px rgba(56,225,255,0)}}
+
+    .hero h1{
+      font-family:var(--disp); font-weight:900; margin:22px 0 6px;
+      font-size:clamp(52px, 9.5vw, 118px); line-height:.95; letter-spacing:.01em;
+      background:linear-gradient(100deg, #eafaff 15%, var(--cyan) 45%, #7cc9ff 60%, var(--coral) 92%);
+      -webkit-background-clip:text; background-clip:text; color:transparent;
+      filter:drop-shadow(0 6px 30px rgba(56,225,255,.25));
+    }
+    .hero .tagline{font-size:clamp(16px,2.3vw,21px); font-weight:700; color:#d7efff; margin:0}
+    .hero .sub{color:var(--muted); max-width:560px; margin:12px 0 0; font-size:15px}
+
+    .cta{margin-top:30px; display:flex; flex-wrap:wrap; gap:14px}
+    .btn{
+      display:inline-flex; align-items:center; gap:10px; font-weight:800; font-size:15px;
+      border-radius:999px; padding:14px 26px; border:1px solid var(--glass-line);
+      color:var(--ink); background:var(--glass); backdrop-filter:blur(8px);
+      transition:transform .25s cubic-bezier(.2,.9,.3,1.4), box-shadow .25s, border-color .25s;
+    }
+    .btn:hover{transform:translateY(-3px); border-color:rgba(120,200,255,.45); box-shadow:0 14px 40px rgba(3,15,28,.5)}
+    .btn--wave{
+      background:linear-gradient(120deg, #0aa8d6, #38e1ff); color:#03222e; border-color:transparent;
+      box-shadow:0 10px 34px rgba(56,225,255,.35);
+    }
+    .btn--wave:hover{box-shadow:0 16px 44px rgba(56,225,255,.5)}
+    .btn--fortune{
+      background:linear-gradient(120deg, #ff8a5c, #ffd166); color:#3a1503; border-color:transparent;
+      box-shadow:0 10px 34px rgba(255,150,90,.3);
+    }
+
+    /* Live conditions */
+    .live{
+      margin-top:38px; display:inline-flex; flex-wrap:wrap; gap:0;
+      border:1px solid var(--glass-line); border-radius:18px; overflow:hidden;
+      background:rgba(6,22,40,.6); backdrop-filter:blur(10px);
+    }
+    .live .cell{padding:14px 22px; display:flex; flex-direction:column; gap:2px; border-right:1px solid rgba(120,200,255,.12)}
+    .live .cell:last-child{border-right:none}
+    .live .label{font-size:11px; letter-spacing:.12em; color:var(--muted); font-weight:700}
+    .live .value{font-family:var(--disp); font-weight:900; font-size:24px; color:#eafaff; line-height:1.2}
+    .live .value small{font-size:12px; font-weight:700; color:var(--muted); margin-left:3px}
+    .live .value.ok{color:var(--cyan)}
+    .live-note{display:block; margin-top:8px; font-size:11px; color:rgba(143,179,204,.7)}
+
+    /* Canvas waves */
+    #waves{position:absolute; left:0; right:0; bottom:-2px; width:100%; height:230px; z-index:1; display:block}
+
+    /* ---------- Sections ---------- */
+    .section{padding:72px 0 20px; position:relative}
+    .sec-head{display:flex; align-items:baseline; gap:16px; margin-bottom:26px}
+    .sec-head h2{
+      font-size:clamp(26px,3.4vw,38px); margin:0; font-weight:900; letter-spacing:.02em;
+    }
+    .sec-head .en{font-family:var(--disp); font-weight:700; font-size:13px; letter-spacing:.3em; color:var(--cyan); text-transform:uppercase}
+
+    /* Fortune banner */
+    .fortune{
+      position:relative; border-radius:26px; overflow:hidden; padding:38px 36px;
+      background:linear-gradient(115deg, rgba(255,138,92,.16), rgba(255,209,102,.08) 55%, rgba(56,225,255,.1));
+      border:1px solid rgba(255,190,130,.28);
+      display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap;
+    }
+    .fortune::before{
+      content:""; position:absolute; inset:-60%; pointer-events:none;
+      background:conic-gradient(from 0deg, transparent 70%, rgba(255,220,160,.14) 78%, transparent 86%);
+      animation:spinlight 9s linear infinite;
+    }
+    @keyframes spinlight{to{transform:rotate(360deg)}}
+    .fortune h3{margin:0 0 6px; font-size:clamp(21px,2.6vw,29px); font-weight:900}
+    .fortune p{margin:0; color:#f4dcc8; font-size:14.5px}
+    .fortune .emoji{font-size:46px; filter:drop-shadow(0 4px 14px rgba(255,170,90,.4)); animation:bob 3s ease-in-out infinite}
+    @keyframes bob{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-8px) rotate(5deg)}}
+    .fortune .left{display:flex; align-items:center; gap:20px; position:relative; z-index:1}
+    .fortune .btn{position:relative; z-index:1}
+
+    /* Cards */
+    .grid{display:grid; grid-template-columns:repeat(3,1fr); gap:22px}
+    .card{
+      position:relative; display:flex; flex-direction:column; border-radius:var(--radius); overflow:hidden;
+      background:var(--glass); border:1px solid var(--glass-line); backdrop-filter:blur(10px);
+      transition:transform .3s cubic-bezier(.2,.9,.3,1.3), box-shadow .3s, border-color .3s;
+      color:var(--ink);
+    }
+    .card:hover{transform:translateY(-7px); border-color:rgba(120,220,255,.45); box-shadow:0 24px 60px rgba(2,12,24,.6)}
+    .card:hover .thumb-icon{transform:scale(1.18) rotate(-5deg)}
+    .thumb{height:150px; position:relative; display:flex; align-items:center; justify-content:center; overflow:hidden}
+    .thumb::after{content:""; position:absolute; inset:0; background:radial-gradient(90% 80% at 50% 110%, rgba(4,16,31,.55), transparent)}
+    .thumb-icon{font-size:60px; z-index:1; transition:transform .35s cubic-bezier(.2,.9,.3,1.4); filter:drop-shadow(0 8px 18px rgba(0,0,0,.35))}
+    .t-map{background:linear-gradient(135deg,#063a5e,#0aa8d6 70%,#38e1ff)}
+    .t-shonan{background:linear-gradient(135deg,#0b2f56,#2f6fd0 65%,#7cc9ff)}
+    .t-game{background:linear-gradient(135deg,#0c4a43,#0fae94 65%,#5ff0cf)}
+    .t-slot{background:linear-gradient(135deg,#4a1660,#9b34c9 65%,#e07cff)}
+    .t-board{background:linear-gradient(135deg,#7a2e10,#e0653a 62%,#ffb27c)}
+    .t-gear{background:linear-gradient(135deg,#5e4a06,#d0a422 65%,#ffe07c)}
+    .t-sticker{background:linear-gradient(135deg,#5e0b30,#d02f6f 65%,#ff8ab5)}
+    .badge{
+      position:absolute; top:12px; left:12px; z-index:2; font-size:11px; font-weight:900; letter-spacing:.12em;
+      padding:4px 11px; border-radius:999px; background:rgba(4,16,31,.65); color:var(--cyan);
+      border:1px solid rgba(120,220,255,.35); backdrop-filter:blur(4px);
+    }
+    .badge--hot{color:var(--gold); border-color:rgba(255,209,102,.4)}
+    .card .body{padding:18px 20px 22px; display:flex; flex-direction:column; gap:6px; flex:1}
+    .card h3{margin:0; font-size:18.5px; font-weight:900}
+    .card p{margin:0; color:var(--muted); font-size:13.5px; flex:1}
+    .card .go{
+      margin-top:12px; font-weight:800; font-size:13px; color:var(--cyan);
+      display:inline-flex; align-items:center; gap:6px;
+    }
+    .card .go::after{content:"→"; transition:transform .25s}
+    .card:hover .go::after{transform:translateX(5px)}
+
+    /* Trivia */
+    .trivia{
+      border-radius:26px; border:1px solid var(--glass-line); background:rgba(6,22,40,.55);
+      backdrop-filter:blur(10px); padding:34px 36px; text-align:center; position:relative; overflow:hidden;
+    }
+    .trivia .en{font-family:var(--disp); letter-spacing:.3em; font-size:12px; color:var(--cyan); font-weight:700}
+    .trivia blockquote{
+      margin:14px auto 6px; max-width:640px; font-size:clamp(16px,2vw,19px); font-weight:700; color:#dff2ff; min-height:3.6em;
+      transition:opacity .5s;
+    }
+    .trivia .num{color:var(--muted); font-size:12px; letter-spacing:.15em}
+    .trivia .refresh{
+      margin-top:14px; cursor:pointer; border:1px solid var(--glass-line); background:var(--cyan-dim);
+      color:var(--cyan); font-weight:800; font-size:13px; border-radius:999px; padding:9px 22px; font-family:var(--jp);
+      transition:transform .2s;
+    }
+    .trivia .refresh:hover{transform:scale(1.06)}
+
+    /* About + footer */
+    .about p{color:var(--muted); max-width:720px; font-size:14.5px}
+    footer{margin-top:70px; border-top:1px solid rgba(120,200,255,.12); background:rgba(3,12,23,.6)}
+    .foot{display:flex; justify-content:space-between; align-items:center; gap:14px; flex-wrap:wrap; padding:26px 0; color:var(--muted); font-size:13.5px}
+    .foot a{color:#9fd4ef}
+    .foot .brand{font-family:var(--disp); font-weight:900; letter-spacing:.06em; color:#eafaff; font-size:16px}
+
+    @media (max-width:900px){ .grid{grid-template-columns:repeat(2,1fr)} .moon{width:80px;height:80px} }
+    @media (max-width:600px){
       .grid{grid-template-columns:1fr}
-      .hero{padding-top:28px}
+      .hero{min-height:76vh; padding-bottom:120px}
+      .live .cell{padding:11px 15px}
+      .live .value{font-size:19px}
+      .fortune{padding:28px 22px}
+    }
+    @media (prefers-reduced-motion:reduce){
+      *{animation:none !important; transition:none !important}
     }
   </style>
 
@@ -86,12 +223,7 @@
     "@context":"https://schema.org",
     "@type":"WebSite",
     "name":"SloSea",
-    "url":"https://example.com/",
-    "potentialAction":{
-      "@type":"SearchAction",
-      "target":"https://example.com/search?q={q}",
-      "query-input":"required name=q"
-    }
+    "description":"波と遊ぶサーフポータル。全国の波情報マップ、波みくじ、サーフゲーム、初心者ガイド。"
   }
   </script>
 </head>
@@ -111,99 +243,190 @@
   </header>
 
   <main>
-    <!-- Hero -->
+    <!-- ============ HERO ============ -->
     <section class="hero">
-      <div class="wrap inner">
-        <div>
-          <h1>シンプルなサーフポータル</h1>
-          <p>初めてのサーフボード選び、遊べるミニゲーム、ボードを“盛る”ステッカーデザイン配布等<br>初心者からわかりやすい情報を届けます</p>
-          <div class="cta">
-            <a class="btn" href="#apps" aria-label="コンテンツ一覧へ">一覧を見る</a>
-          </div>
-        </div>
-        <div aria-hidden="true">
-          <div style="aspect-ratio:4/3; border-radius:18px; border:1px solid var(--line); overflow:hidden; background:radial-gradient(120% 100% at 50% 0%, #e0fbff 0%, #c7f7ff 35%, #baf4ff 50%, #aaf2ff 60%, #97f0ff 70%, #7ee7ff 85%, #5ad6f7 100%), linear-gradient(180deg, var(--sea1), var(--sea2)); position:relative">
-            <svg viewBox="0 0 1440 320" style="position:absolute; left:0; bottom:-1px; width:100%; height:44%" preserveAspectRatio="none" aria-hidden="true">
-              <path fill="#7dd3fc" fill-opacity="1" d="M0,192L60,176C120,160,240,128,360,112C480,96,600,96,720,106.7C840,117,960,139,1080,165.3C1200,192,1320,224,1380,240L1440,256L1440,320L1440,320L0,320Z"></path>
-              <path fill="#22d3ee" fill-opacity="0.8" d="M0,224L60,213.3C120,203,240,181,360,165.3C480,149,600,139,720,138.7C840,139,960,149,1080,165.3C1200,181,1320,203,1380,213.3L1440,224L1440,320L1440,320L0,320Z"></path>
-              <path fill="#a7f3d0" fill-opacity="0.7" d="M0,256L60,256C120,256,240,256,360,245.3C480,235,600,213,720,186.7C840,160,960,128,1080,144C1200,160,1320,224,1380,256L1440,288L1440,320L1440,320L0,320Z"></path>
-            </svg>
-          </div>
-        </div>
+      <div class="hero-sky" id="sky" aria-hidden="true">
+        <div class="moon"></div>
       </div>
-      <div class="ocean" aria-hidden="true">
-        <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
-          <path fill="#e0fbff" d="M0,64L48,58.7C96,53,192,43,288,58.7C384,75,480,117,576,122.7C672,128,768,96,864,80C960,64,1056,64,1152,64C1248,64,1344,64,1392,64L1440,64L1440,120L1392,120C1344,120,1248,120,1152,120C1056,120,960,120,864,120C768,120,672,120,576,120C480,120,384,120,288,120C192,120,96,120,48,120L0,120Z"/>
-        </svg>
+
+      <div class="wrap hero-inner">
+        <span class="kicker"><span class="dot"></span>SURF PORTAL — JAPAN</span>
+        <h1>SloSea</h1>
+        <p class="tagline">波を読む。波と遊ぶ。波に乗る。</p>
+        <p class="sub">全国の波情報マップから今日の波みくじまで。海に行く日も、行けない日も、サーファーの毎日をちょっと楽しくするポータルサイトです。</p>
+
+        <div class="cta">
+          <a class="btn btn--wave" href="./surfpoint/index.html">🗾 全国の波情報マップ</a>
+          <a class="btn btn--fortune" href="./namimikuji.html">🎋 今日の波みくじ</a>
+          <a class="btn" href="#contents">コンテンツ一覧</a>
+        </div>
+
+        <div class="live" role="status" aria-label="湘南・鵠沼のいまの波">
+          <div class="cell">
+            <span class="label">SHONAN / 鵠沼</span>
+            <span class="value" style="font-size:15px; padding-top:5px">いまの波 🌊</span>
+          </div>
+          <div class="cell">
+            <span class="label">波高</span>
+            <span class="value ok" id="lv-wave">--<small>m</small></span>
+          </div>
+          <div class="cell">
+            <span class="label">うねり周期</span>
+            <span class="value" id="lv-period">--<small>s</small></span>
+          </div>
+          <div class="cell">
+            <span class="label">風</span>
+            <span class="value" id="lv-wind">--<small>m/s</small></span>
+          </div>
+        </div>
+        <span class="live-note" id="live-note">データ取得中… (Open-Meteo)</span>
+      </div>
+
+      <canvas id="waves" aria-hidden="true"></canvas>
+    </section>
+
+    <!-- ============ FORTUNE BANNER ============ -->
+    <section class="section" aria-labelledby="fortune-title">
+      <div class="wrap">
+        <div class="fortune">
+          <div class="left">
+            <span class="emoji">🎋</span>
+            <div>
+              <h3 id="fortune-title">波みくじ、はじめました。</h3>
+              <p>今日のあなたのサーフ運は？ 「超大波吉」から「凪」まで、引いてからパドルアウトするのが SloSea 流。</p>
+            </div>
+          </div>
+          <a class="btn btn--fortune" href="./namimikuji.html">みくじを引く →</a>
+        </div>
       </div>
     </section>
 
-    <!-- Apps / Links -->
-    <section id="apps" class="section">
+    <!-- ============ CONTENTS ============ -->
+    <section id="contents" class="section" aria-labelledby="contents-title">
       <div class="wrap">
-        <h2>コンテンツ</h2>
+        <div class="sec-head">
+          <h2 id="contents-title">コンテンツ</h2>
+          <span class="en">Check / Play / Read</span>
+        </div>
+
         <div class="grid" role="list">
-          <!-- 1: 記事（thumbに chill.png を表示） -->
-          <article class="card" role="listitem">
-            <div class="thumb" aria-hidden="true">
-              <img src="chill.png" alt="">
-            </div>
+          <a class="card" role="listitem" href="./surfpoint/index.html">
+            <div class="thumb t-map"><span class="badge">CHECK</span><span class="thumb-icon">🗾</span></div>
             <div class="body">
-              <h3>記事</h3>
-              <p>サーフィンの基礎知識やhow toをまとめた読み物コンテンツ。</p>
-              <ul>
-                <li><a href="surfboard-guide.html" aria-label="サーフボード選び【保存版】の記事を開く">サーフボード選び【保存版】</a></li>
-                <li><a href="beginner-gear.html" aria-label="初心者が揃えるべき道具一式の記事を開く">初心者が揃えるべき道具一式</a></li>
-                <!-- ここを追加：湘南の波予報 -->
-                <li><a href="shonanforecast.html" aria-label="湘南の波予報の記事を開く">湘南の波予報</a></li>
-              </ul>
+              <h3>全国 波情報マップ</h3>
+              <p>日本地図から全国のサーフポイントを選んで、波高・うねり・風・潮位を5日先までチェック。</p>
+              <span class="go">マップを開く</span>
             </div>
-          </article>
+          </a>
 
-          <!-- 2: Surf Mini Game（thumbに game.png を表示） -->
-          <article class="card" role="listitem">
-            <div class="thumb" aria-hidden="true">
-              <img src="game.png" alt="">
-            </div>
+          <a class="card" role="listitem" href="./shonanforecast.html">
+            <div class="thumb t-shonan"><span class="badge">CHECK</span><span class="thumb-icon">🌊</span></div>
             <div class="body">
-              <h3>ゲーム</h3>
-              <ul>
-                <li><a href="./game.html" aria-label="Surf mini Game を開く">Surf mini Game</a></li>
-                <li><a href="./slot.html" aria-label="波運スロットを開く">波運スロット</a></li>
-              </ul>
+              <h3>湘南の波予報</h3>
+              <p>鎌倉〜平塚エリアにフォーカスした波予報。地元サーファー向けのポイント別コンディション。</p>
+              <span class="go">予報を見る</span>
             </div>
-          </article>
+          </a>
 
-          <!-- 3: スポンサー風ステッカー配布（thumbに board.png を表示） -->
-          <article class="card" role="listitem">
-            <div class="thumb" aria-hidden="true">
-              <img src="board.png" alt="">
-            </div>
+          <a class="card" role="listitem" href="./namimikuji.html">
+            <div class="thumb t-slot" style="background:linear-gradient(135deg,#5e2a06,#d07022 65%,#ffd166)"><span class="badge badge--hot">NEW</span><span class="thumb-icon">🎋</span></div>
             <div class="body">
-              <h3>スポンサー風ステッカー配布</h3>
-              <p>ジョーク系ロゴ素材をSVG/PNGで配布。入稿のコツも掲載、印刷サービスへの導線つき。</p>
+              <h3>波みくじ</h3>
+              <p>今日のサーフ運を占うおみくじ。運勢に合わせたひとことアドバイスとラッキー方角つき。</p>
+              <span class="go">占ってみる</span>
             </div>
-            <div class="actions">
-              <a class="chip" href="./stickers.html" aria-label="ステッカー配布ページを開く">開く</a>
+          </a>
+
+          <a class="card" role="listitem" href="./game.html">
+            <div class="thumb t-game"><span class="badge">PLAY</span><span class="thumb-icon">🏄</span></div>
+            <div class="body">
+              <h3>Surf Mini Game</h3>
+              <p>波を避けてコインを集めるカジュアルゲーム。休憩時間の3分にどうぞ。ハイスコアを狙え。</p>
+              <span class="go">遊ぶ</span>
             </div>
-          </article>
+          </a>
+
+          <a class="card" role="listitem" href="./slot.html">
+            <div class="thumb t-slot"><span class="badge">PLAY</span><span class="thumb-icon">🎰</span></div>
+            <div class="body">
+              <h3>波運スロット</h3>
+              <p>目押しで波運を試すスロットマシン。3つ揃えば今日はきっといい波に出会える…かも。</p>
+              <span class="go">回す</span>
+            </div>
+          </a>
+
+          <a class="card" role="listitem" href="./stickers.html">
+            <div class="thumb t-sticker"><span class="badge">GET</span><span class="thumb-icon">🔖</span></div>
+            <div class="body">
+              <h3>スポンサー風ステッカー</h3>
+              <p>ボードを“盛る”ジョーク系スポンサーロゴをSVG/PNGで無料配布。印刷入稿のコツも掲載。</p>
+              <span class="go">もらう</span>
+            </div>
+          </a>
+
+          <a class="card" role="listitem" href="./surfboard-guide.html">
+            <div class="thumb t-board"><span class="badge">READ</span><span class="thumb-icon">🛹</span></div>
+            <div class="body">
+              <h3>サーフボード選び【保存版】</h3>
+              <p>身長・体力・目標スタイルから最適な1本を導く診断つきガイド。初めての1本はここから。</p>
+              <span class="go">読む</span>
+            </div>
+          </a>
+
+          <a class="card" role="listitem" href="./beginner-gear.html">
+            <div class="thumb t-gear"><span class="badge">READ</span><span class="thumb-icon">🎒</span></div>
+            <div class="body">
+              <h3>初心者が揃える道具一式</h3>
+              <p>ウェットスーツからポンチョ・バケツまで。最初に必要なギアと予算感をまるっと解説。</p>
+              <span class="go">読む</span>
+            </div>
+          </a>
+
+          <a class="card" role="listitem" href="./about.html">
+            <div class="thumb" style="background:linear-gradient(135deg,#123047,#2b5876 65%,#6aa8c9)"><span class="badge">ABOUT</span><span class="thumb-icon">⛵</span></div>
+            <div class="body">
+              <h3>SloSea について</h3>
+              <p>「ゆっくり、海と。」がコンセプト。サイトの成り立ちと運営者情報はこちらから。</p>
+              <span class="go">見る</span>
+            </div>
+          </a>
         </div>
       </div>
     </section>
 
-    <!-- About / Policy -->
-    <section class="section" aria-labelledby="about-title">
+    <!-- ============ TRIVIA ============ -->
+    <section class="section" aria-labelledby="trivia-title">
       <div class="wrap">
-        <h2 id="about-title">このサイトについて</h2>
-        <p class="wrap" style="color:var(--muted)">SloSea は、軽快でシンプルなサイトとして作成しています。コンテンツは初心者向けに厳選し、更新が少なくても価値が維持されるよう設計しています。アフィリエイトリンクを含む場合があります。</p>
+        <div class="trivia">
+          <span class="en">Ocean Trivia</span>
+          <h2 id="trivia-title" style="margin:6px 0 0; font-size:22px">海のこぼれ話</h2>
+          <blockquote id="trivia-text">…</blockquote>
+          <div class="num" id="trivia-num"></div>
+          <button class="refresh" id="trivia-btn" type="button">別の話を読む 🐚</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ ABOUT ============ -->
+    <section class="section about" aria-labelledby="about-title">
+      <div class="wrap">
+        <div class="sec-head">
+          <h2 id="about-title">このサイトについて</h2>
+          <span class="en">About</span>
+        </div>
+        <p>SloSea は「ゆっくり、海と。」をコンセプトにした個人運営のサーフポータルです。波情報は Open-Meteo の予報モデルをもとに表示しています（実際の海況は必ず現地で確認してください）。一部コンテンツにアフィリエイトリンク・広告を含む場合があります。</p>
       </div>
     </section>
   </main>
 
   <footer>
     <div class="wrap foot">
-      <div>© <span id="year"></span> SloSea</div>
-      <div><a href="/about.html">運営者情報</a> · <a href="/policy.html">アフィリエイトポリシー</a></div>
+      <div><span class="brand">SloSea</span> — © <span id="year"></span></div>
+      <div>
+        <a href="./about.html">運営者情報</a> ·
+        <a href="./policy.html">アフィリエイトポリシー</a> ·
+        <a href="./privacy.html">プライバシーポリシー</a>
+      </div>
     </div>
   </footer>
 
@@ -218,17 +441,7 @@
           </svg>
         </button>
       </div>
-      <ul class="global-menu__list">
-        <li class="global-menu__item"><a href="./index.html#apps">ホーム / コンテンツ一覧</a><p>SloSea の最新コンテンツまとめ。</p></li>
-        <li class="global-menu__item"><a href="surfboard-guide.html">サーフボード選び【保存版】</a><p>目的に合わせたボードの選び方ガイド。</p></li>
-        <li class="global-menu__item"><a href="beginner-gear.html">初心者が揃えるべき道具一式</a><p>着替えポンチョ・バケツなど必携小物まとめ。</p></li>
-        <!-- ここを追加：湘南の波予報 -->
-        <li class="global-menu__item"><a href="./shonanforecast.html">湘南の波予報</a><p>鎌倉〜平塚エリアの波予報アーカイブ。</p></li>
-        <li class="global-menu__item"><a href="./game.html">Surf Mini Game</a><p>波を避けてコインを集めるカジュアルゲーム。</p></li>
-        <li class="global-menu__item"><a href="./stickers.html">サーフステッカー配布</a><p>ボードやSNSで使えるデジタルステッカー。</p></li>
-        <li class="global-menu__item"><a href="./about.html">SloSea について</a><p>サイトのコンセプトや制作背景を紹介。</p></li>
-        <li class="global-menu__item"><a href="./policy.html">プライバシーポリシー</a><p>利用者のみなさまに安心して使っていただくために。</p></li>
-      </ul>
+      <ul class="global-menu__list"></ul>
       <p class="global-menu__footer">ご希望のコンテンツを選択してください。</p>
       <button class="global-menu__close" type="button" data-menu-dismiss>メニューを閉じる</button>
     </div>
@@ -237,12 +450,123 @@
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    // 念のため、記事カード内リンク以外のクリック干渉を無効化
-    document.querySelectorAll('.card .body a').forEach(a=>{
-      a.addEventListener('click', e=>{
-        e.stopPropagation();
-      }, {capture:true});
-    });
+    /* ---------- 星空 ---------- */
+    (function(){
+      const sky = document.getElementById('sky');
+      for(let i=0;i<70;i++){
+        const s = document.createElement('span');
+        s.className = 'star';
+        s.style.left = Math.random()*100 + '%';
+        s.style.top = Math.random()*62 + '%';
+        s.style.animationDelay = (Math.random()*3.4).toFixed(2) + 's';
+        s.style.animationDuration = (2.4 + Math.random()*3).toFixed(2) + 's';
+        if(Math.random()<.25){ s.style.width = s.style.height = '3px'; }
+        sky.appendChild(s);
+      }
+    })();
+
+    /* ---------- Canvas 波アニメーション ---------- */
+    (function(){
+      const cv = document.getElementById('waves');
+      const ctx = cv.getContext('2d');
+      let w, h, t = 0;
+      const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      const layers = [
+        {amp:16, len:.008, speed:.018, y:.42, color:'rgba(20, 90, 140, .45)'},
+        {amp:22, len:.011, speed:.026, y:.55, color:'rgba(10, 140, 190, .5)'},
+        {amp:18, len:.015, speed:.036, y:.68, color:'rgba(56, 195, 240, .55)'},
+        {amp:12, len:.021, speed:.05,  y:.8,  color:'rgba(140, 235, 255, .5)'}
+      ];
+
+      function resize(){
+        w = cv.width = cv.clientWidth * devicePixelRatio;
+        h = cv.height = cv.clientHeight * devicePixelRatio;
+      }
+      resize();
+      addEventListener('resize', resize);
+
+      function draw(){
+        ctx.clearRect(0,0,w,h);
+        for(const L of layers){
+          ctx.beginPath();
+          ctx.moveTo(0,h);
+          for(let x=0; x<=w; x+=6*devicePixelRatio){
+            const y = h*L.y
+              + Math.sin(x*L.len/devicePixelRatio + t*L.speed*60) * L.amp * devicePixelRatio
+              + Math.sin(x*L.len*0.6/devicePixelRatio - t*L.speed*38) * L.amp*.5 * devicePixelRatio;
+            ctx.lineTo(x,y);
+          }
+          ctx.lineTo(w,h);
+          ctx.closePath();
+          ctx.fillStyle = L.color;
+          ctx.fill();
+        }
+        t += 0.016;
+        if(!reduced) requestAnimationFrame(draw);
+      }
+      draw();
+    })();
+
+    /* ---------- 湘南ライブ波情報 (Open-Meteo / APIキー不要) ---------- */
+    (async function(){
+      const note = document.getElementById('live-note');
+      try{
+        const lat = 35.3126, lon = 139.4741; // 鵠沼海岸
+        const [m, f] = await Promise.all([
+          fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${lat}&longitude=${lon}&hourly=wave_height,wave_period&timezone=Asia%2FTokyo&forecast_days=1`).then(r=>r.json()),
+          fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=wind_speed_10m,wind_direction_10m&wind_speed_unit=ms&timezone=Asia%2FTokyo&forecast_days=1`).then(r=>r.json())
+        ]);
+        const hourIdx = Math.min(new Date().getHours(), m.hourly.time.length - 1);
+        const wave = m.hourly.wave_height[hourIdx];
+        const period = m.hourly.wave_period[hourIdx];
+        const wind = f.hourly.wind_speed_10m[hourIdx];
+        const wdir = f.hourly.wind_direction_10m[hourIdx];
+        const dirs = ['北','北東','東','南東','南','南西','西','北西'];
+        const dirLabel = dirs[Math.round(wdir/45)%8];
+
+        document.getElementById('lv-wave').innerHTML = (wave!=null? wave.toFixed(1) : '--') + '<small>m</small>';
+        document.getElementById('lv-period').innerHTML = (period!=null? period.toFixed(1) : '--') + '<small>s</small>';
+        document.getElementById('lv-wind').innerHTML = (wind!=null? wind.toFixed(1) : '--') + `<small>m/s ${dirLabel}</small>`;
+        note.textContent = 'モデル予報値（Open-Meteo）。実際の海況は現地で確認を。';
+      }catch(e){
+        note.textContent = '波データを取得できませんでした。';
+      }
+    })();
+
+    /* ---------- 海のこぼれ話 ---------- */
+    (function(){
+      const facts = [
+        '波は風が海面を撫でることで生まれる。いま乗っているうねりは、数千km先の嵐からの手紙かもしれない。',
+        'サーフィンの起源は古代ポリネシア。ハワイでは「He\'e nalu（波を滑る）」と呼ばれ、王族のスポーツだった。',
+        '波のセットは「7波に1回大きい」とよく言われるが、実際は複数のうねりが重なる干渉で生まれる自然のリズム。',
+        '日本のサーフィン人口は約200万人。世界で最もサーフショップ密度が高い国のひとつと言われている。',
+        '水深が波長の半分より浅くなると、波は海底を「感じて」立ち上がる。ブレイクの位置は海底地形が決めている。',
+        'うねりの周期が長いほど、波はパワフルでキレイに割れる。周期13秒以上は「グランドスウェル」の目安。',
+        '満月と新月の前後は潮の動きが大きい「大潮」。潮が動く時間帯は波が良くなりやすいと言われる。',
+        '世界最長のライディング記録はアマゾン川の逆流波「ポロロッカ」。1本の波に30分以上乗り続けられる。',
+        'ウェットスーツを発明したのは物理学者のヒュー・ブラッドナー。1952年、体温ではなく「水の層」で保温する発想だった。',
+        '朝イチの海が穏やかなのは、夜のあいだ陸風が海面を整えるから。「朝凪」はサーファーへのご褒美。',
+        'サーフボードのフィンを発明したのはトム・ブレイク（1935年）。それまでのボードは直進しかできなかった。',
+        '波音の「ザザーン」という周波数は約1/fゆらぎ。人間の心拍と共鳴してリラックス効果があるとされる。'
+      ];
+      const text = document.getElementById('trivia-text');
+      const num = document.getElementById('trivia-num');
+      let idx = Math.floor(Math.random()*facts.length);
+      function show(){
+        text.style.opacity = 0;
+        setTimeout(()=>{
+          text.textContent = facts[idx];
+          num.textContent = `— ${String(idx+1).padStart(2,'0')} / ${facts.length} —`;
+          text.style.opacity = 1;
+        }, 250);
+      }
+      document.getElementById('trivia-btn').addEventListener('click', ()=>{
+        idx = (idx + 1 + Math.floor(Math.random()*(facts.length-1))) % facts.length;
+        show();
+      });
+      show();
+    })();
   </script>
 </body>
 </html>

@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Google AdSense ローダー -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9779421014286339"
+          crossorigin="anonymous"></script>
+
+  <title>波みくじ｜今日のサーフ運を占う - SloSea</title>
+  <meta name="description" content="今日のサーフ運を占う「波みくじ」。超大波吉から凪まで、運勢に合わせたひとことアドバイスとラッキー方角つき。引いてからパドルアウトしよう。" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="波みくじ｜今日のサーフ運を占う - SloSea" />
+  <meta property="og:description" content="今日のサーフ運は？超大波吉から凪まで、波みくじで占ってからパドルアウト。" />
+  <meta name="theme-color" content="#04101f" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Noto+Sans+JP:wght@400;500;700;900&family=Shippori+Mincho:wght@600;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="./nav.css" />
+  <script src="./nav.js" defer></script>
+
+  <style>
+    :root{
+      --deep:#04101f; --ink:#e8f6ff; --muted:#8fb3cc;
+      --cyan:#38e1ff; --coral:#ff8a5c; --gold:#ffd166;
+      --glass:rgba(13,38,64,.55); --glass-line:rgba(120,200,255,.18);
+      --jp:"Noto Sans JP",system-ui,sans-serif;
+      --disp:"Montserrat","Noto Sans JP",sans-serif;
+      --mincho:"Shippori Mincho","Noto Sans JP",serif;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; color:var(--ink); font-family:var(--jp); line-height:1.75; min-height:100vh;
+      background:
+        radial-gradient(900px 500px at 85% -80px, rgba(255,138,92,.12), transparent 60%),
+        radial-gradient(1100px 650px at 10% 10%, rgba(56,225,255,.08), transparent 55%),
+        linear-gradient(180deg, #04101f 0%, #07203a 55%, #093054 100%);
+      background-attachment:fixed;
+      overflow-x:hidden;
+    }
+    a{color:var(--cyan); text-decoration:none}
+    .wrap{max-width:760px; margin:0 auto; padding:0 20px}
+
+    .stage{position:relative; padding:44px 0 90px; text-align:center}
+    .kicker{
+      display:inline-flex; align-items:center; gap:8px; font-weight:700; letter-spacing:.2em; font-size:12px;
+      color:var(--gold); border:1px solid rgba(255,209,102,.3); border-radius:999px; padding:6px 16px;
+      background:rgba(255,209,102,.08);
+    }
+    h1{
+      font-family:var(--mincho); font-weight:800; font-size:clamp(38px,8vw,64px); letter-spacing:.14em;
+      margin:18px 0 4px;
+      background:linear-gradient(120deg, #fff4de 20%, var(--gold) 55%, var(--coral) 90%);
+      -webkit-background-clip:text; background-clip:text; color:transparent;
+      filter:drop-shadow(0 4px 24px rgba(255,190,110,.25));
+    }
+    .lead{color:var(--muted); font-size:14.5px; margin:0 0 34px}
+
+    /* ---------- みくじ筒 ---------- */
+    .tube-area{position:relative; min-height:340px; display:flex; align-items:center; justify-content:center}
+    .tube{
+      cursor:pointer; border:none; background:none; padding:20px; font-family:var(--jp);
+      transition:transform .2s; -webkit-tap-highlight-color:transparent;
+    }
+    .tube:hover{transform:scale(1.05)}
+    .tube:active{transform:scale(.97)}
+    .tube svg{width:170px; height:auto; filter:drop-shadow(0 18px 40px rgba(0,0,0,.45))}
+    .tube .hint{
+      display:block; margin-top:18px; font-weight:800; color:var(--gold); font-size:15px; letter-spacing:.1em;
+      animation:hintpulse 1.8s ease-in-out infinite;
+    }
+    @keyframes hintpulse{0%,100%{opacity:.65}50%{opacity:1}}
+    .tube.shaking svg{animation:shake .12s linear 10}
+    @keyframes shake{
+      0%{transform:rotate(0) translateX(0)}
+      25%{transform:rotate(-7deg) translateX(-5px)}
+      75%{transform:rotate(7deg) translateX(5px)}
+      100%{transform:rotate(0) translateX(0)}
+    }
+
+    /* ---------- 結果カード ---------- */
+    .result{
+      display:none; perspective:1200px;
+    }
+    .result.show{display:block}
+    .omikuji-card{
+      position:relative; margin:0 auto; max-width:460px; border-radius:24px; overflow:hidden;
+      background:linear-gradient(170deg, #fdf8ec 0%, #f7ecd2 100%);
+      color:#2a1c08; padding:38px 30px 32px;
+      border:1px solid rgba(255,220,160,.5);
+      box-shadow:0 30px 80px rgba(0,0,0,.55), 0 0 60px rgba(255,200,120,.18);
+      animation:flipin .8s cubic-bezier(.2,.9,.3,1.1) both;
+    }
+    @keyframes flipin{
+      0%{transform:rotateY(95deg) scale(.85); opacity:0}
+      100%{transform:rotateY(0) scale(1); opacity:1}
+    }
+    .omikuji-card::before{
+      content:""; position:absolute; inset:10px; border:2px solid rgba(160,110,40,.35); border-radius:16px; pointer-events:none;
+    }
+    .omikuji-card .title{
+      font-family:var(--mincho); font-size:13px; letter-spacing:.5em; color:#8a6a30; font-weight:800; text-indent:.5em;
+    }
+    .rank{
+      font-family:var(--mincho); font-weight:800; font-size:clamp(46px,11vw,64px); letter-spacing:.08em;
+      margin:10px 0 2px; line-height:1.15;
+    }
+    .rank.r-sss{color:#c21e4d; text-shadow:0 0 26px rgba(255,80,130,.35)}
+    .rank.r-s{color:#d1462a}
+    .rank.r-a{color:#b06010}
+    .rank.r-b{color:#3e7a2e}
+    .rank.r-c{color:#2e6a8a}
+    .rank.r-d{color:#5a5a72}
+    .rank-en{font-family:var(--disp); font-weight:700; letter-spacing:.3em; font-size:11px; color:#a08050; text-transform:uppercase}
+    .poem{
+      font-family:var(--mincho); font-weight:600; font-size:16.5px; color:#4a3410;
+      margin:20px 0; padding:14px 10px; border-top:1px dashed rgba(160,110,40,.4); border-bottom:1px dashed rgba(160,110,40,.4);
+    }
+    .lucky{
+      display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:18px 0 6px; text-align:left;
+    }
+    .lucky div{
+      background:rgba(255,255,255,.55); border:1px solid rgba(160,110,40,.25); border-radius:12px; padding:10px 14px;
+    }
+    .lucky .k{display:block; font-size:11px; letter-spacing:.15em; color:#8a6a30; font-weight:800}
+    .lucky .v{font-weight:900; font-size:15.5px; color:#3a2808}
+    .advice{font-size:13.5px; color:#5a431a; margin:14px 0 0; text-align:left}
+
+    .actions{margin-top:30px; display:flex; gap:14px; justify-content:center; flex-wrap:wrap}
+    .btn{
+      cursor:pointer; display:inline-flex; align-items:center; gap:9px; font-weight:800; font-size:14.5px; font-family:var(--jp);
+      border-radius:999px; padding:13px 26px; border:1px solid var(--glass-line);
+      color:var(--ink); background:var(--glass); backdrop-filter:blur(8px);
+      transition:transform .25s cubic-bezier(.2,.9,.3,1.4), box-shadow .25s;
+    }
+    .btn:hover{transform:translateY(-3px)}
+    .btn--gold{
+      background:linear-gradient(120deg, #ff8a5c, #ffd166); color:#3a1503; border-color:transparent;
+      box-shadow:0 10px 30px rgba(255,150,90,.3);
+    }
+    .copy-done{color:var(--cyan); font-size:13px; font-weight:700; min-height:1.4em; margin-top:10px}
+
+    /* splash particles */
+    #splash{position:fixed; inset:0; pointer-events:none; z-index:50}
+
+    .backlink{margin-top:56px; font-size:14px}
+    .backlink a{font-weight:800}
+
+    footer{margin-top:40px; border-top:1px solid rgba(120,200,255,.12)}
+    .foot{display:flex; justify-content:center; gap:16px; padding:22px 0; color:var(--muted); font-size:13px}
+
+    @media (prefers-reduced-motion:reduce){ *{animation:none !important; transition:none !important} }
+  </style>
+</head>
+<body>
+  <header class="global-bar">
+    <div class="global-bar__inner">
+      <a class="global-bar__brand" href="./index.html#top" aria-label="SloSea のトップへ戻る">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 16c4 0 4-8 8-8s4 8 8 8 4-8 8-8"/></svg>
+        <span>SloSea</span>
+      </a>
+      <button class="global-bar__menu" type="button" aria-label="メニューを開く" aria-expanded="false" aria-controls="global-menu">
+        <svg class="global-bar__menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+          <path d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap stage">
+      <span class="kicker">🎋 SURF FORTUNE</span>
+      <h1>波みくじ</h1>
+      <p class="lead">今日のサーフ運を占ってからパドルアウト。筒をタップしてみくじを引こう。</p>
+
+      <div class="tube-area">
+        <!-- みくじ筒 -->
+        <button class="tube" id="tube" type="button" aria-label="波みくじを引く">
+          <svg viewBox="0 0 200 260" aria-hidden="true">
+            <defs>
+              <linearGradient id="wood" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stop-color="#a2683a"/>
+                <stop offset=".5" stop-color="#d9a05f"/>
+                <stop offset="1" stop-color="#8a5228"/>
+              </linearGradient>
+              <linearGradient id="band" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stop-color="#0aa8d6"/>
+                <stop offset="1" stop-color="#38e1ff"/>
+              </linearGradient>
+            </defs>
+            <!-- 棒 -->
+            <rect x="88" y="6" width="11" height="46" rx="5" fill="#e8cf9a" transform="rotate(-9 94 30)"/>
+            <rect x="104" y="2" width="11" height="50" rx="5" fill="#f2e0b4" transform="rotate(7 110 28)"/>
+            <!-- 筒本体 -->
+            <path d="M55 52 L145 52 L138 240 Q100 254 62 240 Z" fill="url(#wood)"/>
+            <ellipse cx="100" cy="52" rx="45" ry="13" fill="#5f3a1a"/>
+            <ellipse cx="100" cy="52" rx="38" ry="9.5" fill="#2c1808"/>
+            <!-- 帯 -->
+            <path d="M60 120 L140 120 L138 152 L62 152 Z" fill="url(#band)"/>
+            <text x="100" y="143" text-anchor="middle" font-size="19" font-weight="900" fill="#03222e" font-family="'Noto Sans JP',sans-serif">波みくじ</text>
+            <!-- 波模様 -->
+            <path d="M66 195 q8 -9 17 0 q8 -9 17 0 q8 -9 17 0 q8 -9 17 0" stroke="#f6dfae" stroke-width="4" fill="none" stroke-linecap="round"/>
+            <path d="M69 213 q8 -9 16 0 q8 -9 16 0 q8 -9 16 0 q8 -9 16 0" stroke="rgba(246,223,174,.55)" stroke-width="4" fill="none" stroke-linecap="round"/>
+          </svg>
+          <span class="hint">タップして引く</span>
+        </button>
+
+        <!-- 結果 -->
+        <div class="result" id="result" aria-live="polite">
+          <div class="omikuji-card" id="card">
+            <div class="title">波 み く じ</div>
+            <div class="rank" id="r-rank">大波吉</div>
+            <div class="rank-en" id="r-en">BIG WAVE LUCK</div>
+            <p class="poem" id="r-poem"></p>
+            <div class="lucky">
+              <div><span class="k">ラッキー方角</span><span class="v" id="r-dir"></span></div>
+              <div><span class="k">ラッキーアイテム</span><span class="v" id="r-item"></span></div>
+              <div><span class="k">波運</span><span class="v" id="r-wave"></span></div>
+              <div><span class="k">出会い運（海限定）</span><span class="v" id="r-meet"></span></div>
+            </div>
+            <p class="advice" id="r-advice"></p>
+          </div>
+          <div class="actions">
+            <button class="btn btn--gold" id="again" type="button">🎋 もう一回引く</button>
+            <button class="btn" id="share" type="button">📋 結果をコピー</button>
+          </div>
+          <p class="copy-done" id="copy-done"></p>
+        </div>
+      </div>
+
+      <p class="backlink"><a href="./index.html">← SloSea トップへ戻る</a>　·　<a href="./surfpoint/index.html">🗾 波情報マップで答え合わせ</a></p>
+    </div>
+  </main>
+
+  <canvas id="splash" aria-hidden="true"></canvas>
+
+  <footer>
+    <div class="wrap foot">
+      <span>© SloSea</span>
+      <a href="./policy.html">ポリシー</a>
+      <a href="./privacy.html">プライバシー</a>
+    </div>
+  </footer>
+
+  <nav class="global-menu" id="global-menu" data-global-menu aria-hidden="true">
+    <div class="global-menu__backdrop" data-menu-dismiss aria-hidden="true"></div>
+    <div class="global-menu__panel" role="dialog" aria-modal="true" aria-labelledby="global-menu-title">
+      <div class="global-menu__header">
+        <h2 class="global-menu__title" id="global-menu-title">コンテンツ一覧</h2>
+        <button class="global-menu__close" type="button" aria-label="メニューを閉じる" data-menu-dismiss data-menu-initial>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M6 6l12 12M18 6L6 18" />
+          </svg>
+        </button>
+      </div>
+      <ul class="global-menu__list"></ul>
+      <p class="global-menu__footer">ご希望のコンテンツを選択してください。</p>
+      <button class="global-menu__close" type="button" data-menu-dismiss>メニューを閉じる</button>
+    </div>
+  </nav>
+
+  <script>
+    const FORTUNES = [
+      { rank:'超大波吉', en:'EPIC SWELL LUCK', cls:'r-sss', weight:5,
+        poem:'千里のうねり 君のもとへ集いて 今日ただ一度の波となる',
+        wave:'★★★★★', meet:'最高',
+        advice:'一生モノの波に出会える日。迷ったら海へ。セットの1本目は見送らず、堂々とテイクオフを。' },
+      { rank:'大波吉', en:'BIG WAVE LUCK', cls:'r-s', weight:12,
+        poem:'夜明けの海に 光の道すじ 迷わず漕げば 波は開ける',
+        wave:'★★★★☆', meet:'良し',
+        advice:'思い切りの良さが吉。今日はいつもより1本多く波を追いかけてみて。朝イチの海が特に狙い目。' },
+      { rank:'波吉', en:'WAVE LUCK', cls:'r-a', weight:20,
+        poem:'よき波は よき待ち方に 訪れる あせらず あわてず 沖を見よ',
+        wave:'★★★☆☆', meet:'まずまず',
+        advice:'ポジション取りが冴える日。人の少ないピークに移動すると良い波を独り占めできそう。' },
+      { rank:'中波吉', en:'MID WAVE LUCK', cls:'r-b', weight:25,
+        poem:'胸腰の波も 乗りようひとつ 遊び心が 今日の切り札',
+        wave:'★★★☆☆', meet:'普通',
+        advice:'サイズを嘆くより楽しんだもの勝ち。小波用ボードや違う技に挑戦すると新しい発見あり。' },
+      { rank:'小波吉', en:'SMALL WAVE LUCK', cls:'r-c', weight:22,
+        poem:'膝波を 笑うことなかれ 基本にこそ 上達の芽は宿る',
+        wave:'★★☆☆☆', meet:'のんびり',
+        advice:'今日は基礎練習の日。テイクオフの初速とパドル姿勢を見直すと、次の大波吉が生きてくる。' },
+      { rank:'末波吉', en:'LATE WAVE LUCK', cls:'r-c', weight:11,
+        poem:'引き際も 波乗りのうち 今日の一本 明日の百本',
+        wave:'★★☆☆☆', meet:'期待薄',
+        advice:'無理は禁物。短めのセッションでサクッと切り上げ、ワックスがけと道具のメンテに時間を。' },
+      { rank:'凪', en:'FLAT DAY', cls:'r-d', weight:5,
+        poem:'波なくば 海を眺めて 珈琲を 凪もまた良し 海のうち',
+        wave:'★☆☆☆☆', meet:'陸で吉',
+        advice:'今日は海に浮かぶだけでも満点。ビーチクリーンや波チェックの散歩が運気を貯める。次の大波吉は近い。' }
+    ];
+    const DIRS = ['北','北東','東','南東','南','南西','西','北西','沖','岸'];
+    const ITEMS = ['白いワックス','日焼け止め','ビーチサンダル','ホットコーヒー','おにぎり','貝がら','リーシュコード','ポンチョ','サーフハット','バナナ','麦茶','タオル2枚'];
+
+    const tube = document.getElementById('tube');
+    const result = document.getElementById('result');
+    const card = document.getElementById('card');
+    let current = null;
+
+    function pick(){
+      const total = FORTUNES.reduce((s,f)=>s+f.weight,0);
+      let r = Math.random()*total;
+      for(const f of FORTUNES){ if((r-=f.weight) < 0) return f; }
+      return FORTUNES[FORTUNES.length-1];
+    }
+
+    function draw(){
+      tube.classList.add('shaking');
+      tube.querySelector('.hint').textContent = 'シャカシャカ…';
+      setTimeout(()=>{
+        const f = pick();
+        current = f;
+        document.getElementById('r-rank').textContent = f.rank;
+        document.getElementById('r-rank').className = 'rank ' + f.cls;
+        document.getElementById('r-en').textContent = f.en;
+        document.getElementById('r-poem').textContent = f.poem;
+        document.getElementById('r-wave').textContent = f.wave;
+        document.getElementById('r-meet').textContent = f.meet;
+        document.getElementById('r-dir').textContent = DIRS[Math.floor(Math.random()*DIRS.length)];
+        document.getElementById('r-item').textContent = ITEMS[Math.floor(Math.random()*ITEMS.length)];
+        document.getElementById('r-advice').textContent = f.advice;
+
+        tube.style.display = 'none';
+        tube.classList.remove('shaking');
+        result.classList.add('show');
+        card.style.animation = 'none';
+        void card.offsetWidth;
+        card.style.animation = '';
+        splash(f.cls === 'r-sss' || f.cls === 'r-s' ? 90 : 45);
+        document.getElementById('copy-done').textContent = '';
+      }, 1200);
+    }
+
+    tube.addEventListener('click', draw);
+
+    document.getElementById('again').addEventListener('click', ()=>{
+      result.classList.remove('show');
+      tube.style.display = '';
+      tube.querySelector('.hint').textContent = 'タップして引く';
+    });
+
+    document.getElementById('share').addEventListener('click', async ()=>{
+      if(!current) return;
+      const dir = document.getElementById('r-dir').textContent;
+      const item = document.getElementById('r-item').textContent;
+      const text = `🎋 今日の波みくじ【${current.rank}】\n波運 ${current.wave}／ラッキー方角「${dir}」／アイテム「${item}」\n${current.advice}\n#波みくじ #SloSea`;
+      try{
+        await navigator.clipboard.writeText(text);
+        document.getElementById('copy-done').textContent = 'コピーしました！SNSでシェアしてね 🌊';
+      }catch(e){
+        document.getElementById('copy-done').textContent = 'コピーできませんでした…';
+      }
+    });
+
+    /* ---------- 紙吹雪スプラッシュ ---------- */
+    const cv = document.getElementById('splash');
+    const ctx = cv.getContext('2d');
+    let parts = [];
+    function resize(){ cv.width = innerWidth*devicePixelRatio; cv.height = innerHeight*devicePixelRatio; }
+    resize(); addEventListener('resize', resize);
+
+    function splash(n){
+      if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const colors = ['#38e1ff','#ffd166','#ff8a5c','#fff4de','#7cc9ff'];
+      const cx = cv.width/2, cy = cv.height*0.42;
+      for(let i=0;i<n;i++){
+        const a = Math.random()*Math.PI*2, sp = (3+Math.random()*9)*devicePixelRatio;
+        parts.push({
+          x:cx, y:cy, vx:Math.cos(a)*sp, vy:Math.sin(a)*sp - 4*devicePixelRatio,
+          size:(3+Math.random()*5)*devicePixelRatio, rot:Math.random()*Math.PI,
+          vr:(Math.random()-.5)*.3, color:colors[i%colors.length], life:1
+        });
+      }
+      if(parts.length === n) tick();
+    }
+    function tick(){
+      ctx.clearRect(0,0,cv.width,cv.height);
+      parts = parts.filter(p=>p.life>0);
+      for(const p of parts){
+        p.x += p.vx; p.y += p.vy; p.vy += .25*devicePixelRatio;
+        p.rot += p.vr; p.life -= .012;
+        ctx.save();
+        ctx.globalAlpha = Math.max(p.life,0);
+        ctx.translate(p.x,p.y); ctx.rotate(p.rot);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.size/2,-p.size/2,p.size,p.size*.6);
+        ctx.restore();
+      }
+      if(parts.length) requestAnimationFrame(tick);
+      else ctx.clearRect(0,0,cv.width,cv.height);
+    }
+  </script>
+</body>
+</html>
